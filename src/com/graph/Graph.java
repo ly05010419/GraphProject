@@ -10,13 +10,16 @@ public class Graph {
 	public ArrayList<GraphCompenent> GraphCompenentList = new ArrayList<GraphCompenent>();
 
 	private ArrayList<Knote> knoten;
+	private ArrayList<Kante> kanten;
 
 	public Queue<Integer> queue = new LinkedList<Integer>();
 	public HashSet<Integer> nichtBesuchtList = new HashSet<Integer>();
 
 	public Graph(String str) throws Exception {
-		GraphParse graphParse = new GraphParse();
-		knoten = graphParse.parse(str);
+		GraphParse graphParse = new GraphParse(str);
+		knoten = graphParse.parseKonte();
+		kanten = graphParse.parseKante();
+		
 	}
 
 	public void breitenSuche() throws Exception {
@@ -31,7 +34,6 @@ public class Graph {
 		int startKonte = (Integer) nichtBesuchtList.toArray()[0];
 		queue.add(startKonte);
 
-
 		GraphCompenent graphCompenent = new GraphCompenent();
 		GraphCompenentList.add(graphCompenent);
 
@@ -39,9 +41,8 @@ public class Graph {
 
 			Integer vaterKonte = queue.poll();
 			nichtBesuchtList.remove(vaterKonte);
-			
-			graphCompenent.getKnoten().add(vaterKonte);
 
+			graphCompenent.getKnoten().add(vaterKonte);
 
 			Knote vater = knoten.get(vaterKonte);
 
@@ -75,7 +76,7 @@ public class Graph {
 			nichtBesuchtList.add(i);
 		}
 
-		//iteratiert nichtBesuchtList
+		// iteratiert nichtBesuchtList
 		while (nichtBesuchtList.size() != 0) {
 			int startKnote = (int) nichtBesuchtList.toArray()[0];
 			// System.out.println("i:"+i);
@@ -116,6 +117,61 @@ public class Graph {
 			System.out.println("Graph" + i + ":" + GraphCompenentList.get(i));
 		}
 		System.out.println();
+	}
+	
+	
+	private ArrayList<Knote> minimalSpannendeBäumeKnoten;
+//	private ArrayList<Knote> minimalSpannendeBäumeKanten;
+	
+
+	
+
+	public void kruskal() throws Exception {
+		System.out.println(kanten);
+
+		// Initialisiereung
+		nichtBesuchtList.clear();
+		for (int i = 0; i < knoten.size(); i++) {
+			nichtBesuchtList.add(i);
+		}
+		
+		
+		
+		while(nichtBesuchtList.size()>0){
+			int startKonte = (Integer) nichtBesuchtList.toArray()[0];
+			Knote vater = knoten.get(startKonte);
+			nichtBesuchtList.remove(new Integer(startKonte));
+			
+			
+			startKonte = findMinialDistanceKonte(vater.getKnoteList());
+			
+		}
+
+		// startKnote auswälen
+		
+
+		MinimalSpannendeBäume minimalSpannendeBäume = new MinimalSpannendeBäume();
+		System.out.println("MinimalSpannendeBäume:" + minimalSpannendeBäume);
+	}
+
+	public int findMinialDistanceKonte(ArrayList<Integer> kontenlist) {
+		int startKonte = 0;
+		float min = 0;
+		System.out.println(kontenlist);
+		for(int i : kontenlist){
+			
+		}
+		return startKonte;
+	}
+	
+public void prim() throws Exception {
+		
+		MinimalSpannendeBäume minimalSpannendeBäume = new MinimalSpannendeBäume();
+			
+
+			
+
+		System.out.println("MinimalSpannendeBäume:" + minimalSpannendeBäume);
 	}
 
 }

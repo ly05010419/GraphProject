@@ -7,6 +7,10 @@ public class Knote {
 	
 	private ArrayList<Integer> knoteList;
 	
+	
+	
+	
+	
 	public ArrayList<Integer> getKnoteList() {
 		return knoteList;
 	}
@@ -15,8 +19,6 @@ public class Knote {
 		this.knoteList = knoteList;
 	}
 
-	
-	
 	public Knote(int name){
 		this.name = name;
 	}
