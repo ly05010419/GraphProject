@@ -18,14 +18,20 @@ public class Graph {
 	public Queue<Integer> queue = new LinkedList<Integer>();
 	public HashSet<Integer> nichtBesuchtKonten = new HashSet<Integer>();
 	public HashSet<Knote> besuchtKonten = new HashSet<Knote>();
-//	public HashSet<Integer> besuchtKontenInt = new HashSet<Integer>();
+	// public HashSet<Integer> besuchtKontenInt = new HashSet<Integer>();
 
 	private ArrayList<UngerichtetKante> besuchtKanten = new ArrayList<UngerichtetKante>();
 	private ArrayList<HashSet<Integer>> schnittMengen = new ArrayList<HashSet<Integer>>();
 	private HashSet<UngerichtetKante> schnittMenge = new HashSet<UngerichtetKante>();
 
 	public Graph(String str) throws Exception {
+		
+		long startTime=System.currentTimeMillis();
 		GraphParse graphParse = new GraphParse(str);
+		
+		
+		long endTime=System.currentTimeMillis();   
+		System.out.println("parseKonte Zeit：		"+(endTime-startTime)/(1000.0)+"s");  	
 		knoten = graphParse.parseKonte();
 		kanten = graphParse.kanten;
 
@@ -127,11 +133,8 @@ public class Graph {
 		}
 		System.out.println();
 	}
-	
-	
-	
-	
-	
+
+	long totalTime = 0;
 	
 
 	// 切里找最小的边
@@ -140,60 +143,47 @@ public class Graph {
 		Knote minimalKnote = knoten.get(0);
 		besuchtKonten.add(minimalKnote);
 		createSchnittMenge(minimalKnote);
-		
-		while (schnittMenge.size()>0) {
+
+		while (schnittMenge.size() > 0) {
+
 			UngerichtetKante minimalKante = getMinimalKanteVonSchinnt();
-			ergebnis = ergebnis+minimalKante.gewicht;
+
+			ergebnis = ergebnis + minimalKante.gewicht;
+
 			minimalKnote = knoten.get(minimalKante.kindKonte);
-			
-//			System.out.println("minimalKnote:"+minimalKnote);
-			
+//			System.out.println(minimalKnote.id);
+			// System.out.println("minimalKnote:"+minimalKnote);
+
 			besuchtKonten.add(minimalKnote);
 			createSchnittMenge(minimalKnote);
 		}
 
+		System.out.println("Zeit：		" + (totalTime) / (1000.0) + "s");
+
 		System.out.println("ergebnis:" + ergebnis);
 	}
 
-	//有向图
+	// 有向图
 	public void createSchnittMenge(Knote knote) {
-		for(UngerichtetKante kante:knote.getNachbarKantenList()){
-			
+		for (UngerichtetKante kante : knote.getNachbarKantenList()) {
+
 			Knote nachgängerKnote = knoten.get(kante.kindKonte);
-			
-			if(!besuchtKonten.contains(nachgängerKnote)){
+
+			if (!besuchtKonten.contains(nachgängerKnote)) {
 				schnittMenge.add(kante);
-			}else{
+			} else {
 				schnittMenge.remove(kante);
 			}
 		}
-		
-//		System.out.println(schnittMenge);
-//		System.out.println();
-	}
-//	//无向图
-//	public void createSchnittMenge(Knote knote) {
-//		for(UngerichtetKante kante:knote.getNachbarKantenList()){
-//			
-//			Knote nachgängerKnote = knoten.get(kante.kindKonte);
-//			
-//			
-//			if(!besuchtKonten.contains(nachgängerKnote)){
-//				schnittMenge.add(kante);
-//			}else{
-//				schnittMenge.remove(kante);
-//			}
-//		}
-//		
-//		System.out.println(schnittMenge);
-////		System.out.println();
-//	}
 
+	}
 
 	public UngerichtetKante getMinimalKanteVonSchinnt() {
-
+		
 
 		ArrayList<UngerichtetKante> kanten = new ArrayList<UngerichtetKante>(schnittMenge);
+		long startTime = System.currentTimeMillis();
+		
 
 		Collections.sort(kanten, new Comparator<UngerichtetKante>() {
 			@Override
@@ -201,58 +191,51 @@ public class Graph {
 				return Kante1.compareTo(Kante2);
 			}
 		});
-
-		if(kanten.size()==0){
-			return null;
-		}
+		
+		long endTime = System.currentTimeMillis();
+		totalTime = totalTime + (endTime - startTime);
 
 		return kanten.get(0);
 	}
+	
+	
+//	
+//	public static void bubbleSort(ArrayList<UngerichtetKante> kanten)
+//	{
+//		UngerichtetKante temp = null;
+//	    int size = kanten.size();
+//	    for(int i = 0 ; i < size-1; i ++)
+//	    {
+//	    for(int j = 0 ;j < size-1-i ; j++)
+//	    {
+//	        if(kanten.get(j).gewicht > kanten.get(j+1).gewicht)  //交换两数位置
+//	        {
+//	        temp = kanten.get(j);
+//	        kanten.set(j, kanten.get(j+1));
+//	        kanten.set(j+1,temp);
+//	        }
+//	    }
+//	    }
+//	}
+	
+	
+	
 
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
 	// 按最小的边分配，不要有圈
 	public void kruskal() throws Exception {
 
 		schnittMengen = new ArrayList<HashSet<Integer>>();
-		nichtBesuchtKonten.clear();
-
-		for (Knote k : knoten) {
-			nichtBesuchtKonten.add(k.id);
-		}
 
 		for (UngerichtetKante güstigeKante : kanten) {
 
 			if (!kreis(güstigeKante)) {
-
-				besuchtKanten.add(güstigeKante);
 				ergebnis = ergebnis + güstigeKante.gewicht;
-				besuchtKonten.add(knoten.get(güstigeKante.rootKonte));
-				besuchtKonten.add(knoten.get(güstigeKante.kindKonte));
-				nichtBesuchtKonten.remove(güstigeKante.rootKonte);
-				nichtBesuchtKonten.remove(güstigeKante.kindKonte);
-
 				liegenInSchnittMengen(güstigeKante);
 			}
 		}
 
-		System.out.println("ergebnis:" + ergebnis + ",TKanten.size():" + besuchtKanten.size());
-		// System.out.println("ergebnis:" + ergebnis + ",TKanten:" +
-		// besuchtKanten);
+		System.out.println("ergebnis:" + ergebnis);
+		
 	}
 
 	public boolean kreis(UngerichtetKante k) {
