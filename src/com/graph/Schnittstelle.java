@@ -15,7 +15,7 @@ public class Schnittstelle {
 		
 		
 		
-		startTime=System.currentTimeMillis();
+		 startTime=System.currentTimeMillis();
 		
 
 //		graph.breitenSuche();
@@ -23,7 +23,7 @@ public class Schnittstelle {
 		graph.kruskal();
 //		graph.prim();
 //		
-		endTime=System.currentTimeMillis();   
+		 endTime=System.currentTimeMillis();   
 		System.out.println("alle Zeit：		"+(endTime-startTime)/(1000.0)+"s");  	
 		 
    

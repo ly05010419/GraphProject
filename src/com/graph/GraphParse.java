@@ -59,8 +59,8 @@ public class GraphParse {
 			}
 		});
 		
-		System.out.println("knotenList:"+knotenList);
-		System.out.println("kantenList:"+kantenList);
+//		System.out.println("knotenList:"+knotenList);
+//		System.out.println("kantenList:"+kantenList);
 	}
 
 	public void createKonte(int rootKnote, int kindKnote, Float gewicht) {
@@ -70,6 +70,7 @@ public class GraphParse {
 
 		UngerichtetKante kante = new UngerichtetKante(rootKnote, kindKnote, gewicht);
 		k.getNachbarKantenList().add(kante);
+		
 		kantenSet.add(kante);
 
 	}
