@@ -3,29 +3,37 @@ package com.graph;
 import java.util.ArrayList;
 
 public class Knote {
-	public int name;
+	public int id;
 	
-	private ArrayList<Integer> knoteList;
-	
-	
-	
+	private ArrayList<Integer> nachbarKnoteList;
+	private ArrayList<UngerichtetKante> nachbarKantenList;
 	
 	
-	public ArrayList<Integer> getKnoteList() {
-		return knoteList;
+	
+	
+	public ArrayList<Integer> getNachbarKnotenList() {
+		return nachbarKnoteList;
 	}
 
-	public void setKnoteList(ArrayList<Integer> knoteList) {
-		this.knoteList = knoteList;
+	public void setNachbarKnotenList(ArrayList<Integer> knoteList) {
+		this.nachbarKnoteList = knoteList;
 	}
 
-	public Knote(int name){
-		this.name = name;
+	public Knote(int id){
+		this.id = id;
 	}
 	
 	public String toString(){
 		
-		return "name:"+name+",kindList:("+knoteList+")";
+		return "id:"+id+",kindList:("+nachbarKnoteList+")";
+	}
+
+	public ArrayList<UngerichtetKante> getNachbarKantenList() {
+		return nachbarKantenList;
+	}
+
+	public void setNachbarKantenList(ArrayList<UngerichtetKante> kantenList) {
+		this.nachbarKantenList = kantenList;
 	}
 	
 }

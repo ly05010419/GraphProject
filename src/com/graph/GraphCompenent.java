@@ -4,7 +4,7 @@ import java.util.HashSet;
 
 public class GraphCompenent {
 	private HashSet<Integer> _knoten;
-	private HashSet<Kante> _kanten;
+	private HashSet<UngerichtetKante> _kanten;
 
 	public String toString() {
 		if (_kanten == null) {
@@ -14,9 +14,9 @@ public class GraphCompenent {
 		}
 	}
 
-	public HashSet<Kante> getKanten() {
+	public HashSet<UngerichtetKante> getKanten() {
 		if (_kanten == null) {
-			_kanten = new HashSet<Kante>();
+			_kanten = new HashSet<UngerichtetKante>();
 		}
 		return _kanten;
 	}

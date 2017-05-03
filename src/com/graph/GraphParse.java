@@ -11,11 +11,13 @@ import java.util.List;
 public class GraphParse {
 
 	private boolean adjanzenMatrix = false;
+	private boolean gerichtet = false;
 	private int knoteAnzahl;
 	private ArrayList<String[]> stringList;
-	
+	public ArrayList<UngerichtetKante> kanten = new ArrayList<UngerichtetKante>();
+
 	public GraphParse(String str) throws Exception {
-		
+
 		FileReader reader = new FileReader(str);
 		BufferedReader bufferedReader = new BufferedReader(reader);
 		String text = bufferedReader.readLine();
@@ -29,17 +31,21 @@ public class GraphParse {
 
 		while (text != null) {
 			String[] s = text.split("\\t");
-			
+
 			stringList.add(s);
-			if(s.length>3){
-				adjanzenMatrix = true;
+			if (s.length > 2) {
+				if (s.length == 3) {
+					gerichtet = true;
+				} else {
+					adjanzenMatrix = true;
+				}
 			}
 			text = bufferedReader.readLine();
 
 		}
 
 		bufferedReader.close();
-		
+
 	}
 
 	public ArrayList<Knote> parseKonte() throws Exception {
@@ -48,21 +54,22 @@ public class GraphParse {
 		for (int i = 0; i < knoteAnzahl; i++) {
 			Knote k = new Knote(i);
 			knoten.add(k);
-			knoten.get(i).setKnoteList(getKindList(i, stringList, knoten));
+			setKindUndKanteList(i, stringList, knoten.get(i));
 		}
 
 		return knoten;
 	}
 
-	public ArrayList<Integer> getKindList(int vaterKonte, ArrayList<String[]> stringList, ArrayList<Knote> knoten) {
+	public void setKindUndKanteList(int vaterKonte, ArrayList<String[]> stringList, Knote knoten1) {
 
-		ArrayList<Integer> kindList = new ArrayList<Integer>();
+		ArrayList<Integer> kindKonten = new ArrayList<Integer>();
+		ArrayList<UngerichtetKante> kindKanten = new ArrayList<UngerichtetKante>();
 
 		if (adjanzenMatrix) {
 
 			for (int i = 0; i < stringList.get(vaterKonte).length; i++) {
 				if (stringList.get(vaterKonte)[i].equals("1")) {
-					kindList.add(i);
+					kindKonten.add(i);
 				}
 			}
 
@@ -75,55 +82,44 @@ public class GraphParse {
 
 					kindKnote = s[1];
 
-				} else if (s[1].equals("" + vaterKonte)) {
-
+				} else if (!gerichtet && s[1].equals("" + vaterKonte)) {
 					kindKnote = s[0];
 				}
-				
-				float gewicht;
-				
-				
 
 				if (kindKnote != null) {
-					if(s.length>2){
-						gewicht = Float.parseFloat(s[2]);
+
+					kindKonten.add(Integer.parseInt(kindKnote));
+
+					if (s.length == 3) {
+						UngerichtetKante k = new UngerichtetKante(vaterKonte, Integer.parseInt(s[1]), Float.parseFloat(s[2]));
+						if (!kindKanten.contains(k)) {
+							kindKanten.add(k);
+						}
 					}
-					kindList.add(Integer.parseInt(kindKnote));
 				}
 			}
 
 		}
-
-		return kindList;
-	}
-	
-	
-	
-	
-	
-	
-	public ArrayList<Kante> parseKante() throws Exception {
-		ArrayList<Kante> kanten = new ArrayList<Kante>();
-
-		for (int i = 0; i < stringList.size(); i++) {
-			String[] s = stringList.get(i);
-			Kante k = new Kante(Integer.parseInt(s[0]) ,Integer.parseInt(s[1]),Float.parseFloat(s[2]));
-			kanten.add(k);
-		}
-//		System.out.println(kanten);
-		// Sorting
-		Collections.sort(kanten, new Comparator<Kante>() {
-		        @Override
-		        public int compare(Kante Kante1, Kante Kante2)
-		        {
-		            return  Kante1.compareTo(Kante2);
-		        }
-		    });
-		 
-//		 System.out.println(kanten);
 		
+		Collections.sort(kindKanten, new Comparator<UngerichtetKante>() {
+			@Override
+			public int compare(UngerichtetKante Kante1, UngerichtetKante Kante2) {
+				return Kante1.compareTo(Kante2);
+			}
+		});
+		
+		kanten.addAll(kindKanten);
+		
+		Collections.sort(kanten, new Comparator<UngerichtetKante>() {
+			@Override
+			public int compare(UngerichtetKante Kante1, UngerichtetKante Kante2) {
+				return Kante1.compareTo(Kante2);
+			}
+		});
+		
+		knoten1.setNachbarKantenList(kindKanten);
+		knoten1.setNachbarKnotenList(kindKonten);
 
-		return kanten;
 	}
 
 }
