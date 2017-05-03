@@ -5,23 +5,17 @@ public class UngerichtetKante {
 	public int kindKonte;
 	public float gewicht;
 
-
 	public UngerichtetKante(int rootKonte, int kindKonte, float gewicht) {
-		if (rootKonte < kindKonte) {
-			this.rootKonte = rootKonte;
-			this.kindKonte = kindKonte;
-		} else {
 
-			this.rootKonte = kindKonte;
-			this.kindKonte = rootKonte;
-		}
-		
+		this.rootKonte = rootKonte;
+		this.kindKonte = kindKonte;
+
 		this.gewicht = gewicht;
 	}
 
 	public String toString() {
 
-		return "(" + rootKonte + "," + kindKonte + "," + gewicht + ")";
+		return "{" + gewicht + " " + "(" + rootKonte + "," + kindKonte + "," + gewicht + ")}";
 	}
 
 	@Override
@@ -54,4 +48,5 @@ public class UngerichtetKante {
 		}
 
 	}
+
 }

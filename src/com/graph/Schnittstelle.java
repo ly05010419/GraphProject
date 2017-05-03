@@ -5,8 +5,9 @@ public class Schnittstelle {
 	public static void main(String[] args) throws Exception {
 		
 		long startTime=System.currentTimeMillis();
-		Graph graph = new Graph("./assets/G_1_2_1.txt");
-//		Graph graph = new Graph("./assets/G_1_2.txt");
+//		Graph graph = new Graph("./assets/Graph3.txt");
+//		Graph graph = new Graph("./assets/G_1_2_1.txt");
+		Graph graph = new Graph("./assets/G_1_200.txt");
 		long endTime=System.currentTimeMillis(); 
 		System.out.println("Zeit：		"+(endTime-startTime)/(1000.0)+"s");  	
 		

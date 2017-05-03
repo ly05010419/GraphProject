@@ -18,7 +18,7 @@ public class Graph {
 	public Queue<Integer> queue = new LinkedList<Integer>();
 	public HashSet<Integer> nichtBesuchtKonten = new HashSet<Integer>();
 	public HashSet<Knote> besuchtKonten = new HashSet<Knote>();
-	public HashSet<Integer> besuchtKontenInt = new HashSet<Integer>();
+//	public HashSet<Integer> besuchtKontenInt = new HashSet<Integer>();
 
 	private ArrayList<UngerichtetKante> besuchtKanten = new ArrayList<UngerichtetKante>();
 	private ArrayList<HashSet<Integer>> schnittMengen = new ArrayList<HashSet<Integer>>();
@@ -127,39 +127,67 @@ public class Graph {
 		}
 		System.out.println();
 	}
+	
+	
+	
+	
+	
+	
 
 	// 切里找最小的边
 	public void prim() throws Exception {
 
-		UngerichtetKante kante = kanten.get(0);
-		createSchnittMenge(kante);
-
-		while (kante!=null) {
-			kante = getMinimalKanteVonSchinnt();
-			createSchnittMenge(kante);
-		}
-
-		System.out.println("ergebnis:" + ergebnis + ",TKanten.size():" + besuchtKanten.size());
-	}
-
-	public void createSchnittMenge(UngerichtetKante kante) {
+		Knote minimalKnote = knoten.get(0);
+		besuchtKonten.add(minimalKnote);
+		createSchnittMenge(minimalKnote);
 		
-		if (besuchtKontenInt.contains(kante.rootKonte) && besuchtKontenInt.contains(kante.kindKonte)) {
-			schnittMenge.remove(kante);
-		} else {
-			besuchtKontenInt.add(kante.rootKonte);
-			besuchtKontenInt.add(kante.kindKonte);
-			Knote rootKnote = knoten.get(kante.rootKonte);
-			Knote kindKonte = knoten.get(kante.kindKonte);
-			schnittMenge.addAll(rootKnote.getNachbarKantenList());
-			schnittMenge.addAll(kindKonte.getNachbarKantenList());
-			besuchtKanten.add(kante);
-			ergebnis = ergebnis + kante.gewicht;
-			schnittMenge.removeAll(besuchtKanten);
-
+		while (schnittMenge.size()>0) {
+			UngerichtetKante minimalKante = getMinimalKanteVonSchinnt();
+			ergebnis = ergebnis+minimalKante.gewicht;
+			minimalKnote = knoten.get(minimalKante.kindKonte);
+			
+//			System.out.println("minimalKnote:"+minimalKnote);
+			
+			besuchtKonten.add(minimalKnote);
+			createSchnittMenge(minimalKnote);
 		}
-//		System.out.println(schnittMenge);
+
+		System.out.println("ergebnis:" + ergebnis);
 	}
+
+	//有向图
+	public void createSchnittMenge(Knote knote) {
+		for(UngerichtetKante kante:knote.getNachbarKantenList()){
+			
+			Knote nachgängerKnote = knoten.get(kante.kindKonte);
+			
+			if(!besuchtKonten.contains(nachgängerKnote)){
+				schnittMenge.add(kante);
+			}else{
+				schnittMenge.remove(kante);
+			}
+		}
+		
+//		System.out.println(schnittMenge);
+//		System.out.println();
+	}
+//	//无向图
+//	public void createSchnittMenge(Knote knote) {
+//		for(UngerichtetKante kante:knote.getNachbarKantenList()){
+//			
+//			Knote nachgängerKnote = knoten.get(kante.kindKonte);
+//			
+//			
+//			if(!besuchtKonten.contains(nachgängerKnote)){
+//				schnittMenge.add(kante);
+//			}else{
+//				schnittMenge.remove(kante);
+//			}
+//		}
+//		
+//		System.out.println(schnittMenge);
+////		System.out.println();
+//	}
 
 
 	public UngerichtetKante getMinimalKanteVonSchinnt() {
@@ -181,6 +209,22 @@ public class Graph {
 		return kanten.get(0);
 	}
 
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
 	// 按最小的边分配，不要有圈
 	public void kruskal() throws Exception {
 
