@@ -9,13 +9,14 @@ import java.util.Comparator;
 import java.util.HashSet;
 import java.util.List;
 
+
+//缺Adjanzmatrix
 public class GraphParse {
 
-	private boolean adjanzenMatrix = false;
-
 	private int knoteAnzahl;
-	private ArrayList<String[]> stringList;
-	public ArrayList<UngerichtetKante> kanten = new ArrayList<UngerichtetKante>();
+	public ArrayList<Knote> knotenList = new ArrayList<Knote>();
+	public HashSet<UngerichtetKante> kantenSet = new HashSet<UngerichtetKante>();
+	public ArrayList<UngerichtetKante> kantenList;
 
 	public GraphParse(String str) throws Exception {
 
@@ -24,118 +25,52 @@ public class GraphParse {
 		String text = bufferedReader.readLine();
 		knoteAnzahl = Integer.parseInt(text);
 
-		stringList = new ArrayList<String[]>();
-
 		System.out.println("KnoteAnzahl:	" + knoteAnzahl);
+
+		for (int i = 0; i < knoteAnzahl; i++) {
+			Knote k = new Knote(i);
+			knotenList.add(k);
+		}
 
 		text = bufferedReader.readLine();
 
 		while (text != null) {
 			String[] s = text.split("\\t");
+			createKonte(Integer.parseInt(s[0]), Integer.parseInt(s[1]), Float.parseFloat(s[2]));
+			createKonte(Integer.parseInt(s[1]), Integer.parseInt(s[0]), Float.parseFloat(s[2]));
 
-			stringList.add(s);
-			if (s.length > 3) {
-
-				adjanzenMatrix = true;
-
-			}
 			text = bufferedReader.readLine();
-
 		}
 
-		ArrayList<String[]> neuStringList = new ArrayList<String[]>();
-		neuStringList.addAll(stringList);
-		for (String[] s : stringList) {
-			String x = s[0];
-			s[0] = s[1];
-			s[1] = x;
-			neuStringList.add(s);
-
-		}
-		
-		stringList = neuStringList;
-		
-		
-		
 		bufferedReader.close();
 
-	}
-
-	public ArrayList<Knote> parseKonte() throws Exception {
-		ArrayList<Knote> knoten = new ArrayList<Knote>();
-
-		for (int id = 0; id < knoteAnzahl; id++) {
-			Knote knote = new Knote(id);
-
-			setKindUndKanteList(stringList, knote);
-
-			knoten.add(knote);
-		}
-
-		return knoten;
-	}
-
-	public void setKindUndKanteList(ArrayList<String[]> stringList, Knote knote) {
-
-		HashSet<Integer> kindKonten = new HashSet<Integer>();
-		ArrayList<UngerichtetKante> kindKanten = new ArrayList<UngerichtetKante>();
-
-		if (adjanzenMatrix) {
-
-			for (int i = 0; i < stringList.get(knote.id).length; i++) {
-				if (stringList.get(knote.id)[i].equals("1")) {
-					kindKonten.add(i);
-				}
-			}
-
-		} else {
-			for (int i = 0; i < stringList.size(); i++) {
-				String kindKnote = null;
-				String[] s = stringList.get(i);
-
-				if (s[0].equals("" + knote.id)) {
-
-					kindKnote = s[1];
-
-				} else if (s[1].equals("" + knote.id)) {
-					kindKnote = s[0];
-				}
-
-				if (kindKnote != null) {
-
-					kindKonten.add(Integer.parseInt(kindKnote));
-
-					if (s.length == 3) {
-						UngerichtetKante kante = new UngerichtetKante(knote.id, Integer.parseInt(kindKnote),
-								Float.parseFloat(s[2]));
-						if (!kindKanten.contains(kante)) {
-							kindKanten.add(kante);
-						}
-					}
-				}
-			}
-
-		}
-
-		Collections.sort(kindKanten, new Comparator<UngerichtetKante>() {
+		kantenList = new ArrayList<UngerichtetKante>(kantenSet);
+		Collections.sort(kantenList, new Comparator<UngerichtetKante>() {
 			@Override
 			public int compare(UngerichtetKante Kante1, UngerichtetKante Kante2) {
 				return Kante1.compareTo(Kante2);
 			}
 		});
 
-		kanten.addAll(kindKanten);
-
-		Collections.sort(kanten, new Comparator<UngerichtetKante>() {
+		Collections.sort(knotenList, new Comparator<Knote>() {
 			@Override
-			public int compare(UngerichtetKante Kante1, UngerichtetKante Kante2) {
+			public int compare(Knote Kante1, Knote Kante2) {
 				return Kante1.compareTo(Kante2);
 			}
 		});
-
-		knote.setNachbarKantenList(kindKanten);
-		knote.setNachbarKnotenList(new ArrayList<Integer>(kindKonten));
-
+		
+		System.out.println("knotenList:"+knotenList);
+		System.out.println("kantenList:"+kantenList);
 	}
 
+	public void createKonte(int rootKnote, int kindKnote, Float gewicht) {
+
+		Knote k = knotenList.get(rootKnote);
+		k.getNachbarKnotenList().add(kindKnote);
+
+		UngerichtetKante kante = new UngerichtetKante(rootKnote, kindKnote, gewicht);
+		k.getNachbarKantenList().add(kante);
+		kantenSet.add(kante);
+
+	}
 }

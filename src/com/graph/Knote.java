@@ -5,8 +5,8 @@ import java.util.ArrayList;
 public class Knote {
 	public int id;
 	
-	private ArrayList<Integer> nachbarKnoteList;
-	private ArrayList<UngerichtetKante> nachbarKantenList;
+	private ArrayList<Integer> nachbarKnoteList = new ArrayList<Integer>();
+	private ArrayList<UngerichtetKante> nachbarKantenList = new ArrayList<UngerichtetKante>();
 	
 	
 	
@@ -28,6 +28,16 @@ public class Knote {
 		return "id:"+id+",kindList:("+nachbarKnoteList+")";
 	}
 
+	public int compareTo(Knote o) {
+		if (this.id > o.id) {
+			return 1;
+		} else if (this.id == o.id) {
+			return 0;
+		} else {
+			return -1;
+		}
+	}
+	
 	public ArrayList<UngerichtetKante> getNachbarKantenList() {
 		return nachbarKantenList;
 	}

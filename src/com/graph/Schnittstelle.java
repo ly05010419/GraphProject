@@ -7,7 +7,7 @@ public class Schnittstelle {
 		long startTime=System.currentTimeMillis();
 
 //		Graph graph = new Graph("./assets/G_1_2_1.txt");
-		Graph graph = new Graph("./assets/G_1_200.txt");
+		Graph graph = new Graph("./assets/G_1_2.txt");
 		
 		
 		long endTime=System.currentTimeMillis(); 

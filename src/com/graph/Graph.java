@@ -11,8 +11,8 @@ import java.util.Queue;
 public class Graph {
 	public ArrayList<GraphCompenent> GraphCompenentList = new ArrayList<GraphCompenent>();
 
-	private ArrayList<Knote> knoten;
-	private ArrayList<UngerichtetKante> kanten;
+	private ArrayList<Knote> knotenList;
+	private ArrayList<UngerichtetKante> kantenList;
 	private float ergebnis = 0;
 
 	public Queue<Integer> queue = new LinkedList<Integer>();
@@ -26,14 +26,11 @@ public class Graph {
 
 	public Graph(String str) throws Exception {
 		
-		long startTime=System.currentTimeMillis();
+		
 		GraphParse graphParse = new GraphParse(str);
 		
-		
-		long endTime=System.currentTimeMillis();   
-		System.out.println("parseKonte Zeit：		"+(endTime-startTime)/(1000.0)+"s");  	
-		knoten = graphParse.parseKonte();
-		kanten = graphParse.kanten;
+		knotenList = graphParse.knotenList;
+		kantenList = graphParse.kantenList;
 
 	}
 
@@ -41,7 +38,7 @@ public class Graph {
 
 		// Initialisiereung
 		nichtBesuchtKonten.clear();
-		for (int i = 0; i < knoten.size(); i++) {
+		for (int i = 0; i < knotenList.size(); i++) {
 			nichtBesuchtKonten.add(i);
 		}
 
@@ -59,7 +56,7 @@ public class Graph {
 
 			graphCompenent.getKnoten().add(vaterKonte);
 
-			Knote vater = knoten.get(vaterKonte);
+			Knote vater = knotenList.get(vaterKonte);
 
 			ArrayList<Integer> kindList = vater.getNachbarKnotenList();
 
@@ -87,7 +84,7 @@ public class Graph {
 
 		// Initialisiereung
 		nichtBesuchtKonten.clear();
-		for (int i = 0; i < knoten.size(); i++) {
+		for (int i = 0; i < knotenList.size(); i++) {
 			nichtBesuchtKonten.add(i);
 		}
 
@@ -112,7 +109,7 @@ public class Graph {
 		nichtBesuchtKonten.remove(vaterKnote);
 		graph.getKnoten().add(vaterKnote);
 
-		Knote vater = knoten.get(vaterKnote);
+		Knote vater = knotenList.get(vaterKnote);
 
 		for (int i = 0; i < vater.getNachbarKnotenList().size(); i++) {
 
@@ -140,7 +137,7 @@ public class Graph {
 	// 切里找最小的边
 	public void prim() throws Exception {
 
-		Knote minimalKnote = knoten.get(0);
+		Knote minimalKnote = knotenList.get(0);
 		besuchtKonten.add(minimalKnote);
 		createSchnittMenge(minimalKnote);
 
@@ -150,7 +147,7 @@ public class Graph {
 
 			ergebnis = ergebnis + minimalKante.gewicht;
 
-			minimalKnote = knoten.get(minimalKante.kindKonte);
+			minimalKnote = knotenList.get(minimalKante.kindKonte);
 //			System.out.println(minimalKnote.id);
 			// System.out.println("minimalKnote:"+minimalKnote);
 
@@ -167,7 +164,7 @@ public class Graph {
 	public void createSchnittMenge(Knote knote) {
 		for (UngerichtetKante kante : knote.getNachbarKantenList()) {
 
-			Knote nachgängerKnote = knoten.get(kante.kindKonte);
+			Knote nachgängerKnote = knotenList.get(kante.kindKonte);
 
 			if (!besuchtKonten.contains(nachgängerKnote)) {
 				schnittMenge.add(kante);
@@ -226,7 +223,7 @@ public class Graph {
 
 		schnittMengen = new ArrayList<HashSet<Integer>>();
 
-		for (UngerichtetKante güstigeKante : kanten) {
+		for (UngerichtetKante güstigeKante : kantenList) {
 
 			if (!kreis(güstigeKante)) {
 				ergebnis = ergebnis + güstigeKante.gewicht;

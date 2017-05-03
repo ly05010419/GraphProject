@@ -46,7 +46,6 @@ public class UngerichtetKante {
 		} else {
 			return -1;
 		}
-
 	}
 
 }
