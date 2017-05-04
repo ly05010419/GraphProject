@@ -3,10 +3,9 @@ package com.graph;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
-
+import java.util.PriorityQueue;
 import java.util.Queue;
 
 public class Graph {
@@ -21,9 +20,11 @@ public class Graph {
 	public HashSet<Knote> besuchtKonten = new HashSet<Knote>();
 	// public HashSet<Integer> besuchtKontenInt = new HashSet<Integer>();
 
-	private HashMap<Integer, HashSet<Integer>> mengeMap = new HashMap<Integer, HashSet<Integer>>();
-//	private ArrayList<HashSet<Integer>> schnittMengen = new ArrayList<HashSet<Integer>>();
-	private HashSet<UngerichtetKante> schnittMenge = new HashSet<UngerichtetKante>();
+	private ArrayList<UngerichtetKante> besuchtKanten = new ArrayList<UngerichtetKante>();
+	private ArrayList<HashSet<Integer>> schnittMengen = new ArrayList<HashSet<Integer>>();
+	private PriorityQueue<UngerichtetKante> schnittMenge;
+	
+	
 
 	public Graph(String str) throws Exception {
 
@@ -31,6 +32,21 @@ public class Graph {
 
 		knotenList = graphParse.knotenList;
 		kantenList = graphParse.kantenList;
+
+		  
+        //比较器按照降序实现  
+		schnittMenge = new PriorityQueue<UngerichtetKante>((Comparator<? super UngerichtetKante>) new Comparator<UngerichtetKante>(){  
+			@Override
+			public int compare(UngerichtetKante o1, UngerichtetKante o2) {
+				if (o1.gewicht > o2.gewicht) {
+					return 1;
+				} else if (o1.gewicht == o2.gewicht) {
+					return 0;
+				} else {
+					return -1;
+				}
+			}
+        }) ;
 
 	}
 
@@ -151,7 +167,17 @@ public class Graph {
 			// System.out.println("minimalKnote:"+minimalKnote);
 
 			besuchtKonten.add(minimalKnote);
+			
+			long startTime = System.currentTimeMillis();
+
+
+			
 			createSchnittMenge(minimalKnote);
+			
+			
+			
+			long endTime = System.currentTimeMillis();
+			totalTime = totalTime + (endTime - startTime);
 		}
 
 		System.out.println("Zeit：		" + (totalTime) / (1000.0) + "s");
@@ -176,95 +202,83 @@ public class Graph {
 
 	public UngerichtetKante getMinimalKanteVonSchinnt() {
 
-		ArrayList<UngerichtetKante> kanten = new ArrayList<UngerichtetKante>(schnittMenge);
-		long startTime = System.currentTimeMillis();
-
-		Collections.sort(kanten, new Comparator<UngerichtetKante>() {
-			@Override
-			public int compare(UngerichtetKante Kante1, UngerichtetKante Kante2) {
-				return Kante1.compareTo(Kante2);
-			}
-		});
-
-		long endTime = System.currentTimeMillis();
-		totalTime = totalTime + (endTime - startTime);
-
-		return kanten.get(0);
+		return schnittMenge.poll();
 	}
-
+	
+	
+	
+	
+	
 
 	// 按最小的边分配，不要有圈
 	public void kruskal() throws Exception {
 
-//		schnittMengen = new ArrayList<HashSet<Integer>>();
+		schnittMengen = new ArrayList<HashSet<Integer>>();
 
-		
 		int i = 0;
+
 		for (UngerichtetKante güstigeKante : kantenList) {
 
 			if (!kreis(güstigeKante)) {
-//				System.out.println(güstigeKante);
+				// System.out.println(güstigeKante);
 				i++;
 				ergebnis = ergebnis + güstigeKante.gewicht;
 				liegenInSchnittMengen(güstigeKante);
 			}
 		}
 
-		System.out.println(i+" ergebnis:" + ergebnis);
+		System.out.println(i + " ergebnis:" + ergebnis);
 
 	}
 
 	public boolean kreis(UngerichtetKante k) {
-		
-		HashSet<Integer> s = mengeMap.get(k.rootKonte);
-		HashSet<Integer> s2 = mengeMap.get(k.kindKonte);
-		if(s!=null&&s2!=null&&s.hashCode()==s2.hashCode()){
-			
-			return true;
-		}else{
-			
-			return false;
+		boolean flag = false;
+		for (HashSet<Integer> s : schnittMengen) {
+			if (s.contains(k.rootKonte) && s.contains(k.kindKonte)) {
+				s.add(k.rootKonte);
+				flag = true;
+				break;
+			}
 		}
+
+		return flag;
 
 	}
 
 	public void liegenInSchnittMengen(UngerichtetKante k) {
-		
-		
-		HashSet<Integer> hashSet = mengeMap.get(k.rootKonte);
-		if (hashSet == null) {
-			HashSet<Integer> s = new HashSet<Integer>();
-			s.add(k.rootKonte);
-			s.add(k.kindKonte);
-			mengeMap.put(k.rootKonte, s);
-			mengeMap.put(k.kindKonte, s);
-		} else {
-			hashSet.add(k.rootKonte);
-			hashSet.add(k.kindKonte);
-			
+		boolean gefunden = false;
 
-			HashSet<Integer> hashSet2 = mengeMap.get(k.kindKonte);
-			if (hashSet2 != null) {
-				if (hashSet.size() >= hashSet2.size()) {
-					hashSet.addAll(hashSet2);
-					for (Object i : hashSet2.toArray()) {
-						mengeMap.put((Integer) i, hashSet);
+		ArrayList<HashSet<Integer>> connecteHashSetArrayList = new ArrayList<HashSet<Integer>>();
+
+		for (HashSet<Integer> s : schnittMengen) {
+			if (s.contains(k.rootKonte) || s.contains(k.kindKonte)) {
+				s.add(k.rootKonte);
+				s.add(k.kindKonte);
+				gefunden = true;
+				connecteHashSetArrayList.add(s);
+
+				if (connecteHashSetArrayList.size() == 2) {
+
+					HashSet<Integer> menge = new HashSet<Integer>();
+					for (HashSet<Integer> set : connecteHashSetArrayList) {
+						schnittMengen.remove(set);
+						for (Object i : set.toArray()) {
+							menge.add((Integer) i);
+						}
 					}
-				}else{
-					hashSet2.addAll(hashSet);
-					for (Object i : hashSet.toArray()) {
-						mengeMap.put((Integer) i, hashSet2);
-					}
-					
+					schnittMengen.add(menge);
+					break;
 				}
-			}else{
-				mengeMap.put(k.kindKonte, hashSet);
 			}
-
 		}
 
-//		System.out.println(mengeMap);
-//		System.out.println();
+		if (!gefunden) {
+			HashSet<Integer> menge = new HashSet<Integer>();
+			menge.add(k.rootKonte);
+			menge.add(k.kindKonte);
+			schnittMengen.add(menge);
+		}
+		// System.out.println("baumMenge"+baumMenge);
 	}
 
 }
