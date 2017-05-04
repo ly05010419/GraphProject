@@ -4,13 +4,21 @@ public class UngerichtetKante {
 	public int rootKonte;
 	public int kindKonte;
 	public float gewicht;
+	public Knote end;
+	
+	
+	public UngerichtetKante(Knote end, float weight) {
+		this.gewicht = weight;
+		this.end = end;
 
-	public UngerichtetKante(int rootKonte, int kindKonte, float gewicht) {
+	}
+
+	public UngerichtetKante(int rootKonte, int kindKonte, float gewicht,Knote end) {
 
 		this.rootKonte = rootKonte;
 		this.kindKonte = kindKonte;
-
 		this.gewicht = gewicht;
+		this.end = end;
 	}
 
 	public String toString() {

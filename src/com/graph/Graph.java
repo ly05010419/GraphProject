@@ -5,6 +5,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashSet;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.PriorityQueue;
 import java.util.Queue;
 
@@ -148,59 +149,97 @@ public class Graph {
 	}
 
 	long totalTime = 0;
-
-	// 切里找最小的边
+	
+	
 	public void prim() throws Exception {
 
-		Knote minimalKnote = knotenList.get(0);
-		besuchtKonten.add(minimalKnote);
-		createSchnittMenge(minimalKnote);
-
-		while (schnittMenge.size() > 0) {
-
-			UngerichtetKante minimalKante = getMinimalKanteVonSchinnt();
-
-			ergebnis = ergebnis + minimalKante.gewicht;
-
-			minimalKnote = knotenList.get(minimalKante.kindKonte);
-			// System.out.println(minimalKnote.id);
-			// System.out.println("minimalKnote:"+minimalKnote);
-
-			besuchtKonten.add(minimalKnote);
-			
-			long startTime = System.currentTimeMillis();
-
-
-			
-			createSchnittMenge(minimalKnote);
-			long endTime = System.currentTimeMillis();
-			totalTime = totalTime + (endTime - startTime);
+		PriorityQueue<Knote> priorityQueue = new PriorityQueue<Knote>();
+		for (Knote v : knotenList) {
+			v.kosten = Float.MAX_VALUE;
+			priorityQueue.add(v);
 		}
 
-//		System.out.println("Zeit：		" + (totalTime) / (1000.0) + "s");
+		Knote peek = priorityQueue.peek();
+		peek.kosten = 0;
+		priorityQueue.remove(peek);
+		priorityQueue.add(peek);
+		while (!priorityQueue.isEmpty()) {
+			Knote minKnote = priorityQueue.poll();
+			if (minKnote.nachbarKantenList != null && minKnote.nachbarKantenList.size() > 0) {
+				for (UngerichtetKante edge : minKnote.nachbarKantenList) {
+					if (priorityQueue.contains(edge.end) && edge.gewicht < edge.end.kosten) {
+						priorityQueue.remove(edge.end);
+						edge.end.kosten = edge.gewicht;
+						edge.end.previous = minKnote;
+						// System.out.println(edge.end);
+						priorityQueue.add(edge.end);
 
+					} 
+				}
+			}
+		}
+		
+		
+		for (Knote knote : knotenList) {
+			if (knote.kosten != Float.MAX_VALUE) {
+				ergebnis = ergebnis + knote.kosten;
+			}
+		}
 		System.out.println("ergebnis:" + ergebnis);
 	}
 
-	// 有向图
-	public void createSchnittMenge(Knote knote) {
-		for (UngerichtetKante kante : knote.getNachbarKantenList()) {
-
-			Knote nachgängerKnote = knotenList.get(kante.kindKonte);
-
-			if (!besuchtKonten.contains(nachgängerKnote)) {
-				schnittMenge.add(kante);
-			} else {
-				schnittMenge.remove(kante);
-			}
-		}
-
-	}
-
-	public UngerichtetKante getMinimalKanteVonSchinnt() {
-
-		return schnittMenge.peek();
-	}
+//	// 切里找最小的边
+//	public void prim() throws Exception {
+//
+//		Knote minimalKnote = knotenList.get(0);
+//		besuchtKonten.add(minimalKnote);
+//		createSchnittMenge(minimalKnote);
+//
+//		while (schnittMenge.size() > 0) {
+//
+//			UngerichtetKante minimalKante = getMinimalKanteVonSchinnt();
+//
+//			ergebnis = ergebnis + minimalKante.gewicht;
+//
+//			minimalKnote = knotenList.get(minimalKante.kindKonte);
+//			// System.out.println(minimalKnote.id);
+//			// System.out.println("minimalKnote:"+minimalKnote);
+//
+//			besuchtKonten.add(minimalKnote);
+//			
+//			long startTime = System.currentTimeMillis();
+//
+//
+//			
+//			createSchnittMenge(minimalKnote);
+//			long endTime = System.currentTimeMillis();
+//			totalTime = totalTime + (endTime - startTime);
+//		}
+//
+////		System.out.println("Zeit：		" + (totalTime) / (1000.0) + "s");
+//
+//		System.out.println("ergebnis:" + ergebnis);
+//	}
+//
+//	// 有向图
+//	public void createSchnittMenge(Knote knote) {
+//		for (UngerichtetKante kante : knote.getNachbarKantenList()) {
+//
+//			Knote nachgängerKnote = knotenList.get(kante.kindKonte);
+//
+//			if (!besuchtKonten.contains(nachgängerKnote)) {
+//				schnittMenge.add(kante);
+//			} else {
+//				schnittMenge.remove(kante);
+//			}
+//		}
+//
+//	}
+//
+//	public UngerichtetKante getMinimalKanteVonSchinnt() {
+//
+//		return schnittMenge.peek();
+//	}
 	
 	
 	
@@ -217,9 +256,9 @@ public class Graph {
 		for (UngerichtetKante güstigeKante : kantenList) {
 
 			if (!kreis(güstigeKante)) {
-				// System.out.println(güstigeKante);
 				i++;
 				ergebnis = ergebnis + güstigeKante.gewicht;
+
 				liegenInSchnittMengen(güstigeKante);
 			}
 		}

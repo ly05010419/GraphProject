@@ -55,7 +55,13 @@ public class GraphParse {
 		Collections.sort(knotenList, new Comparator<Knote>() {
 			@Override
 			public int compare(Knote Kante1, Knote Kante2) {
-				return Kante1.compareTo(Kante2);
+				if (Kante1.id > Kante2.id) {
+					return 1;
+				} else if (Kante1.id == Kante2.id) {
+					return 0;
+				} else {
+					return -1;
+				}
 			}
 		});
 		
@@ -65,11 +71,12 @@ public class GraphParse {
 
 	public void createKonte(int rootKnote, int kindKnote, Float gewicht) {
 
-		Knote k = knotenList.get(rootKnote);
-		k.getNachbarKnotenList().add(kindKnote);
+		Knote rootK = knotenList.get(rootKnote);
+		rootK.getNachbarKnotenList().add(kindKnote);
 
-		UngerichtetKante kante = new UngerichtetKante(rootKnote, kindKnote, gewicht);
-		k.getNachbarKantenList().add(kante);
+		Knote kindK = knotenList.get(kindKnote);
+		UngerichtetKante kante = new UngerichtetKante(rootKnote, kindKnote, gewicht,kindK);
+		rootK.getNachbarKantenList().add(kante);
 		
 		kantenSet.add(kante);
 

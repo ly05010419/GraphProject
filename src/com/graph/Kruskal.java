@@ -81,7 +81,7 @@ public class Kruskal {
 
 	public static void main(String[] args) throws Exception {
 
-		GraphParse graphParse = new GraphParse("./assets/G_1_2.txt");
+		GraphParse graphParse = new GraphParse("./assets/G_100_200.txt");
 
 
 		EDGE[] edges = new EDGE[graphParse.kantenList.size()];
