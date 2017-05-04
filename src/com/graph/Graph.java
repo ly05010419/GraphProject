@@ -173,14 +173,11 @@ public class Graph {
 
 			
 			createSchnittMenge(minimalKnote);
-			
-			
-			
 			long endTime = System.currentTimeMillis();
 			totalTime = totalTime + (endTime - startTime);
 		}
 
-		System.out.println("Zeit：		" + (totalTime) / (1000.0) + "s");
+//		System.out.println("Zeit：		" + (totalTime) / (1000.0) + "s");
 
 		System.out.println("ergebnis:" + ergebnis);
 	}
@@ -202,7 +199,7 @@ public class Graph {
 
 	public UngerichtetKante getMinimalKanteVonSchinnt() {
 
-		return schnittMenge.poll();
+		return schnittMenge.peek();
 	}
 	
 	
