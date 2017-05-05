@@ -18,7 +18,7 @@ public class Knote implements Comparable<Knote> {
 	public String toString() {
 
 		if (previousKnote == null) {
-			return "id:" + id + ",kosten" + kosten + ",previous:null";
+			return "id:" + id ;
 		} else {
 			return "id:" + id + ",kosten" + kosten + ",previous:" + previousKnote.id;
 		}
@@ -26,6 +26,7 @@ public class Knote implements Comparable<Knote> {
 	}
 
 	public int compareTo(Knote o) {
+
 		if (this.kosten > o.kosten) {
 			return 1;
 		} else if (this.kosten == o.kosten) {
@@ -38,6 +39,8 @@ public class Knote implements Comparable<Knote> {
 	public ArrayList<UngerichtetKante> getNachbarKantenList() {
 		return nachbarKantenList;
 	}
+	
+	
 
 	public void setNachbarKantenList(ArrayList<UngerichtetKante> kantenList) {
 		this.nachbarKantenList = kantenList;

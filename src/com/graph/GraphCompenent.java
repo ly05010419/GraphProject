@@ -3,7 +3,7 @@ package com.graph;
 import java.util.HashSet;
 
 public class GraphCompenent {
-	private HashSet<Integer> _knoten;
+	private HashSet<Knote> _knoten;
 	private HashSet<UngerichtetKante> _kanten;
 
 	public String toString() {
@@ -21,9 +21,9 @@ public class GraphCompenent {
 		return _kanten;
 	}
 
-	public HashSet<Integer> getKnoten() {
+	public HashSet<Knote> getKnoten() {
 		if (_knoten == null) {
-			_knoten = new HashSet<Integer>();
+			_knoten = new HashSet<Knote>();
 		}
 		return _knoten;
 	}

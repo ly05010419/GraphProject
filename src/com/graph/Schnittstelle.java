@@ -8,7 +8,7 @@ public class Schnittstelle {
 
 
 		ArrayList<String> strList = new ArrayList<String>();
-		strList.add("./assets/Graph4.txt");
+		strList.add("./assets/Graph5.txt");
 //		strList.add("./assets/G_1_2_1.txt");
 //		strList.add("./assets/G_1_2.txt");
 //		strList.add("./assets/G_1_20.txt");
@@ -31,9 +31,10 @@ public class Schnittstelle {
 			startTime = System.currentTimeMillis();
 
 			graph.breitenSuche();
+//			graph.prim();
 //			graph.tiefenSuche();
 //			graph.kruskal();
-//			graph.prim();
+
 
 			endTime = System.currentTimeMillis();
 			System.out.println("alle Zeit：		" + (endTime - startTime) / (1000.0) + "s");

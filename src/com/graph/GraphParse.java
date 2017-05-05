@@ -1,13 +1,12 @@
 package com.graph;
 
 import java.io.BufferedReader;
-
 import java.io.FileReader;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashSet;
-import java.util.List;
+
 
 
 //缺Adjanzmatrix
@@ -19,7 +18,7 @@ public class GraphParse {
 	public ArrayList<UngerichtetKante> kantenList;
 
 	public GraphParse(String str) throws Exception {
-
+		
 		FileReader reader = new FileReader(str);
 		BufferedReader bufferedReader = new BufferedReader(reader);
 		String text = bufferedReader.readLine();
@@ -28,8 +27,8 @@ public class GraphParse {
 		System.out.println("KnoteAnzahl:	" + knoteAnzahl);
 
 		for (int i = 0; i < knoteAnzahl; i++) {
-			Knote k = new Knote(i);
-			knotenList.add(k);
+			Knote knote = new Knote(i);
+			knotenList.add(knote);
 		}
 
 		text = bufferedReader.readLine();

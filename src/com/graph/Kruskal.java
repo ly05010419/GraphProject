@@ -3,41 +3,9 @@ package com.graph;
 import java.util.*;
 
 public class Kruskal {
-	
-	
-	static class EDGE implements Comparable<EDGE> {
-		String from, to;
-		float weight;
 
-		EDGE(String f, String t, float w) {
-			from = f;
-			to = t;
-			weight = w;
-		}
-
-
-		@Override
-		public int compareTo(EDGE o) {
-			return weight < o.weight ? -1 : (weight > o.weight ? 1 : 0);
-		}
-
-		@Override
-		public String toString() {
-			return "[" + from + ", " + to + "]";
-		}
-	}
-
-	private static Map<String, String> PARENT;
-	private static Map<String, Integer> RANKS; // to store the depths
-
-	public static void initialize(String[] universe) {
-		PARENT = new HashMap<>();
-		RANKS = new HashMap<>();
-		for (String x : universe) {
-			PARENT.put(x, x);
-			RANKS.put(x, 1);
-		}
-	}
+	private static Map<String, String> PARENT = new HashMap<>();
+	private static Map<String, Integer> RANKS = new HashMap<>();
 
 	public static String FindSet(String item) {
 		String parent = PARENT.get(item);
@@ -47,25 +15,38 @@ public class Kruskal {
 			return FindSet(parent);
 	}
 
-	public static void Union(String setA, String setB) {
-		String pA, pB;
-		while ((pA = PARENT.get(setA)) != setA) {
-			setA = pA;
-		}
-		while ((pB = PARENT.get(setB)) != setB) {
-			setB = pB;
+	public static void Union(String vorgängerKonteId, String nachgängerKnoteId) {
+		String parentSetA, parentSetB;
+
+		while (true) {
+			parentSetA = PARENT.get(vorgängerKonteId);
+			
+			if (parentSetA != vorgängerKonteId) {
+				vorgängerKonteId = parentSetA;
+			} else {
+				break;
+			}
 		}
 
-		int rankFirst = RANKS.get(setA), rankSecond = RANKS.get(setB);
+		while (true) {
+			parentSetB = PARENT.get(nachgängerKnoteId);
+			if (parentSetB != nachgängerKnoteId) {
+				nachgängerKnoteId = parentSetB;
+			} else {
+				break;
+			}
+		}
+
+		int rankFirst = RANKS.get(vorgängerKonteId), rankSecond = RANKS.get(nachgängerKnoteId);
 		if (rankFirst > rankSecond) {
-			PARENT.put(setB, setA);
-			updateRanksUpward(setB);
+			PARENT.put(nachgängerKnoteId, vorgängerKonteId);
+			updateRanksUpward(nachgängerKnoteId);
 		} else if (rankSecond > rankFirst) {
-			PARENT.put(setA, setB);
-			updateRanksUpward(setA);
+			PARENT.put(vorgängerKonteId, nachgängerKnoteId);
+			updateRanksUpward(vorgängerKonteId);
 		} else {
-			PARENT.put(setB, setA);
-			updateRanksUpward(setB);
+			PARENT.put(nachgängerKnoteId, vorgängerKonteId);
+			updateRanksUpward(nachgängerKnoteId);
 		}
 	}
 
@@ -79,63 +60,51 @@ public class Kruskal {
 		}
 	}
 
-	public static void main(String[] args) throws Exception {
-
-		GraphParse graphParse = new GraphParse("./assets/G_100_200.txt");
-
-
-		EDGE[] edges = new EDGE[graphParse.kantenList.size()];
-		int i = 0;
-		for (UngerichtetKante kante : graphParse.kantenList) {
-
-			edges[i] = new EDGE(kante.vorgängerKonte+"", kante.nachgängerKnote.id+"", kante.gewicht);
-			i++;
-		}
-
-		// Test data
-		// CLRS Example p632
-		String[] vertices = new String[graphParse.knotenList.size()];
-		int j = 0;
-		for (Knote knote : graphParse.knotenList) {
-
-			vertices[j] =  knote.id+"";
-			j++;
-		}
-
-		long startTime = System.currentTimeMillis();
-		// Call Kruskal Algorithm
-		Kruskal(vertices, edges);
-		long endTime = System.currentTimeMillis();
-		System.out.println("alle Zeit：		" + (endTime - startTime) / (1000.0) + "s");
-	}
-
 	// CLSR p631 Algorithm
-	public static ArrayList<EDGE> Kruskal(String[] vertices, EDGE[] edges) {
-		
+	public static ArrayList<UngerichtetKante> Kruskal(ArrayList<Knote> vertices,
+			ArrayList<UngerichtetKante> kantenList) {
+
 		float ergbnis = 0;
 		// Initialize A = empty set
-		ArrayList<EDGE> mst = new ArrayList<>();
+		ArrayList<UngerichtetKante> mst = new ArrayList<>();
 
-		// for each vertex v belongs to G.V MAKE-SET(v)
-		initialize(vertices);
-
-		// sort the edges of G.E into non decreasing order by weight w
-		Arrays.sort(edges);
+		for (Knote knote : vertices) {
+			PARENT.put(knote.id + "", knote.id + "");
+			RANKS.put(knote.id + "", 1);
+		}
 
 		// For each edge (u,v) belongs to G.E taken in non decreasing order by
 		// weight
-		for (EDGE edge : edges) {
+		for (UngerichtetKante kante : kantenList) {
 			// If (find-set(u)!=find-set(v)
-			if (FindSet(edge.from) != FindSet(edge.to)) {
+			String vorgängerKonteFindSet = FindSet(kante.vorgängerKonte.id + "");
+			String nachgängerKnoteFindSet = FindSet(kante.nachgängerKnote.id + "");
+			if (vorgängerKonteFindSet != nachgängerKnoteFindSet) {
 				// A = A union (u, v)
-				mst.add(edge);
-				ergbnis = ergbnis+edge.weight;
+				mst.add(kante);
+				ergbnis = ergbnis + kante.gewicht;
 				// UNION(u, v)
-				Union(edge.from, edge.to);
+				Union(kante.vorgängerKonte.id + "", kante.nachgängerKnote.id + "");
+				// System.out.println("PARENT"+PARENT);
+				// System.out.println("RANKS"+RANKS);
 			}
 		}
+
 		// Display contents
-		System.out.println(ergbnis+",MST contains the edges: " + mst.size());
+		System.out.println(ergbnis + ",MST contains the edges: " + mst.size());
 		return mst;
+	}
+
+	public static void main(String[] args) throws Exception {
+
+//		GraphParse graphParse = new GraphParse("./assets/G_100_200.txt");
+		 GraphParse graphParse = new GraphParse("./assets/G_1_2_1.txt");
+
+		long startTime = System.currentTimeMillis();
+
+		Kruskal(graphParse.knotenList, graphParse.kantenList);
+
+		long endTime = System.currentTimeMillis();
+		System.out.println("alle Zeit：		" + (endTime - startTime) / (1000.0) + "s");
 	}
 }
