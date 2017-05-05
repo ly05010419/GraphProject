@@ -10,77 +10,57 @@ import java.util.PriorityQueue;
 import java.util.Queue;
 
 public class Graph {
-	public ArrayList<GraphCompenent> GraphCompenentList = new ArrayList<GraphCompenent>();
+	public ArrayList<GraphCompenent> graphCompenentList = new ArrayList<GraphCompenent>();
 
 	private ArrayList<Knote> knotenList;
 	private ArrayList<UngerichtetKante> kantenList;
 	private float ergebnis = 0;
 
-	public Queue<Integer> queue = new LinkedList<Integer>();
+	
 	public HashSet<Integer> nichtBesuchtKonten = new HashSet<Integer>();
 	public HashSet<Knote> besuchtKonten = new HashSet<Knote>();
-	// public HashSet<Integer> besuchtKontenInt = new HashSet<Integer>();
-
-	private ArrayList<UngerichtetKante> besuchtKanten = new ArrayList<UngerichtetKante>();
 	private ArrayList<HashSet<Integer>> schnittMengen = new ArrayList<HashSet<Integer>>();
-	private PriorityQueue<UngerichtetKante> schnittMenge;
+	
 	
 	
 
 	public Graph(String str) throws Exception {
 
 		GraphParse graphParse = new GraphParse(str);
-
 		knotenList = graphParse.knotenList;
 		kantenList = graphParse.kantenList;
-
-		  
-        //比较器按照降序实现  
-		schnittMenge = new PriorityQueue<UngerichtetKante>((Comparator<? super UngerichtetKante>) new Comparator<UngerichtetKante>(){  
-			@Override
-			public int compare(UngerichtetKante o1, UngerichtetKante o2) {
-				if (o1.gewicht > o2.gewicht) {
-					return 1;
-				} else if (o1.gewicht == o2.gewicht) {
-					return 0;
-				} else {
-					return -1;
-				}
-			}
-        }) ;
-
+		
 	}
 
 	public void breitenSuche() throws Exception {
-
+		Queue<Integer> queue = new LinkedList<Integer>();
+		
 		// Initialisiereung
-		nichtBesuchtKonten.clear();
 		for (int i = 0; i < knotenList.size(); i++) {
 			nichtBesuchtKonten.add(i);
 		}
 
-		// startKnote auswälen
+		// StartKnote auswälen
 		int startKonte = (Integer) nichtBesuchtKonten.toArray()[0];
 		queue.add(startKonte);
 
 		GraphCompenent graphCompenent = new GraphCompenent();
-		GraphCompenentList.add(graphCompenent);
+		graphCompenentList.add(graphCompenent);
 
-		while (queue.size() != 0) {
+		while (!queue.isEmpty()) {
 
 			Integer vaterKonte = queue.poll();
 			nichtBesuchtKonten.remove(vaterKonte);
 
 			graphCompenent.getKnoten().add(vaterKonte);
-
 			Knote vater = knotenList.get(vaterKonte);
 
-			ArrayList<Integer> kindList = vater.getNachbarKnotenList();
+			ArrayList<Knote> kindList = vater.getNachbarKnotenList();
 
-			for (int i = 0; i < kindList.size(); i++) {
-				if (nichtBesuchtKonten.contains(kindList.get(i))) {
-					queue.add(kindList.get(i));
-					nichtBesuchtKonten.remove(kindList.get(i));
+			for (Knote knote: kindList) {
+				if (nichtBesuchtKonten.contains(knote.id)) {
+					queue.add(knote.id);
+					nichtBesuchtKonten.remove(knote.id);
 				}
 			}
 
@@ -90,7 +70,7 @@ public class Graph {
 				queue.add(neuStartKonte);
 
 				graphCompenent = new GraphCompenent();
-				GraphCompenentList.add(graphCompenent);
+				graphCompenentList.add(graphCompenent);
 			}
 		}
 
@@ -112,7 +92,7 @@ public class Graph {
 
 			GraphCompenent g = new GraphCompenent();
 
-			GraphCompenentList.add(g);
+			graphCompenentList.add(g);
 
 			this.rekusiveTiefenSuche(startKnote, g);
 
@@ -128,22 +108,21 @@ public class Graph {
 
 		Knote vater = knotenList.get(vaterKnote);
 
-		for (int i = 0; i < vater.getNachbarKnotenList().size(); i++) {
+		for (Knote kindKnote: vater.getNachbarKnotenList()) {
 
-			int kindKnote = vater.getNachbarKnotenList().get(i);
 			if (nichtBesuchtKonten.contains(kindKnote)) {
 
-				this.rekusiveTiefenSuche(kindKnote, graph);
+				this.rekusiveTiefenSuche(kindKnote.id, graph);
 			}
 		}
 
 	}
 
 	public void darstellenVonGraphen() {
-		System.out.println("\nGraphenAnzahl:	" + GraphCompenentList.size() + "\n");
+		System.out.println("\nGraphenAnzahl:	" + graphCompenentList.size() + "\n");
 
-		for (int i = 0; i < GraphCompenentList.size(); i++) {
-			System.out.println("Graph" + i + ":" + GraphCompenentList.get(i));
+		for (int i = 0; i < graphCompenentList.size(); i++) {
+			System.out.println("Graph" + i + ":" + graphCompenentList.get(i));
 		}
 		System.out.println();
 	}
@@ -151,6 +130,7 @@ public class Graph {
 	long totalTime = 0;
 	
 	
+//	按最小边深度遍历 找MST minimal spanning tree
 	public void prim() throws Exception {
 
 		PriorityQueue<Knote> priorityQueue = new PriorityQueue<Knote>();
@@ -167,12 +147,12 @@ public class Graph {
 			Knote minKnote = priorityQueue.poll();
 			if (minKnote.nachbarKantenList != null && minKnote.nachbarKantenList.size() > 0) {
 				for (UngerichtetKante edge : minKnote.nachbarKantenList) {
-					if (priorityQueue.contains(edge.end) && edge.gewicht < edge.end.kosten) {
-						priorityQueue.remove(edge.end);
-						edge.end.kosten = edge.gewicht;
-						edge.end.previous = minKnote;
+					if (priorityQueue.contains(edge.nachgängerKnote) && edge.gewicht < edge.nachgängerKnote.kosten) {
+						priorityQueue.remove(edge.nachgängerKnote);
+						edge.nachgängerKnote.kosten = edge.gewicht;
+						edge.nachgängerKnote.previousKnote = minKnote;
 						// System.out.println(edge.end);
-						priorityQueue.add(edge.end);
+						priorityQueue.add(edge.nachgängerKnote);
 
 					} 
 				}
@@ -270,8 +250,8 @@ public class Graph {
 	public boolean kreis(UngerichtetKante k) {
 		boolean flag = false;
 		for (HashSet<Integer> s : schnittMengen) {
-			if (s.contains(k.rootKonte) && s.contains(k.kindKonte)) {
-				s.add(k.rootKonte);
+			if (s.contains(k.vorgängerKonte) && s.contains(k.nachgängerKnote.id)) {
+				s.add(k.vorgängerKonte.id);
 				flag = true;
 				break;
 			}
@@ -287,9 +267,9 @@ public class Graph {
 		ArrayList<HashSet<Integer>> connecteHashSetArrayList = new ArrayList<HashSet<Integer>>();
 
 		for (HashSet<Integer> s : schnittMengen) {
-			if (s.contains(k.rootKonte) || s.contains(k.kindKonte)) {
-				s.add(k.rootKonte);
-				s.add(k.kindKonte);
+			if (s.contains(k.vorgängerKonte) || s.contains(k.nachgängerKnote.id)) {
+				s.add(k.vorgängerKonte.id);
+				s.add(k.nachgängerKnote.id);
 				gefunden = true;
 				connecteHashSetArrayList.add(s);
 
@@ -310,8 +290,8 @@ public class Graph {
 
 		if (!gefunden) {
 			HashSet<Integer> menge = new HashSet<Integer>();
-			menge.add(k.rootKonte);
-			menge.add(k.kindKonte);
+			menge.add(k.vorgängerKonte.id);
+			menge.add(k.nachgängerKnote.id);
 			schnittMengen.add(menge);
 		}
 		// System.out.println("baumMenge"+baumMenge);

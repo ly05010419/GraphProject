@@ -1,44 +1,45 @@
 package com.graph;
 
-public class UngerichtetKante {
-	public int rootKonte;
-	public int kindKonte;
-	public float gewicht;
-	public Knote end;
+public class UngerichtetKante implements Comparable<UngerichtetKante> {
 	
+	public Knote vorgängerKonte;
+	public Knote nachgängerKnote;
+	public float gewicht;
 	
 	public UngerichtetKante(Knote end, float weight) {
 		this.gewicht = weight;
-		this.end = end;
-
+		this.nachgängerKnote = end;
 	}
 
-	public UngerichtetKante(int rootKonte, int kindKonte, float gewicht,Knote end) {
+	public UngerichtetKante(Knote vorgängerKonte,Knote nachgängerKnote, float gewicht) {
 
-		this.rootKonte = rootKonte;
-		this.kindKonte = kindKonte;
+		this.vorgängerKonte = vorgängerKonte;
+		this.nachgängerKnote = nachgängerKnote;
 		this.gewicht = gewicht;
-		this.end = end;
 	}
 
 	public String toString() {
 
-		return "{" + gewicht + " " + "(" + rootKonte + "," + kindKonte + "," + gewicht + ")}";
+		return "{" + gewicht + " " + "(" + vorgängerKonte + "," + nachgängerKnote.id + "," + gewicht + ")}";
 	}
 
 	@Override
 	public int hashCode() {
-		return rootKonte + kindKonte;
+		if(vorgängerKonte.id<nachgängerKnote.id){
+			return vorgängerKonte.id*10 + nachgängerKnote.id;
+		}else{
+			return nachgängerKnote.id*10+vorgängerKonte.id;
+		}
 	}
 
 	@Override
 	public boolean equals(Object o) {
 
 		UngerichtetKante kante = (UngerichtetKante) o;
-		if (this.rootKonte == kante.rootKonte && this.kindKonte == kante.kindKonte) {
+		if (this.vorgängerKonte == kante.vorgängerKonte && this.nachgängerKnote.id == kante.nachgängerKnote.id) {
 			return true;
 
-		} else if (this.rootKonte == kante.kindKonte && this.kindKonte == kante.rootKonte) {
+		} else if (this.vorgängerKonte.id == kante.nachgängerKnote.id && this.nachgängerKnote.id == kante.vorgängerKonte.id) {
 			return true;
 
 		} else {
@@ -46,6 +47,7 @@ public class UngerichtetKante {
 		}
 	}
 
+	@Override
 	public int compareTo(UngerichtetKante o) {
 		if (this.gewicht > o.gewicht) {
 			return 1;

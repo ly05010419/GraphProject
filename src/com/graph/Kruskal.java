@@ -88,7 +88,7 @@ public class Kruskal {
 		int i = 0;
 		for (UngerichtetKante kante : graphParse.kantenList) {
 
-			edges[i] = new EDGE(kante.rootKonte+"", kante.kindKonte+"", kante.gewicht);
+			edges[i] = new EDGE(kante.vorgängerKonte+"", kante.nachgängerKnote.id+"", kante.gewicht);
 			i++;
 		}
 

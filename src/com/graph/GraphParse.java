@@ -36,8 +36,13 @@ public class GraphParse {
 
 		while (text != null) {
 			String[] s = text.split("\\t");
-			createKonte(Integer.parseInt(s[0]), Integer.parseInt(s[1]), Float.parseFloat(s[2]));
-			createKonte(Integer.parseInt(s[1]), Integer.parseInt(s[0]), Float.parseFloat(s[2]));
+			
+			float gewicht = 0;
+			if(s.length==3){
+				gewicht = Float.parseFloat(s[2]);
+			}
+			createKonte(knotenList.get(Integer.parseInt(s[0])), knotenList.get(Integer.parseInt(s[1])), gewicht);
+			createKonte(knotenList.get(Integer.parseInt(s[1])), knotenList.get(Integer.parseInt(s[0])), gewicht);
 
 			text = bufferedReader.readLine();
 		}
@@ -69,14 +74,12 @@ public class GraphParse {
 //		System.out.println("kantenList:"+kantenList);
 	}
 
-	public void createKonte(int rootKnote, int kindKnote, Float gewicht) {
+	public void createKonte(Knote rootKnote, Knote kindKnote, Float gewicht) {
+		
+		rootKnote.getNachbarKnotenList().add(kindKnote);
 
-		Knote rootK = knotenList.get(rootKnote);
-		rootK.getNachbarKnotenList().add(kindKnote);
-
-		Knote kindK = knotenList.get(kindKnote);
-		UngerichtetKante kante = new UngerichtetKante(rootKnote, kindKnote, gewicht,kindK);
-		rootK.getNachbarKantenList().add(kante);
+		UngerichtetKante kante = new UngerichtetKante(rootKnote,kindKnote, gewicht);
+		rootKnote.getNachbarKantenList().add(kante);
 		
 		kantenSet.add(kante);
 

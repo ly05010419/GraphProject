@@ -2,28 +2,27 @@ package com.graph;
 
 import java.util.ArrayList;
 
-public class Knote implements Comparable<Knote>{
+public class Knote implements Comparable<Knote> {
+	
 	public int id;
-	
-	private ArrayList<Integer> nachbarKnoteList = new ArrayList<Integer>();
+	private ArrayList<Knote> nachbarKnoteList = new ArrayList<Knote>();
 	public ArrayList<UngerichtetKante> nachbarKantenList = new ArrayList<UngerichtetKante>();
-	public Knote previous;
+	//für Prim
+	public Knote previousKnote;
 	float kosten;
-	
-	
 
-	public Knote(int id){
+	public Knote(int id) {
 		this.id = id;
 	}
-	
-	public String toString(){
-		
-		if(previous==null){
-			return "id:"+id+",kosten"+kosten+",previous:null";
-		}else{
-		return "id:"+id+",kosten"+kosten+",previous:"+previous.id;
+
+	public String toString() {
+
+		if (previousKnote == null) {
+			return "id:" + id + ",kosten" + kosten + ",previous:null";
+		} else {
+			return "id:" + id + ",kosten" + kosten + ",previous:" + previousKnote.id;
 		}
-//		return "id:"+id+",kindList:("+nachbarKnoteList+"),kosten"+kosten+",previous:"+previous;
+
 	}
 
 	public int compareTo(Knote o) {
@@ -35,7 +34,7 @@ public class Knote implements Comparable<Knote>{
 			return -1;
 		}
 	}
-	
+
 	public ArrayList<UngerichtetKante> getNachbarKantenList() {
 		return nachbarKantenList;
 	}
@@ -43,13 +42,13 @@ public class Knote implements Comparable<Knote>{
 	public void setNachbarKantenList(ArrayList<UngerichtetKante> kantenList) {
 		this.nachbarKantenList = kantenList;
 	}
-	
-	public ArrayList<Integer> getNachbarKnotenList() {
+
+	public ArrayList<Knote> getNachbarKnotenList() {
 		return nachbarKnoteList;
 	}
 
-	public void setNachbarKnotenList(ArrayList<Integer> knoteList) {
+	public void setNachbarKnotenList(ArrayList<Knote> knoteList) {
 		this.nachbarKnoteList = knoteList;
 	}
-	
+
 }
