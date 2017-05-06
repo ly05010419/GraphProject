@@ -2,17 +2,28 @@ package com.graph;
 
 import java.util.ArrayList;
 
+
 public class Knote implements Comparable<Knote> {
 	
 	public int id;
 	private ArrayList<Knote> nachbarKnoteList = new ArrayList<Knote>();
 	public ArrayList<UngerichtetKante> nachbarKantenList = new ArrayList<UngerichtetKante>();
-	//für Prim
 	public Knote previousKnote;
 	float kosten;
+	public SchnittMenge schnittMenge;
+	
+	public SchnittMenge getSchnittMenge(){
+		if (this.schnittMenge != null) {
+			return this.schnittMenge.getSchnittMenge();
+		} else {
+			return this.schnittMenge;
+		}
+	}
+	
 
 	public Knote(int id) {
 		this.id = id;
+		
 	}
 
 	public String toString() {

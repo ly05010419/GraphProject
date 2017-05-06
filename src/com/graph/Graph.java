@@ -3,6 +3,7 @@ package com.graph;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.PriorityQueue;
@@ -25,6 +26,17 @@ public class Graph {
 		GraphParse graphParse = new GraphParse(str);
 		knotenList = graphParse.knotenList;
 		kantenList = graphParse.kantenList;
+
+		// for(UngerichtetKante kante:kantenList){
+		//
+		// System.out.println(kante.vorgängerKonte.id+"
+		// "+kante.nachgängerKnote.id+" "+kante.gewicht);
+		// }
+
+	}
+
+	public Graph() throws Exception {
+
 	}
 
 	// // BreitenSuche durch Queue
@@ -141,11 +153,11 @@ public class Graph {
 		System.out.println();
 	}
 
-	long totalTime = 0;
+	
 
 	// 按最小边深度遍历 找MST minimal spanning tree
 	public void prim() throws Exception {
-
+		insgesamtGewicht = 0;
 		PriorityQueue<Knote> priorityQueue = new PriorityQueue<Knote>();
 		for (Knote v : knotenList) {
 			v.kosten = Float.MAX_VALUE;
@@ -173,92 +185,85 @@ public class Graph {
 		for (Knote knote : knotenList) {
 			insgesamtGewicht = insgesamtGewicht + knote.kosten;
 		}
-		System.out.println("insgesamtGewicht:" + insgesamtGewicht);
+		System.out.println("Prim insgesamtGewicht:" + insgesamtGewicht);
 	}
 
+	
+	long totalTime = 0;
 	// 按最小的边分配，不要有圈
 	public void kruskal() throws Exception {
-
-		schnittMengen = new ArrayList<HashSet<Integer>>();
-
-		int i = 0;
-
+		insgesamtGewicht = 0;
+		
 		for (UngerichtetKante güstigeKante : kantenList) {
-
+//			schnittMengen = new ArrayList<HashSet<Integer>>();
+			
+			
+			
 			if (!kreis(güstigeKante)) {
-				i++;
-				insgesamtGewicht = insgesamtGewicht + güstigeKante.gewicht;
-
+				
+//				insgesamtGewicht = insgesamtGewicht + güstigeKante.gewicht;
+				
+				 
 				liegenInSchnittMengen(güstigeKante);
+			
 			}
+			
 		}
+		
 
-		System.out.println(i + " insgesamtGewicht:" + insgesamtGewicht);
+		System.out.println("kruskal insgesamtGewicht:" + insgesamtGewicht);
 
+		
+		System.out.println("totalTime：		" + totalTime / (1000.0) + "s");
 	}
 
-	public boolean kreis(UngerichtetKante k) {
-		boolean flag = false;
-		for (HashSet<Integer> s : schnittMengen) {
-			if (s.contains(k.vorgängerKonte.id) && s.contains(k.nachgängerKnote.id)) {
-				s.add(k.vorgängerKonte.id);
-				flag = true;
-				break;
+	public boolean kreis(UngerichtetKante kante) {
+		
+		
+		if (kante.vorgängerKonte.getSchnittMenge() != null && kante.nachgängerKnote.getSchnittMenge() != null) {
+			if (kante.vorgängerKonte.getSchnittMenge() == kante.nachgängerKnote.getSchnittMenge()) {
+				return true;
 			}
 		}
+		
 
-		return flag;
-
+		return false;
 	}
+
+	int schnittMengeId = 0;
 
 	public void liegenInSchnittMengen(UngerichtetKante kante) {
-		boolean gefunden = false;
-
-		ArrayList<HashSet<Integer>> connecteHashSetArrayList = new ArrayList<HashSet<Integer>>();
-
-//		System.out.println("kante:"+kante);
+		long startTime = System.currentTimeMillis();
 		
-		
-		for (HashSet<Integer> s : schnittMengen) {
-			if (s.contains(kante.vorgängerKonte.id) || s.contains(kante.nachgängerKnote.id)) {
-				if (s.contains(kante.vorgängerKonte.id)) {
-					s.add(kante.nachgängerKnote.id);
+		if (kante.vorgängerKonte.schnittMenge == null && kante.nachgängerKnote.schnittMenge == null) {
 
-				} else {
-					s.add(kante.vorgängerKonte.id);
-				}
-				gefunden = true;
-				connecteHashSetArrayList.add(s);
+			SchnittMenge schnittMenge = new SchnittMenge(schnittMengeId++);
+			kante.vorgängerKonte.schnittMenge = schnittMenge;
+			kante.nachgängerKnote.schnittMenge = schnittMenge;
 
-				if (connecteHashSetArrayList.size() == 2) {
+		} else if (kante.vorgängerKonte.schnittMenge != null && kante.nachgängerKnote.schnittMenge == null) {
+			kante.nachgängerKnote.schnittMenge = kante.vorgängerKonte.schnittMenge;
 
-					HashSet<Integer> menge = new HashSet<Integer>();
-					for (HashSet<Integer> set : connecteHashSetArrayList) {
-						schnittMengen.remove(set);
-						for (Object i : set.toArray()) {
-							menge.add((Integer) i);
-						}
-					}
-					schnittMengen.add(menge);
-					break;
-				}
-			}
+		} else if (kante.nachgängerKnote.schnittMenge != null && kante.vorgängerKonte.schnittMenge == null) {
+
+			kante.vorgängerKonte.schnittMenge = kante.nachgängerKnote.schnittMenge;
+		} else {
+
+			kante.nachgängerKnote.schnittMenge.getSchnittMenge().schnittMenge = kante.vorgängerKonte.schnittMenge;
+
 		}
+		long endTime = System.currentTimeMillis();
+		totalTime = totalTime + (endTime - startTime);
 
-		if (!gefunden) {
-			HashSet<Integer> menge = new HashSet<Integer>();
-			menge.add(kante.vorgängerKonte.id);
-			menge.add(kante.nachgängerKnote.id);
-			schnittMengen.add(menge);
-		}
-//		System.out.println("schnittMengen:"+schnittMengen);
 	}
 
-	public ArrayList union(ArrayList<Integer> ls, ArrayList<Integer> ls2) {
-		ArrayList<Integer> list = new ArrayList<Integer>(Arrays.asList(new Integer[ls.size()]));
-		Collections.copy(list, ls);
-		list.addAll(ls2);
-		return list;
-	}
+	// public HashSet<Integer> union(HashSet<Integer> ls, HashSet<Integer> ls2)
+	// {
+	// HashSet<Integer> list = new HashSet<Integer>(Arrays.asList(new
+	// Integer[ls.size()]));
+	// Collections.copy(list, ls);
+	// list.addAll(ls2);
+	// return list;
+	// }
 
 }

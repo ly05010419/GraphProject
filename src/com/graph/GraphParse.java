@@ -78,6 +78,7 @@ public class GraphParse {
 		rootKnote.getNachbarKnotenList().add(kindKnote);
 
 		UngerichtetKante kante = new UngerichtetKante(rootKnote,kindKnote, gewicht);
+//		UngerichtetKante kante = new UngerichtetKante(rootKnote,kindKnote, (int)(1+Math.random()*(10-1+1)));
 		rootKnote.getNachbarKantenList().add(kante);
 		
 		kantenSet.add(kante);
