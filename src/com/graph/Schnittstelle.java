@@ -8,14 +8,14 @@ public class Schnittstelle {
 
 
 		ArrayList<String> strList = new ArrayList<String>();
-		strList.add("./assets/Graph5.txt");
+//		strList.add("./assets/Graph5.txt");
 //		strList.add("./assets/G_1_2_1.txt");
 //		strList.add("./assets/G_1_2.txt");
 //		strList.add("./assets/G_1_20.txt");
 //		strList.add("./assets/G_1_200.txt");
 //		strList.add("./assets/G_10_20.txt");
 //		strList.add("./assets/G_10_200.txt");
-//		strList.add("./assets/G_100_200.txt");
+		strList.add("./assets/G_100_200.txt");
 		long startTime1 = System.currentTimeMillis();
 		
 		for (String str : strList) {
@@ -30,10 +30,10 @@ public class Schnittstelle {
 
 			startTime = System.currentTimeMillis();
 
-			graph.breitenSuche();
+//			graph.breitenSuche();
 //			graph.prim();
 //			graph.tiefenSuche();
-//			graph.kruskal();
+			graph.kruskal();
 
 
 			endTime = System.currentTimeMillis();

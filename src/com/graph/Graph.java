@@ -16,7 +16,7 @@ public class Graph {
 
 	public ArrayList<Knote> nichtBesuchtKonten = new ArrayList<Knote>();
 	public ArrayList<Knote> besuchtKonten = new ArrayList<Knote>();
-	private ArrayList<ArrayList<Integer>> schnittMengen = new ArrayList<ArrayList<Integer>>();
+	private ArrayList<HashSet<Integer>> schnittMengen = new ArrayList<HashSet<Integer>>();
 
 	private float insgesamtGewicht = 0;
 
@@ -176,12 +176,10 @@ public class Graph {
 		System.out.println("insgesamtGewicht:" + insgesamtGewicht);
 	}
 
-	
-
 	// 按最小的边分配，不要有圈
 	public void kruskal() throws Exception {
 
-		schnittMengen = new ArrayList<ArrayList<Integer>>();
+		schnittMengen = new ArrayList<HashSet<Integer>>();
 
 		int i = 0;
 
@@ -201,8 +199,8 @@ public class Graph {
 
 	public boolean kreis(UngerichtetKante k) {
 		boolean flag = false;
-		for (ArrayList<Integer> s : schnittMengen) {
-			if (s.contains(k.vorgängerKonte) && s.contains(k.nachgängerKnote.id)) {
+		for (HashSet<Integer> s : schnittMengen) {
+			if (s.contains(k.vorgängerKonte.id) && s.contains(k.nachgängerKnote.id)) {
 				s.add(k.vorgängerKonte.id);
 				flag = true;
 				break;
@@ -213,22 +211,29 @@ public class Graph {
 
 	}
 
-	public void liegenInSchnittMengen(UngerichtetKante k) {
+	public void liegenInSchnittMengen(UngerichtetKante kante) {
 		boolean gefunden = false;
 
-		ArrayList<ArrayList<Integer>> connecteHashSetArrayList = new ArrayList<ArrayList<Integer>>();
+		ArrayList<HashSet<Integer>> connecteHashSetArrayList = new ArrayList<HashSet<Integer>>();
 
-		for (ArrayList<Integer> s : schnittMengen) {
-			if (s.contains(k.vorgängerKonte) || s.contains(k.nachgängerKnote.id)) {
-				s.add(k.vorgängerKonte.id);
-				s.add(k.nachgängerKnote.id);
+//		System.out.println("kante:"+kante);
+		
+		
+		for (HashSet<Integer> s : schnittMengen) {
+			if (s.contains(kante.vorgängerKonte.id) || s.contains(kante.nachgängerKnote.id)) {
+				if (s.contains(kante.vorgängerKonte.id)) {
+					s.add(kante.nachgängerKnote.id);
+
+				} else {
+					s.add(kante.vorgängerKonte.id);
+				}
 				gefunden = true;
 				connecteHashSetArrayList.add(s);
 
 				if (connecteHashSetArrayList.size() == 2) {
 
-					ArrayList<Integer> menge = new ArrayList<Integer>();
-					for (ArrayList<Integer> set : connecteHashSetArrayList) {
+					HashSet<Integer> menge = new HashSet<Integer>();
+					for (HashSet<Integer> set : connecteHashSetArrayList) {
 						schnittMengen.remove(set);
 						for (Object i : set.toArray()) {
 							menge.add((Integer) i);
@@ -241,20 +246,19 @@ public class Graph {
 		}
 
 		if (!gefunden) {
-			ArrayList<Integer> menge = new ArrayList<Integer>();
-			menge.add(k.vorgängerKonte.id);
-			menge.add(k.nachgängerKnote.id);
+			HashSet<Integer> menge = new HashSet<Integer>();
+			menge.add(kante.vorgängerKonte.id);
+			menge.add(kante.nachgängerKnote.id);
 			schnittMengen.add(menge);
 		}
-		// System.out.println("baumMenge"+baumMenge);
+//		System.out.println("schnittMengen:"+schnittMengen);
 	}
-	
-	
-//	 public List union(List ls, List ls2) { 
-//	        List list = new ArrayList(Arrays.asList(new Object[ls.size()])); 
-//	        Collections.copy(list, ls); 
-//	        list.addAll(ls2); 
-//	        return list; 
-//	    }
+
+	public ArrayList union(ArrayList<Integer> ls, ArrayList<Integer> ls2) {
+		ArrayList<Integer> list = new ArrayList<Integer>(Arrays.asList(new Integer[ls.size()]));
+		Collections.copy(list, ls);
+		list.addAll(ls2);
+		return list;
+	}
 
 }
