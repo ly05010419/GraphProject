@@ -10,13 +10,33 @@ public class Knote implements Comparable<Knote> {
 	public ArrayList<UngerichtetKante> nachbarKantenList = new ArrayList<UngerichtetKante>();
 	public Knote previousKnote;
 	float kosten;
-	public SchnittMenge schnittMenge;
+	private GraphSchnitt graphSchnitt;
 	
-	public SchnittMenge getSchnittMenge(){
-		if (this.schnittMenge != null) {
-			return this.schnittMenge.getSchnittMenge();
+	
+	public boolean hatGraphSchnitt(){
+		
+		if (this.graphSchnitt != null) {
+			return true;
 		} else {
-			return this.schnittMenge;
+			return false;
+		}
+	}
+	
+	public void setGraphSchnitt(GraphSchnitt graphSchnitt){
+		if (this.graphSchnitt != null) {
+			this.graphSchnitt.setSchnittMenge(graphSchnitt);
+		}else{
+			this.graphSchnitt = graphSchnitt;
+		}
+		
+	}
+	
+	public GraphSchnitt getSchnittMenge(){
+		
+		if (this.graphSchnitt != null) {
+			return this.graphSchnitt.getGraphSchnitt();
+		} else {
+			return this.graphSchnitt;
 		}
 	}
 	

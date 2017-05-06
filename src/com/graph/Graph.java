@@ -153,9 +153,8 @@ public class Graph {
 		System.out.println();
 	}
 
-	
-
 	// 按最小边深度遍历 找MST minimal spanning tree
+	//makieren Gewicht von Konte und alle Gewicht zällen
 	public void prim() throws Exception {
 		insgesamtGewicht = 0;
 		PriorityQueue<Knote> priorityQueue = new PriorityQueue<Knote>();
@@ -188,82 +187,62 @@ public class Graph {
 		System.out.println("Prim insgesamtGewicht:" + insgesamtGewicht);
 	}
 
-	
 	long totalTime = 0;
-	// 按最小的边分配，不要有圈
+
+	// finden günstig kante aber keine Kreis
 	public void kruskal() throws Exception {
 		insgesamtGewicht = 0;
-		
+
 		for (UngerichtetKante güstigeKante : kantenList) {
-//			schnittMengen = new ArrayList<HashSet<Integer>>();
-			
-			
-			
+
 			if (!kreis(güstigeKante)) {
-				
-//				insgesamtGewicht = insgesamtGewicht + güstigeKante.gewicht;
-				
-				 
-				liegenInSchnittMengen(güstigeKante);
-			
+
+				insgesamtGewicht = insgesamtGewicht + güstigeKante.gewicht;
+
+				erstellungVonSchnitt(güstigeKante);
 			}
-			
+
 		}
-		
 
 		System.out.println("kruskal insgesamtGewicht:" + insgesamtGewicht);
 
-		
 		System.out.println("totalTime：		" + totalTime / (1000.0) + "s");
 	}
 
+	
+	// Ob es Kreis gibt
 	public boolean kreis(UngerichtetKante kante) {
-		
-		
+
 		if (kante.vorgängerKonte.getSchnittMenge() != null && kante.nachgängerKnote.getSchnittMenge() != null) {
 			if (kante.vorgängerKonte.getSchnittMenge() == kante.nachgängerKnote.getSchnittMenge()) {
 				return true;
 			}
 		}
-		
 
 		return false;
 	}
 
 	int schnittMengeId = 0;
+// Schnitt von Graph erstellen und update
+	public void erstellungVonSchnitt(UngerichtetKante kante) {
 
-	public void liegenInSchnittMengen(UngerichtetKante kante) {
-		long startTime = System.currentTimeMillis();
-		
-		if (kante.vorgängerKonte.schnittMenge == null && kante.nachgängerKnote.schnittMenge == null) {
+		if (!kante.vorgängerKonte.hatGraphSchnitt() && !kante.nachgängerKnote.hatGraphSchnitt()) {
 
-			SchnittMenge schnittMenge = new SchnittMenge(schnittMengeId++);
-			kante.vorgängerKonte.schnittMenge = schnittMenge;
-			kante.nachgängerKnote.schnittMenge = schnittMenge;
+			GraphSchnitt schnittMenge = new GraphSchnitt(schnittMengeId++);
+			kante.vorgängerKonte.setGraphSchnitt(schnittMenge);
+			kante.nachgängerKnote.setGraphSchnitt(schnittMenge);
 
-		} else if (kante.vorgängerKonte.schnittMenge != null && kante.nachgängerKnote.schnittMenge == null) {
-			kante.nachgängerKnote.schnittMenge = kante.vorgängerKonte.schnittMenge;
+		} else if (kante.vorgängerKonte.hatGraphSchnitt() && !kante.nachgängerKnote.hatGraphSchnitt()) {
+			kante.nachgängerKnote.setGraphSchnitt(kante.vorgängerKonte.getSchnittMenge());
 
-		} else if (kante.nachgängerKnote.schnittMenge != null && kante.vorgängerKonte.schnittMenge == null) {
+		} else if (kante.nachgängerKnote.hatGraphSchnitt() && !kante.vorgängerKonte.hatGraphSchnitt()) {
 
-			kante.vorgängerKonte.schnittMenge = kante.nachgängerKnote.schnittMenge;
+			kante.vorgängerKonte.setGraphSchnitt(kante.nachgängerKnote.getSchnittMenge());
 		} else {
-
-			kante.nachgängerKnote.schnittMenge.getSchnittMenge().schnittMenge = kante.vorgängerKonte.schnittMenge;
+			kante.nachgängerKnote.setGraphSchnitt(kante.vorgängerKonte.getSchnittMenge());
 
 		}
-		long endTime = System.currentTimeMillis();
-		totalTime = totalTime + (endTime - startTime);
 
 	}
-
-	// public HashSet<Integer> union(HashSet<Integer> ls, HashSet<Integer> ls2)
-	// {
-	// HashSet<Integer> list = new HashSet<Integer>(Arrays.asList(new
-	// Integer[ls.size()]));
-	// Collections.copy(list, ls);
-	// list.addAll(ls2);
-	// return list;
-	// }
 
 }

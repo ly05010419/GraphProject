@@ -23,14 +23,14 @@ public class UngerichtetKante implements Comparable<UngerichtetKante> {
 		return "{" + gewicht + " " + "(" + vorgängerKonte + "," + nachgängerKnote.id + "," + gewicht + ")}";
 	}
 
-	@Override
-	public int hashCode() {
-		if(vorgängerKonte.id<nachgängerKnote.id){
-			return vorgängerKonte.id*10 + nachgängerKnote.id;
-		}else{
-			return nachgängerKnote.id*10+vorgängerKonte.id;
-		}
-	}
+//	@Override
+//	public int hashCode() {
+//		if(vorgängerKonte.id<nachgängerKnote.id){
+//			return vorgängerKonte.id*10 + nachgängerKnote.id;
+//		}else{
+//			return nachgängerKnote.id*10+vorgängerKonte.id;
+//		}
+//	}
 
 	@Override
 	public boolean equals(Object o) {
