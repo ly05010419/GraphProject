@@ -14,10 +14,8 @@ public class Graph {
 
 	private ArrayList<Knote> knotenList;
 	private ArrayList<UngerichtetKante> kantenList;
-
 	public ArrayList<Knote> nichtBesuchtKonten = new ArrayList<Knote>();
 	public ArrayList<Knote> besuchtKonten = new ArrayList<Knote>();
-	private ArrayList<HashSet<Integer>> schnittMengen = new ArrayList<HashSet<Integer>>();
 
 	private float insgesamtGewicht = 0;
 
@@ -26,13 +24,6 @@ public class Graph {
 		GraphParse graphParse = new GraphParse(str);
 		knotenList = graphParse.knotenList;
 		kantenList = graphParse.kantenList;
-
-		// for(UngerichtetKante kante:kantenList){
-		//
-		// System.out.println(kante.vorgängerKonte.id+"
-		// "+kante.nachgängerKnote.id+" "+kante.gewicht);
-		// }
-
 	}
 
 	public Graph() throws Exception {
@@ -152,9 +143,11 @@ public class Graph {
 		}
 		System.out.println();
 	}
-
-	// 按最小边深度遍历 找MST minimal spanning tree
-	//makieren Gewicht von Konte und alle Gewicht zällen
+	
+	 /**
+     *  按最小边深度遍历 找MST minimal spanning tree
+     *   makieren Gewicht von Konte dann zällen alle Gewicht von Knoten
+     */
 	public void prim() throws Exception {
 		insgesamtGewicht = 0;
 		PriorityQueue<Knote> priorityQueue = new PriorityQueue<Knote>();
@@ -189,7 +182,12 @@ public class Graph {
 
 	long totalTime = 0;
 
-	// finden günstig kante aber keine Kreis
+	
+	
+	
+	 /**
+     *  günstig kante finden， aber keine Kreis ！
+     */
 	public void kruskal() throws Exception {
 		insgesamtGewicht = 0;
 
@@ -206,15 +204,13 @@ public class Graph {
 
 		System.out.println("kruskal insgesamtGewicht:" + insgesamtGewicht);
 
-		System.out.println("totalTime：		" + totalTime / (1000.0) + "s");
 	}
 
-	
 	// Ob es Kreis gibt
 	public boolean kreis(UngerichtetKante kante) {
 
-		if (kante.vorgängerKonte.getSchnittMenge() != null && kante.nachgängerKnote.getSchnittMenge() != null) {
-			if (kante.vorgängerKonte.getSchnittMenge() == kante.nachgängerKnote.getSchnittMenge()) {
+		if (kante.vorgängerKonte.getKnoteGruppe() != null && kante.nachgängerKnote.getKnoteGruppe() != null) {
+			if (kante.vorgängerKonte.getKnoteGruppe() == kante.nachgängerKnote.getKnoteGruppe()) {
 				return true;
 			}
 		}
@@ -222,24 +218,27 @@ public class Graph {
 		return false;
 	}
 
-	int schnittMengeId = 0;
-// Schnitt von Graph erstellen und update
+	int knoteGruppeId = 0;
+
+	// Schnitt von Graph erstellen und update
 	public void erstellungVonSchnitt(UngerichtetKante kante) {
 
+		// Knote wurde schon noch in keine Kontegruppe zugeordnet
 		if (!kante.vorgängerKonte.hatGraphSchnitt() && !kante.nachgängerKnote.hatGraphSchnitt()) {
 
-			GraphSchnitt schnittMenge = new GraphSchnitt(schnittMengeId++);
-			kante.vorgängerKonte.setGraphSchnitt(schnittMenge);
-			kante.nachgängerKnote.setGraphSchnitt(schnittMenge);
+			KnoteGruppe knoteGruppe = new KnoteGruppe(knoteGruppeId++);
+			kante.vorgängerKonte.setKnoteGruppe(knoteGruppe);
+			kante.nachgängerKnote.setKnoteGruppe(knoteGruppe);
 
 		} else if (kante.vorgängerKonte.hatGraphSchnitt() && !kante.nachgängerKnote.hatGraphSchnitt()) {
-			kante.nachgängerKnote.setGraphSchnitt(kante.vorgängerKonte.getSchnittMenge());
+			kante.nachgängerKnote.setKnoteGruppe(kante.vorgängerKonte.getKnoteGruppe());
 
 		} else if (kante.nachgängerKnote.hatGraphSchnitt() && !kante.vorgängerKonte.hatGraphSchnitt()) {
 
-			kante.vorgängerKonte.setGraphSchnitt(kante.nachgängerKnote.getSchnittMenge());
+			kante.vorgängerKonte.setKnoteGruppe(kante.nachgängerKnote.getKnoteGruppe());
 		} else {
-			kante.nachgängerKnote.setGraphSchnitt(kante.vorgängerKonte.getSchnittMenge());
+			// zwei Gruppen sind disjunkt
+			kante.nachgängerKnote.setKnoteGruppe(kante.vorgängerKonte.getKnoteGruppe());
 
 		}
 
