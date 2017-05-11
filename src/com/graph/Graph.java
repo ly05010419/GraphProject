@@ -27,8 +27,8 @@ public class Graph {
 	}
 
 	/**
-     *  BreitenSuche durch Queue
-     */
+	 * BreitenSuche durch Queue
+	 */
 	public void breitenSuche() throws Exception {
 		Queue<Knote> queue = new LinkedList<Knote>();
 
@@ -72,65 +72,63 @@ public class Graph {
 
 		this.darstellenVonGraphen();
 	}
-	/**
-     *  ------------------------------------------------------------------------------------
-     */
 
-	
 	/**
-     *  TiefenSuche durch rekutiv
-     */
-	// public void tiefenSuche() throws Exception {
-	//
-	// // Initialisiereung
-	// nichtBesuchtKonten.clear();
-	// for (int i = 0; i < knotenList.size(); i++) {
-	// nichtBesuchtKonten.add(i);
-	// }
-	//
-	// // iteratiert nichtBesuchtList
-	// while (nichtBesuchtKonten.size() != 0) {
-	// int startKnote = (int) nichtBesuchtKonten.toArray()[0];
-	// // System.out.println("i:"+i);
-	//
-	// GraphCompenent g = new GraphCompenent();
-	//
-	// graphCompenentList.add(g);
-	//
-	// this.rekusiveTiefenSuche(startKnote, g);
-	//
-	// }
-	//
-	// this.darstellenVonGraphen();
-	// }
-	//
-	// public void rekusiveTiefenSuche(int vaterKnote, GraphCompenent graph)
-	// throws Exception {
-	// // System.out.println("vaterKnote:" + vaterKnote);
-	// nichtBesuchtKonten.remove(vaterKnote);
-	// graph.getKnoten().add(vaterKnote);
-	//
-	// Knote vater = knotenList.get(vaterKnote);
-	//
-	// for (Knote kindKnote : vater.getNachbarKnotenList()) {
-	//
-	// if (nichtBesuchtKonten.contains(kindKnote)) {
-	//
-	// this.rekusiveTiefenSuche(kindKnote.id, graph);
-	// }
-	// }
-	//
-	// }
-	/**
-     *  ------------------------------------------------------------------------------------
-     */
+	 * ------------------------------------------------------------------------------------
+	 */
 
-	
-	
-	 /**
-     *  按最小边深度遍历 找MST (Minimal Spanning Tree)
-     *   Makieren Gewicht von Konte, dann zällen alle Gewicht von Knoten.
-     */
+	/**
+	 * TiefenSuche durch rekutiv
+	 */
+	public void tiefenSuche() throws Exception {
+
+		// Initialisiereung
+		nichtBesuchtKonten.clear();
+		for (Knote konte : knotenList) {
+			nichtBesuchtKonten.add(konte);
+		}
+
+		// iteratiert nichtBesuchtList
+		while (nichtBesuchtKonten.size() != 0) {
+			Knote startKnote = (Knote) nichtBesuchtKonten.toArray()[0];
+			// System.out.println("i:"+i);
+
+			GraphCompenent g = new GraphCompenent();
+
+			graphCompenentList.add(g);
+
+			this.rekusiveTiefenSuche(startKnote, g);
+
+		}
+
+		this.darstellenVonGraphen();
+	}
+
+	public void rekusiveTiefenSuche(Knote vaterKnote, GraphCompenent graph) throws Exception {
+		// System.out.println("vaterKnote:" + vaterKnote);
+		nichtBesuchtKonten.remove(vaterKnote);
+		graph.getKnoten().add(vaterKnote);
+
+		
+
+		for (Knote kindKnote : vaterKnote.getNachbarKnotenList()) {
+
+			if (nichtBesuchtKonten.contains(kindKnote)) {
+
+				this.rekusiveTiefenSuche(kindKnote, graph);
+			}
+		}
+
+	}
+
+	/**
+	 * ------------------------------------------------------------------------------------
+	 */
+
+	/**
+	 * 按最小边深度遍历 找MST (Minimal Spanning Tree) Makieren Gewicht von Konte, dann
+	 * zällen alle Gewicht von Knoten.
+	 */
 	public void prim() throws Exception {
 		insgesamtGewicht = 0;
 		PriorityQueue<Knote> priorityQueue = new PriorityQueue<Knote>();
@@ -141,7 +139,8 @@ public class Graph {
 
 		Knote startKnote = priorityQueue.peek();
 		startKnote.kosten = 0;
-		// durch priorityQueue können wir immer die günstigKnote finden von nachbarKantenList.
+		// durch priorityQueue können wir immer die günstigKnote finden von
+		// nachbarKantenList.
 		while (!priorityQueue.isEmpty()) {
 			Knote günstigKnote = priorityQueue.poll();
 			if (günstigKnote.nachbarKantenList != null && günstigKnote.nachbarKantenList.size() > 0) {
@@ -161,15 +160,14 @@ public class Graph {
 		}
 		System.out.println("Prim insgesamtGewicht:" + insgesamtGewicht);
 	}
-	/**
-     *  ------------------------------------------------------------------------------------
-     */
 
-	
-	
-	 /**
-     *  Günstig kante finden， aber keine Kreis ！
-     */
+	/**
+	 * ------------------------------------------------------------------------------------
+	 */
+
+	/**
+	 * Günstig kante finden， aber keine Kreis ！
+	 */
 	public void kruskal() throws Exception {
 		insgesamtGewicht = 0;
 
@@ -225,11 +223,11 @@ public class Graph {
 		}
 
 	}
-	 /**
-     *  ------------------------------------------------------------------------------------
-     */
 
-	
+	/**
+	 * ------------------------------------------------------------------------------------
+	 */
+
 	public void darstellenVonGraphen() {
 		System.out.println("\nGraphenAnzahl:	" + graphCompenentList.size() + "\n");
 
@@ -238,8 +236,8 @@ public class Graph {
 		}
 		System.out.println();
 	}
-	
-//  Diff operation 两个集合 差运算
+
+	// Diff operation 两个集合 差运算
 	public ArrayList<Knote> diffKnotenList(ArrayList<Knote> listA, ArrayList<Knote> listB) {
 		ArrayList<Knote> list = new ArrayList<Knote>(Arrays.asList(new Knote[listA.size()]));
 		Collections.copy(list, listA);
