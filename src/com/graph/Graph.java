@@ -26,11 +26,9 @@ public class Graph {
 		kantenList = graphParse.kantenList;
 	}
 
-	public Graph() throws Exception {
-
-	}
-
-	// // BreitenSuche durch Queue
+	/**
+     *  BreitenSuche durch Queue
+     */
 	public void breitenSuche() throws Exception {
 		Queue<Knote> queue = new LinkedList<Knote>();
 
@@ -74,25 +72,14 @@ public class Graph {
 
 		this.darstellenVonGraphen();
 	}
+	/**
+     *  ------------------------------------------------------------------------------------
+     */
 
-	// 两个集合 差运算
-	public ArrayList<Knote> diffKnotenList(ArrayList<Knote> listA, ArrayList<Knote> listB) {
-		ArrayList<Knote> list = new ArrayList<Knote>(Arrays.asList(new Knote[listA.size()]));
-		Collections.copy(list, listA);
-		list.removeAll(listB);
-		return list;
-	}
-
-	// 两个集合 差运算
-	public ArrayList<UngerichtetKante> diffKantenList(ArrayList<UngerichtetKante> listA,
-			ArrayList<UngerichtetKante> listB) {
-		ArrayList<UngerichtetKante> list = new ArrayList<UngerichtetKante>(
-				Arrays.asList(new UngerichtetKante[listA.size()]));
-		Collections.copy(list, listA);
-		list.removeAll(listB);
-		return list;
-	}
-
+	
+	/**
+     *  TiefenSuche durch rekutiv
+     */
 	// public void tiefenSuche() throws Exception {
 	//
 	// // Initialisiereung
@@ -134,19 +121,15 @@ public class Graph {
 	// }
 	//
 	// }
+	/**
+     *  ------------------------------------------------------------------------------------
+     */
 
-	public void darstellenVonGraphen() {
-		System.out.println("\nGraphenAnzahl:	" + graphCompenentList.size() + "\n");
-
-		for (int i = 0; i < graphCompenentList.size(); i++) {
-			System.out.println("Graph" + i + ":" + graphCompenentList.get(i));
-		}
-		System.out.println();
-	}
+	
 	
 	 /**
-     *  按最小边深度遍历 找MST minimal spanning tree
-     *   makieren Gewicht von Konte dann zällen alle Gewicht von Knoten
+     *  按最小边深度遍历 找MST (Minimal Spanning Tree)
+     *   Makieren Gewicht von Konte, dann zällen alle Gewicht von Knoten.
      */
 	public void prim() throws Exception {
 		insgesamtGewicht = 0;
@@ -156,19 +139,18 @@ public class Graph {
 			priorityQueue.add(v);
 		}
 
-		Knote peek = priorityQueue.peek();
-		peek.kosten = 0;
+		Knote startKnote = priorityQueue.peek();
+		startKnote.kosten = 0;
+		// durch priorityQueue können wir immer die günstigKnote finden von nachbarKantenList.
 		while (!priorityQueue.isEmpty()) {
-			Knote minKnote = priorityQueue.poll();
-			if (minKnote.nachbarKantenList != null && minKnote.nachbarKantenList.size() > 0) {
-				for (UngerichtetKante edge : minKnote.nachbarKantenList) {
+			Knote günstigKnote = priorityQueue.poll();
+			if (günstigKnote.nachbarKantenList != null && günstigKnote.nachbarKantenList.size() > 0) {
+				for (UngerichtetKante edge : günstigKnote.nachbarKantenList) {
 					if (priorityQueue.contains(edge.nachgängerKnote) && edge.gewicht < edge.nachgängerKnote.kosten) {
 						priorityQueue.remove(edge.nachgängerKnote);
 						edge.nachgängerKnote.kosten = edge.gewicht;
-						edge.nachgängerKnote.previousKnote = minKnote;
-						// System.out.println(edge.end);
+						edge.nachgängerKnote.previousKnote = günstigKnote;
 						priorityQueue.add(edge.nachgängerKnote);
-
 					}
 				}
 			}
@@ -179,14 +161,14 @@ public class Graph {
 		}
 		System.out.println("Prim insgesamtGewicht:" + insgesamtGewicht);
 	}
+	/**
+     *  ------------------------------------------------------------------------------------
+     */
 
-	long totalTime = 0;
-
-	
 	
 	
 	 /**
-     *  günstig kante finden， aber keine Kreis ！
+     *  Günstig kante finden， aber keine Kreis ！
      */
 	public void kruskal() throws Exception {
 		insgesamtGewicht = 0;
@@ -220,7 +202,7 @@ public class Graph {
 
 	int knoteGruppeId = 0;
 
-	// Schnitt von Graph erstellen und update
+	// KnoteGruppe von Graph erstellen und update
 	public void erstellungVonSchnitt(UngerichtetKante kante) {
 
 		// Knote wurde schon noch in keine Kontegruppe zugeordnet
@@ -242,6 +224,27 @@ public class Graph {
 
 		}
 
+	}
+	 /**
+     *  ------------------------------------------------------------------------------------
+     */
+
+	
+	public void darstellenVonGraphen() {
+		System.out.println("\nGraphenAnzahl:	" + graphCompenentList.size() + "\n");
+
+		for (int i = 0; i < graphCompenentList.size(); i++) {
+			System.out.println("Graph" + i + ":" + graphCompenentList.get(i));
+		}
+		System.out.println();
+	}
+	
+//  Diff operation 两个集合 差运算
+	public ArrayList<Knote> diffKnotenList(ArrayList<Knote> listA, ArrayList<Knote> listB) {
+		ArrayList<Knote> list = new ArrayList<Knote>(Arrays.asList(new Knote[listA.size()]));
+		Collections.copy(list, listA);
+		list.removeAll(listB);
+		return list;
 	}
 
 }
