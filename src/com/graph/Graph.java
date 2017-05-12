@@ -232,6 +232,28 @@ public class Graph {
 		}
 
 	}
+	
+	/**
+	 * Günstig kante finden， aber keine Kreis ！
+	 */
+	public void nearestNeighbor() throws Exception {
+		insgesamtGewicht = 0;
+
+		for (UngerichtetKante güstigeKante : kantenList) {
+
+			if (!kreis(güstigeKante)) {
+
+				insgesamtGewicht = insgesamtGewicht + güstigeKante.gewicht;
+
+				ueberpruefungVonKnotenGruppen(güstigeKante);
+			}
+		}
+
+		System.out.println("kruskal insgesamtGewicht:" + insgesamtGewicht);
+
+	}
+	
+	
 
 	/**
 	 * ------------------------------------------------------------------------------------
