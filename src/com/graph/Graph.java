@@ -3,8 +3,6 @@ package com.graph;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.HashMap;
-import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.PriorityQueue;
 import java.util.Queue;
@@ -109,8 +107,6 @@ public class Graph {
 		nichtBesuchtKonten.remove(vaterKnote);
 		graph.getKnoten().add(vaterKnote);
 
-		
-
 		for (Knote kindKnote : vaterKnote.getNachbarKnotenList()) {
 
 			if (nichtBesuchtKonten.contains(kindKnote)) {
@@ -133,30 +129,40 @@ public class Graph {
 		insgesamtGewicht = 0;
 		PriorityQueue<Knote> priorityQueue = new PriorityQueue<Knote>();
 		for (Knote v : knotenList) {
-			v.kosten = Float.MAX_VALUE;
+			v.knoteGewicht = Float.MAX_VALUE;
 			priorityQueue.add(v);
 		}
 
 		Knote startKnote = priorityQueue.peek();
-		startKnote.kosten = 0;
-		// durch priorityQueue können wir immer die günstigKnote finden von
-		// nachbarKantenList.
+		startKnote.knoteGewicht = 0;
+		// Durch priorityQueue können wir immer die günstigKnote von
+		// nachbarKantenList finden.
 		while (!priorityQueue.isEmpty()) {
 			Knote günstigKnote = priorityQueue.poll();
+
+			// ist NachbarKantenList vorhanden?
 			if (günstigKnote.nachbarKantenList != null && günstigKnote.nachbarKantenList.size() > 0) {
 				for (UngerichtetKante edge : günstigKnote.nachbarKantenList) {
-					if (priorityQueue.contains(edge.nachgängerKnote) && edge.gewicht < edge.nachgängerKnote.kosten) {
+
+					// wenn Gewicht von nachgängerKnote günstig ist, dann
+					// überschreiben das aktuelles Gewicht.
+					if (priorityQueue.contains(edge.nachgängerKnote)
+							&& edge.gewicht < edge.nachgängerKnote.knoteGewicht) {
+
+						// remove und add für Sortierung von akuelle
+						// PriorityQueue
 						priorityQueue.remove(edge.nachgängerKnote);
-						edge.nachgängerKnote.kosten = edge.gewicht;
+						edge.nachgängerKnote.knoteGewicht = edge.gewicht;
 						edge.nachgängerKnote.previousKnote = günstigKnote;
 						priorityQueue.add(edge.nachgängerKnote);
 					}
+
 				}
 			}
 		}
 
 		for (Knote knote : knotenList) {
-			insgesamtGewicht = insgesamtGewicht + knote.kosten;
+			insgesamtGewicht = insgesamtGewicht + knote.knoteGewicht;
 		}
 		System.out.println("Prim insgesamtGewicht:" + insgesamtGewicht);
 	}
@@ -177,7 +183,7 @@ public class Graph {
 
 				insgesamtGewicht = insgesamtGewicht + güstigeKante.gewicht;
 
-				erstellungVonSchnitt(güstigeKante);
+				ueberpruefungVonKnotenGruppen(güstigeKante);
 			}
 
 		}
@@ -188,7 +194,7 @@ public class Graph {
 
 	// Ob es Kreis gibt
 	public boolean kreis(UngerichtetKante kante) {
-
+		// Wenn die beide KnotenGruppe gleich sind, dann es Kreis gibt!
 		if (kante.vorgängerKonte.getKnoteGruppe() != null && kante.nachgängerKnote.getKnoteGruppe() != null) {
 			if (kante.vorgängerKonte.getKnoteGruppe() == kante.nachgängerKnote.getKnoteGruppe()) {
 				return true;
@@ -200,24 +206,27 @@ public class Graph {
 
 	int knoteGruppeId = 0;
 
-	// KnoteGruppe von Graph erstellen und update
-	public void erstellungVonSchnitt(UngerichtetKante kante) {
+	// KnoteGruppe von Konte erstellen und überprüfen.
+	public void ueberpruefungVonKnotenGruppen(UngerichtetKante kante) {
 
 		// Knote wurde schon noch in keine Kontegruppe zugeordnet
-		if (!kante.vorgängerKonte.hatGraphSchnitt() && !kante.nachgängerKnote.hatGraphSchnitt()) {
+		if (!kante.vorgängerKonte.hatKnoteGruppe() && !kante.nachgängerKnote.hatKnoteGruppe()) {
 
 			KnoteGruppe knoteGruppe = new KnoteGruppe(knoteGruppeId++);
 			kante.vorgängerKonte.setKnoteGruppe(knoteGruppe);
 			kante.nachgängerKnote.setKnoteGruppe(knoteGruppe);
+			// wenn nachgängerKnote kein KnotenGruppe hat,dann nachgängerKnote
+			// in KontenGruppe von vorgängerKonte hinzufügen.
+		} else if (kante.vorgängerKonte.hatKnoteGruppe() && !kante.nachgängerKnote.hatKnoteGruppe()) {
 
-		} else if (kante.vorgängerKonte.hatGraphSchnitt() && !kante.nachgängerKnote.hatGraphSchnitt()) {
 			kante.nachgängerKnote.setKnoteGruppe(kante.vorgängerKonte.getKnoteGruppe());
-
-		} else if (kante.nachgängerKnote.hatGraphSchnitt() && !kante.vorgängerKonte.hatGraphSchnitt()) {
+			// wenn vorgängerKonte kein KnotenGruppe hat,dann vorgängerKonte in
+			// KontenGruppe von nachgängerKnote hinzufügen.
+		} else if (kante.nachgängerKnote.hatKnoteGruppe() && !kante.vorgängerKonte.hatKnoteGruppe()) {
 
 			kante.vorgängerKonte.setKnoteGruppe(kante.nachgängerKnote.getKnoteGruppe());
 		} else {
-			// zwei Gruppen sind disjunkt
+			// zwei KnotenGruppen zusammenfassen!
 			kante.nachgängerKnote.setKnoteGruppe(kante.vorgängerKonte.getKnoteGruppe());
 
 		}

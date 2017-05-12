@@ -23,14 +23,15 @@ public class UngerichtetKante implements Comparable<UngerichtetKante> {
 		return "{" + gewicht + " " + "(" + vorgängerKonte + "," + nachgängerKnote.id + "," + gewicht + ")}";
 	}
 
-//	@Override
-//	public int hashCode() {
-//		if(vorgängerKonte.id<nachgängerKnote.id){
-//			return vorgängerKonte.id*10 + nachgängerKnote.id;
-//		}else{
-//			return nachgängerKnote.id*10+vorgängerKonte.id;
-//		}
-//	}
+//	Prüfung für zwei kante nach Reihenfolge,ob es gleich ist. z.B. Kante(2-9) ist gleich Kante(9-2)
+	@Override
+	public int hashCode() {
+		if(vorgängerKonte.id<nachgängerKnote.id){
+			return vorgängerKonte.id*10 + nachgängerKnote.id;
+		}else{
+			return nachgängerKnote.id*10+vorgängerKonte.id;
+		}
+	}
 
 	@Override
 	public boolean equals(Object o) {
@@ -47,6 +48,7 @@ public class UngerichtetKante implements Comparable<UngerichtetKante> {
 		}
 	}
 
+//	Sortieren nach Gewicht
 	@Override
 	public int compareTo(UngerichtetKante o) {
 		if (this.gewicht > o.gewicht) {

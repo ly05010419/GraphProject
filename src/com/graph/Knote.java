@@ -9,11 +9,11 @@ public class Knote implements Comparable<Knote> {
 	private ArrayList<Knote> nachbarKnoteList = new ArrayList<Knote>();
 	public ArrayList<UngerichtetKante> nachbarKantenList = new ArrayList<UngerichtetKante>();
 	public Knote previousKnote;
-	float kosten;
+	float knoteGewicht;
 	private KnoteGruppe knoteGruppe;
 	
 	
-	public boolean hatGraphSchnitt(){
+	public boolean hatKnoteGruppe(){
 		
 		if (this.knoteGruppe != null) {
 			return true;
@@ -51,16 +51,16 @@ public class Knote implements Comparable<Knote> {
 		if (previousKnote == null) {
 			return "id:" + id ;
 		} else {
-			return "id:" + id + ",kosten" + kosten + ",previous:" + previousKnote.id;
+			return "id:" + id + ",kosten" + knoteGewicht + ",previous:" + previousKnote.id;
 		}
 
 	}
 
 	public int compareTo(Knote o) {
 
-		if (this.kosten > o.kosten) {
+		if (this.knoteGewicht > o.knoteGewicht) {
 			return 1;
-		} else if (this.kosten == o.kosten) {
+		} else if (this.knoteGewicht == o.knoteGewicht) {
 			return 0;
 		} else {
 			return -1;

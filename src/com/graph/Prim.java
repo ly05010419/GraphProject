@@ -18,7 +18,7 @@ public class Prim {
 
 		float ergbnis = 0;
 		for (Knote knote : graphParse.knotenList) {
-			ergbnis = ergbnis + knote.kosten;
+			ergbnis = ergbnis + knote.knoteGewicht;
 		}
 
 		System.out.println(ergbnis);
@@ -29,21 +29,20 @@ public class Prim {
 
 		PriorityQueue<Knote> priorityQueue = new PriorityQueue<Knote>();
 		for (Knote v : knotenList) {
-			v.kosten = Float.MAX_VALUE;
+			v.knoteGewicht = Float.MAX_VALUE;
 			priorityQueue.add(v);
 		}
 
 		Knote peek = priorityQueue.peek();
-		peek.kosten = 0;
-		priorityQueue.remove(peek);
-		priorityQueue.add(peek);
+		peek.knoteGewicht = 0;
+	
 		while (!priorityQueue.isEmpty()) {
 			Knote minKnote = priorityQueue.poll();
 			if (minKnote.nachbarKantenList != null && minKnote.nachbarKantenList.size() > 0) {
 				for (UngerichtetKante edge : minKnote.nachbarKantenList) {
-					if (priorityQueue.contains(edge.nachgängerKnote) && edge.gewicht < edge.nachgängerKnote.kosten) {
+					if (priorityQueue.contains(edge.nachgängerKnote) && edge.gewicht < edge.nachgängerKnote.knoteGewicht) {
 						priorityQueue.remove(edge.nachgängerKnote);
-						edge.nachgängerKnote.kosten = edge.gewicht;
+						edge.nachgängerKnote.knoteGewicht = edge.gewicht;
 						edge.nachgängerKnote.previousKnote = minKnote;
 						// System.out.println(edge.end);
 						priorityQueue.add(edge.nachgängerKnote);
