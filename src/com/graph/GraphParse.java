@@ -5,14 +5,16 @@ import java.io.FileReader;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.HashSet;
 
 //缺Adjanzmatrix
 public class GraphParse {
 	
-	private int knoteAnzahl;
+	public int knoteAnzahl;
 	public ArrayList<Knote> knotenList = new ArrayList<Knote>();
 	public HashSet<UngerichtetKante> kantenSet = new HashSet<UngerichtetKante>();
+	public HashMap<String,UngerichtetKante> kantenMap = new HashMap<String,UngerichtetKante>();
 	public ArrayList<UngerichtetKante> kantenList;
 
 	public GraphParse(String str) throws Exception {
@@ -22,7 +24,6 @@ public class GraphParse {
 		String text = bufferedReader.readLine();
 		knoteAnzahl = Integer.parseInt(text);
 
-		System.out.println("KnoteAnzahl:	" + knoteAnzahl);
 
 		for (int i = 0; i < knoteAnzahl; i++) {
 			Knote knote = new Knote(i);
@@ -83,7 +84,6 @@ public class GraphParse {
 			}
 		});
 
-		// System.out.println("knotenList:"+knotenList);
 		// System.out.println("kantenList:"+kantenList);
 	}
 
@@ -97,6 +97,6 @@ public class GraphParse {
 		rootKnote.getNachbarKantenList().add(kante);
 
 		kantenSet.add(kante);
-
+		kantenMap.put(kante.kanteId, kante);
 	}
 }

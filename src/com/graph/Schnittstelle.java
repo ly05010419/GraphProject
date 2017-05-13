@@ -20,11 +20,10 @@ public class Schnittstelle {
 		// strList.add("./assets/MST/G_10_20.txt");
 		// strList.add("./assets/MST/G_10_200.txt");
 		// strList.add("./assets/MST/G_100_200.txt");
-		
-		strList.add("./assets/Traveling-Salesman-Problem/K_10_1.txt");
-//		strList.add("./assets/Traveling-Salesman-Problem/K_10.txt");
+
+//		 strList.add("./assets/Traveling-Salesman-Problem/K_10_1.txt");
+		strList.add("./assets/Traveling-Salesman-Problem/K_10.txt");
 //		strList.add("./assets/Traveling-Salesman-Problem/K_10e.txt");
-//		strList.add("./assets/Traveling-Salesman-Problem/K_100.txt");
 //		strList.add("./assets/Traveling-Salesman-Problem/K_12.txt");
 //		strList.add("./assets/Traveling-Salesman-Problem/K_12e.txt");
 //		strList.add("./assets/Traveling-Salesman-Problem/K_15.txt");
@@ -33,21 +32,29 @@ public class Schnittstelle {
 //		strList.add("./assets/Traveling-Salesman-Problem/K_30.txt");
 //		strList.add("./assets/Traveling-Salesman-Problem/K_50.txt");
 //		strList.add("./assets/Traveling-Salesman-Problem/K_70.txt");
+//		strList.add("./assets/Traveling-Salesman-Problem/K_100.txt");
 
 		for (String str : strList) {
 
-			System.out.println(str.replace("./assets/", "").replace(".txt", ""));
+			if (str.contains("./assets/Traveling-Salesman-Problem/")) {
+				System.out.println(str.replace("./assets/Traveling-Salesman-Problem/", "").replace(".txt", ""));
+			} else if (str.contains("./assets/MST/")) {
+				System.out.println(str.replace("./assets/MST/", "").replace(".txt", ""));
+			} else if (str.contains("./assets/BreitensucheUndTiefensuche/")) {
+				System.out.println(str.replace("./assets/BreitensucheUndTiefensuche/", "").replace(".txt", ""));
+			}
 
 			Graph graph = new Graph(str);
 
 			long startTime = System.currentTimeMillis();
 
-//			 graph.breitenSuche();
-//			 graph.tiefenSuche();
+			// graph.breitenSuche();
+			// graph.tiefenSuche();
 
-//			 graph.prim();
-//			graph.kruskal();
-			graph.nearestNeighbor();
+			// graph.prim();
+			// graph.kruskal();
+//			graph.nearestNeighbor();
+			 graph.doppelterBaum();
 
 			long endTime = System.currentTimeMillis();
 			System.out.println("Alle Zeit：		" + (endTime - startTime) / (1000.0) + "s");

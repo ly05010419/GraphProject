@@ -49,9 +49,17 @@ public class Knote implements Comparable<Knote> {
 	public String toString() {
 
 		if (previousKnote == null) {
-			return "id:" + id ;
+			
+			 StringBuffer sBuffer = new StringBuffer("(id:" + id+",[");
+			 
+			for(Knote knote:this.getNachbarKnotenList()){
+				
+				sBuffer.append(knote.id+",");
+			}
+			sBuffer.append("])");
+			return  sBuffer.toString();
 		} else {
-			return "id:" + id + ",kosten" + knoteGewicht + ",previous:" + previousKnote.id;
+			return "(id:" + id  + ",previous:" + previousKnote.id+")";
 		}
 
 	}

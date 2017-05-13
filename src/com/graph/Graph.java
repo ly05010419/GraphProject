@@ -3,6 +3,8 @@ package com.graph;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.Comparator;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.PriorityQueue;
 import java.util.Queue;
@@ -14,14 +16,18 @@ public class Graph {
 	private ArrayList<UngerichtetKante> kantenList;
 	public ArrayList<Knote> nichtBesuchtKonten = new ArrayList<Knote>();
 	public ArrayList<Knote> besuchtKonten = new ArrayList<Knote>();
-
+	private int knoteAnzahl;
 	private float insgesamtGewicht = 0;
+	public HashMap<String, UngerichtetKante> kantenMap;
 
 	public Graph(String str) throws Exception {
 
 		GraphParse graphParse = new GraphParse(str);
 		knotenList = graphParse.knotenList;
 		kantenList = graphParse.kantenList;
+		knoteAnzahl = graphParse.knoteAnzahl;
+		kantenMap = graphParse.kantenMap;
+		// System.out.println("KnoteAnzahl: " + knoteAnzahl);
 	}
 
 	/**
@@ -78,8 +84,9 @@ public class Graph {
 	/**
 	 * TiefenSuche durch rekutiv
 	 */
-	public void tiefenSuche() throws Exception {
+	public ArrayList<Knote> tiefenSuche(Knote startKnote, ArrayList<Knote> knotenList) throws Exception {
 
+		ArrayList<Knote> reihenFolgeVonKnoten = new ArrayList<Knote>();
 		// Initialisiereung
 		nichtBesuchtKonten.clear();
 		for (Knote konte : knotenList) {
@@ -88,30 +95,30 @@ public class Graph {
 
 		// iteratiert nichtBesuchtList
 		while (nichtBesuchtKonten.size() != 0) {
-			Knote startKnote = (Knote) nichtBesuchtKonten.toArray()[0];
-			// System.out.println("i:"+i);
 
 			GraphCompenent g = new GraphCompenent();
 
 			graphCompenentList.add(g);
 
-			this.rekusiveTiefenSuche(startKnote, g);
+			this.rekusiveTiefenSuche(startKnote, reihenFolgeVonKnoten);
 
 		}
 
-		this.darstellenVonGraphen();
+		// this.darstellenVonGraphen();
+
+		return reihenFolgeVonKnoten;
 	}
 
-	public void rekusiveTiefenSuche(Knote vaterKnote, GraphCompenent graph) throws Exception {
+	public void rekusiveTiefenSuche(Knote vaterKnote, ArrayList<Knote> reihenFolgeVonKnoten) throws Exception {
 		// System.out.println("vaterKnote:" + vaterKnote);
 		nichtBesuchtKonten.remove(vaterKnote);
-		graph.getKnoten().add(vaterKnote);
+		reihenFolgeVonKnoten.add(vaterKnote);
 
 		for (Knote kindKnote : vaterKnote.getNachbarKnotenList()) {
 
 			if (nichtBesuchtKonten.contains(kindKnote)) {
 
-				this.rekusiveTiefenSuche(kindKnote, graph);
+				this.rekusiveTiefenSuche(kindKnote, reihenFolgeVonKnoten);
 			}
 		}
 
@@ -125,8 +132,11 @@ public class Graph {
 	 * 按最小边深度遍历 找MST (Minimal Spanning Tree) Makieren Gewicht von Konte, dann
 	 * zällen alle Gewicht von Knoten.
 	 */
-	public void prim() throws Exception {
+	public ArrayList<Knote> prim() throws Exception {
 		insgesamtGewicht = 0;
+
+		ArrayList<Knote> knoten = new ArrayList<Knote>();
+
 		PriorityQueue<Knote> priorityQueue = new PriorityQueue<Knote>();
 		for (Knote v : knotenList) {
 			v.knoteGewicht = Float.MAX_VALUE;
@@ -139,7 +149,7 @@ public class Graph {
 		// nachbarKantenList finden.
 		while (!priorityQueue.isEmpty()) {
 			Knote günstigKnote = priorityQueue.poll();
-
+			knoten.add(günstigKnote);
 			// ist NachbarKantenList vorhanden?
 			if (günstigKnote.nachbarKantenList != null && günstigKnote.nachbarKantenList.size() > 0) {
 				for (UngerichtetKante edge : günstigKnote.nachbarKantenList) {
@@ -165,6 +175,8 @@ public class Graph {
 			insgesamtGewicht = insgesamtGewicht + knote.knoteGewicht;
 		}
 		System.out.println("Prim insgesamtGewicht:" + insgesamtGewicht);
+
+		return knoten;
 	}
 
 	/**
@@ -174,14 +186,17 @@ public class Graph {
 	/**
 	 * Günstig kante finden， aber keine Kreis ！
 	 */
-	public void kruskal() throws Exception {
+	public ArrayList<UngerichtetKante> kruskal() throws Exception {
 		insgesamtGewicht = 0;
+
+		ArrayList<UngerichtetKante> kanten = new ArrayList<UngerichtetKante>();
 
 		for (UngerichtetKante güstigeKante : kantenList) {
 
 			if (!kreis(güstigeKante)) {
 
 				insgesamtGewicht = insgesamtGewicht + güstigeKante.gewicht;
+				kanten.add(güstigeKante);
 
 				ueberpruefungVonKnotenGruppen(güstigeKante);
 			}
@@ -189,7 +204,9 @@ public class Graph {
 		}
 
 		System.out.println("kruskal insgesamtGewicht:" + insgesamtGewicht);
+		// System.out.println("kanten:" + kanten);
 
+		return kanten;
 	}
 
 	// Ob es Kreis gibt
@@ -232,28 +249,6 @@ public class Graph {
 		}
 
 	}
-	
-	/**
-	 * Günstig kante finden， aber keine Kreis ！
-	 */
-	public void nearestNeighbor() throws Exception {
-		insgesamtGewicht = 0;
-
-		for (UngerichtetKante güstigeKante : kantenList) {
-
-			if (!kreis(güstigeKante)) {
-
-				insgesamtGewicht = insgesamtGewicht + güstigeKante.gewicht;
-
-				ueberpruefungVonKnotenGruppen(güstigeKante);
-			}
-		}
-
-		System.out.println("kruskal insgesamtGewicht:" + insgesamtGewicht);
-
-	}
-	
-	
 
 	/**
 	 * ------------------------------------------------------------------------------------
@@ -274,6 +269,145 @@ public class Graph {
 		Collections.copy(list, listA);
 		list.removeAll(listB);
 		return list;
+	}
+
+	/**
+	 * ------------------------------------------------------------------------------------
+	 */
+
+	/**
+	 * Hamilton-Rundreise finden， jede Knote als StartKonte versuchen. Suche
+	 * nach guestige Gewicht von der Kante
+	 */
+
+	public void nearestNeighbor() throws Exception {
+		float min = Float.MAX_VALUE;
+
+		for (Knote konte : knotenList) {
+			float nearestNeighborInsgesamtGewicht = nearestNeighbor(konte);
+			if (nearestNeighborInsgesamtGewicht < min)
+				min = nearestNeighborInsgesamtGewicht;
+		}
+
+		System.out.println("Guestige Hamilton-Rundreise von nearestNeighbor:" + min);
+	}
+
+	public float nearestNeighbor(Knote startKnote) throws Exception {
+		float insgesamtGewichtVonDiesesMal = 0;
+		ArrayList<UngerichtetKante> kanten = new ArrayList<UngerichtetKante>();
+
+		nichtBesuchtKonten.clear();
+		for (Knote konte : knotenList) {
+			nichtBesuchtKonten.add(konte);
+		}
+
+		int startKnoteId = startKnote.id;
+		nichtBesuchtKonten.remove(startKnote);
+		// iteratiert nichtBesuchtList
+		while (nichtBesuchtKonten.size() != 0) {
+
+			// Suche aus den Kanten von vnow zu unbesuchten Knoten
+			ArrayList<UngerichtetKante> nachbarKantenList = new ArrayList<UngerichtetKante>();
+			ArrayList<UngerichtetKante> startKnoteKantenList = startKnote.getNachbarKantenList();
+			for (UngerichtetKante kante : startKnoteKantenList) {
+				if (nichtBesuchtKonten.contains(kante.nachgängerKnote)) {
+					nachbarKantenList.add(kante);
+				}
+			}
+
+			// die Kante mit dem guenstigsten Gewicht
+			Collections.sort(nachbarKantenList, new Comparator<UngerichtetKante>() {
+				@Override
+				public int compare(UngerichtetKante Kante1, UngerichtetKante Kante2) {
+					return Kante1.compareTo(Kante2);
+				}
+			});
+
+			UngerichtetKante kante = nachbarKantenList.get(0);
+			kanten.add(kante);
+
+			insgesamtGewichtVonDiesesMal = insgesamtGewichtVonDiesesMal + kante.gewicht;
+			// gehe Kante entlang zum naechsten Knoten vnext.
+			startKnote = kante.nachgängerKnote;
+			nichtBesuchtKonten.remove(startKnote);
+		}
+
+		// Falls alle Knoten als besucht markiert sind, verbinde vnow mit vstart
+		// und STOPP.
+		for (UngerichtetKante kante : startKnote.getNachbarKantenList()) {
+			if (kante.nachgängerKnote.id == startKnoteId) {
+				insgesamtGewichtVonDiesesMal = insgesamtGewichtVonDiesesMal + kante.gewicht;
+				// Hamilton-Rundreise fertig!
+				kanten.add(kante);
+			}
+		}
+
+		System.out.println(
+				"startKnoteId:" + startKnoteId + ",insgesamtGewichtVonDiesesMal:" + insgesamtGewichtVonDiesesMal);
+		System.out.println("Hamilton-Rundreise:" + kanten);
+
+		return insgesamtGewichtVonDiesesMal;
+	}
+
+	/**
+	 * ------------------------------------------------------------------------------------
+	 */
+
+	public void doppelterBaum() throws Exception {
+		float insgesamtGewichtVonDiesesMal = 0;
+
+		ArrayList<UngerichtetKante> kanten = kruskal();
+		MST mst = new MST(kanten, knoteAnzahl);
+
+		for (UngerichtetKante kante : mst.kantenList) {
+			insgesamtGewichtVonDiesesMal = insgesamtGewichtVonDiesesMal + kante.gewicht;
+		}
+		System.out.println("Kanten von MST :" + mst.kantenList);
+		System.out.println("Knoten von MST :" + mst.knotenList);
+
+		float min = Float.MAX_VALUE;
+		for (Knote startKnote : mst.knotenList) {
+			ArrayList<Knote> reihenFolge = tiefenSuche(startKnote, mst.knotenList);
+
+			float nearestNeighborInsgesamtGewicht = getErgebinsVonReihenfolge(reihenFolge);
+			if (nearestNeighborInsgesamtGewicht < min)
+				min = nearestNeighborInsgesamtGewicht;
+		}
+
+		System.out.println("Guestige Hamilton-Rundreise von doppelterBaum:" + min);
+
+	}
+
+	public float getErgebinsVonReihenfolge(ArrayList<Knote> reihenFolge) {
+		float insgesamtGewichtVonDiesesMal = 0;
+
+		Knote startKnote = null;
+		Knote previousKnote = null;
+		
+		StringBuffer msg = new StringBuffer();
+		
+		for (Knote knote : reihenFolge) {
+			if (previousKnote != null) {
+
+				UngerichtetKante kante = UngerichtetKante.getKanteMitId(previousKnote, knote, kantenMap);
+
+				msg.append(" kante:" + kante);
+				insgesamtGewichtVonDiesesMal = insgesamtGewichtVonDiesesMal + kante.gewicht;
+			} else {
+				startKnote = knote;
+				msg.append("ErsteKnote:" + startKnote.id);
+
+			}
+			previousKnote = knote;
+		}
+
+		UngerichtetKante kante = UngerichtetKante.getKanteMitId(startKnote, previousKnote, kantenMap);
+		msg.append(" kante:" + kante);
+		insgesamtGewichtVonDiesesMal = insgesamtGewichtVonDiesesMal + kante.gewicht;
+
+//		System.out.println(msg.toString());
+		System.out.println("insgesamtGewichtVonDiesesMal:" + insgesamtGewichtVonDiesesMal);
+		return insgesamtGewichtVonDiesesMal;
 	}
 
 }
