@@ -362,8 +362,9 @@ public class Graph {
 		for (UngerichtetKante kante : mst.kantenList) {
 			insgesamtGewichtVonDiesesMal = insgesamtGewichtVonDiesesMal + kante.gewicht;
 		}
-		System.out.println("Kanten von MST :" + mst.kantenList);
-		System.out.println("Knoten von MST :" + mst.knotenList);
+//		System.out.println("Kanten von MST :" + mst.kantenList);
+//		System.out.println("Knoten von MST :" + mst.knotenList);
+		
 
 		float min = Float.MAX_VALUE;
 		for (Knote startKnote : mst.knotenList) {
@@ -406,7 +407,7 @@ public class Graph {
 		insgesamtGewichtVonDiesesMal = insgesamtGewichtVonDiesesMal + kante.gewicht;
 
 //		System.out.println(msg.toString());
-		System.out.println("insgesamtGewichtVonDiesesMal:" + insgesamtGewichtVonDiesesMal);
+//		System.out.println("ErsteKnote:" + startKnote.id+"insgesamtGewichtVonDiesesMal:" + insgesamtGewichtVonDiesesMal);
 		return insgesamtGewichtVonDiesesMal;
 	}
 
