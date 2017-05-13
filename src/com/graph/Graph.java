@@ -354,20 +354,22 @@ public class Graph {
 	 */
 
 	public void doppelterBaum() throws Exception {
-		float insgesamtGewichtVonDiesesMal = 0;
 
+
+		// MST von Krusal bekommen
 		ArrayList<UngerichtetKante> kanten = kruskal();
 		MST mst = new MST(kanten, knoteAnzahl);
 
-		for (UngerichtetKante kante : mst.kantenList) {
-			insgesamtGewichtVonDiesesMal = insgesamtGewichtVonDiesesMal + kante.gewicht;
-		}
 //		System.out.println("Kanten von MST :" + mst.kantenList);
 //		System.out.println("Knoten von MST :" + mst.knotenList);
 		
 
+		
+		// das guestigest Ergebenis finden.
 		float min = Float.MAX_VALUE;
 		for (Knote startKnote : mst.knotenList) {
+			
+			//durch Tiefensuche erhalten wir die Reihenfolge von MST
 			ArrayList<Knote> reihenFolge = tiefenSuche(startKnote, mst.knotenList);
 
 			float nearestNeighborInsgesamtGewicht = getErgebinsVonReihenfolge(reihenFolge);
@@ -379,6 +381,7 @@ public class Graph {
 
 	}
 
+	//die Knoten von der reihenfolge verbinden, startKonte verbindet auch mit letzteKnote zu Krei bekommen
 	public float getErgebinsVonReihenfolge(ArrayList<Knote> reihenFolge) {
 		float insgesamtGewichtVonDiesesMal = 0;
 
