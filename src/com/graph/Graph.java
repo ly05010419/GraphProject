@@ -344,8 +344,8 @@ public class Graph {
 			}
 		}
 
-		System.out.println("startKnoteId:" + startKnoteId + ",ergebenis:" + ergebenis);
-		System.out.println("Hamilton-Rundreise:" + kanten);
+//		System.out.println("startKnoteId:" + startKnoteId + ",ergebenis:" + ergebenis);
+//		System.out.println("Hamilton-Rundreise:" + kanten);
 
 		return ergebenis;
 	}
@@ -354,7 +354,7 @@ public class Graph {
 	 * ------------------------------------------------------------------------------------
 	 */
 
-	public void doppelterBaum() throws Exception {
+	public float doppelterBaum() throws Exception {
 
 		// MST von Krusal bekommen
 		ArrayList<UngerichtetKante> kanten = kruskal();
@@ -377,6 +377,7 @@ public class Graph {
 		}
 
 		System.out.println("Guestige Hamilton-Rundreise von doppelterBaum:" + min);
+		return min;
 
 	}
 
@@ -407,7 +408,11 @@ public class Graph {
 	}
 // Tiefensuche durch Rekusion
 	public void rekusiveBruteforce(Knote startKnote, ArrayList<Knote> knotenReihenfolge) throws Exception {
-
+		if (knotenReihenfolge.size()==2) {
+			if(knotenReihenfolge.get(1).id>knoteAnzahl/2){
+				return;
+			}			
+		}
 		nichtBesuchtKnoten.remove(startKnote);
 
 		knotenReihenfolge.add(startKnote);
@@ -444,6 +449,7 @@ public class Graph {
 	 */
 
 	public void branchUndBound() throws Exception {
+		
 		insgesamtGewicht = 0;
 		// Initialisiereung
 		nichtBesuchtKnoten.clear();
@@ -467,7 +473,12 @@ public class Graph {
 		if (checkErgebenis > minimalErgebenis) {
 			// schneiden ab
 			return;
-
+		}
+		
+		if (knotenReihenfolge.size()==2) {
+			if(knotenReihenfolge.get(1).id>knoteAnzahl/2){
+				return;
+			}			
 		}
 
 		nichtBesuchtKnoten.remove(startKnote);
@@ -489,6 +500,7 @@ public class Graph {
 			if (ergebenis < minimalErgebenis) {
 				minimalErgebenis = ergebenis;
 				minimalReihenFolge = knotenReihenfolge.toString();
+//				System.out.println(minimalErgebenis);
 			}
 
 			mal++;

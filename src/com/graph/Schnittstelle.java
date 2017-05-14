@@ -21,10 +21,10 @@ public class Schnittstelle {
 		// strList.add("./assets/MST/G_10_200.txt");
 		// strList.add("./assets/MST/G_100_200.txt");
 
-		// strList.add("./assets/Traveling-Salesman-Problem/K_10_1.txt");
-		 strList.add("./assets/Traveling-Salesman-Problem/K_10.txt");
-		 strList.add("./assets/Traveling-Salesman-Problem/K_10e.txt");
-		 strList.add("./assets/Traveling-Salesman-Problem/K_12.txt");
+//		 strList.add("./assets/Traveling-Salesman-Problem/K_10_1.txt");
+//		 strList.add("./assets/Traveling-Salesman-Problem/K_10.txt");
+//		 strList.add("./assets/Traveling-Salesman-Problem/K_10e.txt");
+//		 strList.add("./assets/Traveling-Salesman-Problem/K_12.txt");
 		 strList.add("./assets/Traveling-Salesman-Problem/K_12e.txt");
 		// strList.add("./assets/Traveling-Salesman-Problem/K_15.txt");
 //		strList.add("./assets/Traveling-Salesman-Problem/K_15e.txt");
@@ -32,7 +32,7 @@ public class Schnittstelle {
 		// strList.add("./assets/Traveling-Salesman-Problem/K_30.txt");
 		// strList.add("./assets/Traveling-Salesman-Problem/K_50.txt");
 		// strList.add("./assets/Traveling-Salesman-Problem/K_70.txt");
-		// strList.add("./assets/Traveling-Salesman-Problem/K_100.txt");
+//		 strList.add("./assets/Traveling-Salesman-Problem/K_100.txt");
 
 		for (String str : strList) {
 
@@ -48,10 +48,10 @@ public class Schnittstelle {
 			// graph.prim();
 			// graph.kruskal();
 			
-			// graph.nearestNeighbor();
-			// graph.doppelterBaum();
+//			 graph.nearestNeighbor();
+//			 graph.doppelterBaum();
 
-			// graph.bruteForce();
+//			 graph.bruteForce();
 
 			graph.branchUndBound();
 
