@@ -13,6 +13,8 @@ public class Knote implements Comparable<Knote> {
 	private KnoteGruppe knoteGruppe;
 	
 	
+	
+	
 	public boolean hatKnoteGruppe(){
 		
 		if (this.knoteGruppe != null) {
@@ -48,20 +50,20 @@ public class Knote implements Comparable<Knote> {
 
 	public String toString() {
 
-		if (previousKnote == null) {
-			
-			 StringBuffer sBuffer = new StringBuffer("(id:" + id+",[");
-			 
-			for(Knote knote:this.getNachbarKnotenList()){
-				
-				sBuffer.append(knote.id+",");
-			}
-			sBuffer.append("])");
-			return  sBuffer.toString();
-		} else {
-			return "(id:" + id  + ",previous:" + previousKnote.id+")";
-		}
-
+//		if (previousKnote == null) {
+//			
+//			 StringBuffer sBuffer = new StringBuffer("(id:" + id+",[");
+//			 
+//			for(Knote knote:this.getNachbarKnotenList()){
+//				
+//				sBuffer.append(knote.id+",");
+//			}
+//			sBuffer.append("])");
+//			return  sBuffer.toString();
+//		} else {
+//			return "(id:" + id  + ",previous:" + previousKnote.id+")";
+//		}
+		return ""+id;
 	}
 
 	public int compareTo(Knote o) {
