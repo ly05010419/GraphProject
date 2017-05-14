@@ -6,6 +6,7 @@
 Zur Bestimmung der Anzahl der Zusammenhangskomponenten. 
 ##### 3) Algorithmen von Prim und Kruskal realisieren.
 ##### 4) Algorithmen von NearestNeighbor und DoppelterBaum realisieren.
+##### 4) bruteforce von branchUndBound realisieren.
 
 
 # 图论 
@@ -13,3 +14,4 @@ Zur Bestimmung der Anzahl der Zusammenhangskomponenten.
 ##### 2) 深度优先算法（递归实现）
 ##### 3) Prim 和 Kruskal 算法的实现。
 ##### 4) 最近鄰居法 和 DoppelterBaum 算法的实现。
+##### 5) 穷举法 和 分支定界法 算法的实现。
