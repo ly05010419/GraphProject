@@ -370,7 +370,7 @@ public class Graph {
 			// durch Tiefensuche erhalten wir die Reihenfolge von MST
 			ArrayList<Knote> knoten = tiefenSuche(startKnote, mst.knotenList);
 
-			float ergebenis = getErgebenis(knoten);
+			float ergebenis = getErgebenisVonKonten(knoten);
 			if (ergebenis < min) {
 				min = ergebenis;
 			}
@@ -380,45 +380,13 @@ public class Graph {
 
 	}
 
-	// die Knoten von der reihenfolge verbinden, startKonte verbindet auch mit
-	// letzteKnote zu Krei bekommen
-	// public float getErgebinsVonReihenfolge(ArrayList<Knote> reihenFolge) {
-	// float insgesamtGewichtVonDiesesMal = 0;
-	//
-	// Knote startKnote = null;
-	// Knote previousKnote = null;
-	//
-	// StringBuffer msg = new StringBuffer();
-	//
-	// for (Knote knote : reihenFolge) {
-	// if (previousKnote != null) {
-	//
-	// UngerichtetKante kante = UngerichtetKante.getKanteMitId(previousKnote,
-	// knote, kantenMap);
-	//
-	// msg.append(" kante:" + kante);
-	// insgesamtGewichtVonDiesesMal = insgesamtGewichtVonDiesesMal +
-	// kante.gewicht;
-	// } else {
-	// startKnote = knote;
-	// msg.append("ErsteKnote:" + startKnote.id);
-	//
-	// }
-	// previousKnote = knote;
-	// }
-	//
-	// UngerichtetKante kante = UngerichtetKante.getKanteMitId(startKnote,
-	// previousKnote, kantenMap);
-	// msg.append(" kante:" + kante);
-	// insgesamtGewichtVonDiesesMal = insgesamtGewichtVonDiesesMal +
-	// kante.gewicht;
-	//
-	// return insgesamtGewichtVonDiesesMal;
-	// }
+	/**
+	 * ------------------------------------------------------------------------------------
+	 */
 
 	int mal = 0;
-	float min = Float.MAX_VALUE;
-	String reihenFolge = null;
+	float minimalErgebenis = Float.MAX_VALUE;
+	String minimalReihenFolge = null;
 
 	public void bruteForce() throws Exception {
 		insgesamtGewicht = 0;
@@ -428,51 +396,52 @@ public class Graph {
 			nichtBesuchtKnoten.add(konte);
 		}
 
-		ArrayList<Knote> knotenliste = new ArrayList<Knote>();
+		ArrayList<Knote> knotenReihenfolge = new ArrayList<Knote>();
 
 		Knote startKnote = this.knotenList.get(0);
 
-		rekusiveBruteforce(startKnote, knotenliste);
+		rekusiveBruteforce(startKnote, knotenReihenfolge);
 
-		System.out.println("min:" + min + ",mal:" + mal + ",reihenFolge:" + reihenFolge);
+		System.out.println("min:" + minimalErgebenis + ",mal:" + mal + ",reihenFolge:" + minimalReihenFolge);
 
 	}
-
-	public void rekusiveBruteforce(Knote startKnote, ArrayList<Knote> knotenliste) throws Exception {
+// Tiefensuche durch Rekusion
+	public void rekusiveBruteforce(Knote startKnote, ArrayList<Knote> knotenReihenfolge) throws Exception {
 
 		nichtBesuchtKnoten.remove(startKnote);
 
-		knotenliste.add(startKnote);
+		knotenReihenfolge.add(startKnote);
 
 		for (Knote knote : startKnote.getNachbarKnotenList()) {
 			if (nichtBesuchtKnoten.contains(knote)) {
-
-				// System.out.println(getRekusiveZeichen(knotenliste.size())+":"
-				// + knote);
-				rekusiveBruteforce(knote, knotenliste);
-				// System.out.println(getRekusiveZeichen(knotenliste.size())+":"
-				// + knote);
+				rekusiveBruteforce(knote, knotenReihenfolge);
 			}
 		}
 
-		if (knotenliste.size() == knoteAnzahl) {
+		if (knotenReihenfolge.size() == knoteAnzahl) {
 
-			float ergebenis = getErgebenis(knotenliste);
+			float ergebenis = getErgebenisVonKonten(knotenReihenfolge);
 
-			if (ergebenis < min) {
-				min = ergebenis;
-				reihenFolge = knotenliste.toString();
+			if (ergebenis < minimalErgebenis) {
+				minimalErgebenis = ergebenis;
+				minimalReihenFolge = knotenReihenfolge.toString();
 			}
 
 			mal++;
-			
-			// System.out.println(getRekusiveZeichen(knotenliste.size()) + ",mal:" + mal+ ",ergebenis:" + ergebenis+"," + knotenliste.toString() + ",min:" + min );
+
+//			 System.out.println(getRekusiveZeichen(knotenReihenfolge.size()) +
+//			 ",mal:" + mal+ ",ergebenis:" + ergebenis+"," +
+//			 knotenReihenfolge.toString() + ",min:" + minimalErgebenis );
 		}
 
 		nichtBesuchtKnoten.add(startKnote);
-		knotenliste.remove(startKnote);
+		knotenReihenfolge.remove(startKnote);
 
 	}
+
+	/**
+	 * ------------------------------------------------------------------------------------
+	 */
 
 	public void branchUndBound() throws Exception {
 		insgesamtGewicht = 0;
@@ -482,58 +451,60 @@ public class Graph {
 			nichtBesuchtKnoten.add(konte);
 		}
 
-		ArrayList<Knote> knotenliste = new ArrayList<Knote>();
+		ArrayList<Knote> knotenReihenfolge = new ArrayList<Knote>();
 
 		Knote startKnote = this.knotenList.get(0);
 
-		rekusiveBranchUndBound(startKnote, knotenliste);
+		rekusiveBranchUndBound(startKnote, knotenReihenfolge);
 
-		System.out.println("min:" + min + ",mal:" + mal + ",reihenFolge:" + reihenFolge);
+		System.out.println("min:" + minimalErgebenis + ",mal:" + mal + ",reihenFolge:" + minimalReihenFolge);
 	}
 
-	public void rekusiveBranchUndBound(Knote startKnote, ArrayList<Knote> knotenliste) throws Exception {
+	// Tiefensuche durch Rekusion 
+	public void rekusiveBranchUndBound(Knote startKnote, ArrayList<Knote> knotenReihenfolge) throws Exception {
 
-		float checkErgebenis = getErgebenis(knotenliste);
-		if (checkErgebenis > min) {
-//			System.out.println("checkErgebenis:"+checkErgebenis);
-//			System.out.println("min:"+min);
+		float checkErgebenis = getErgebenisVonKonten(knotenReihenfolge);
+		if (checkErgebenis > minimalErgebenis) {
+			// schneiden ab
 			return;
 
 		}
 
 		nichtBesuchtKnoten.remove(startKnote);
 
-		knotenliste.add(startKnote);
+		knotenReihenfolge.add(startKnote);
 
 		for (Knote knote : startKnote.getNachbarKnotenList()) {
 			if (nichtBesuchtKnoten.contains(knote)) {
-
-//				System.out.println(getRekusiveZeichen(knotenliste.size()) + ":" + knote);
-				rekusiveBranchUndBound(knote, knotenliste);
-//				System.out.println(getRekusiveZeichen(knotenliste.size()) + ":" + knote);
+				rekusiveBranchUndBound(knote, knotenReihenfolge);
 			}
 		}
 
-		if (knotenliste.size() == knoteAnzahl) {
+		// Ein Mal durchgeführt. für 10 Knoten insgesamt 3628800 Möglichkeit
+		// muss man durchführen
+		if (knotenReihenfolge.size() == knoteAnzahl) {
 
-			float ergebenis = getErgebenis(knotenliste);
+			float ergebenis = getErgebenisVonKonten(knotenReihenfolge);
 
-			if (ergebenis < min) {
-				min = ergebenis;
-				reihenFolge = knotenliste.toString();
+			if (ergebenis < minimalErgebenis) {
+				minimalErgebenis = ergebenis;
+				minimalReihenFolge = knotenReihenfolge.toString();
 			}
 
 			mal++;
 
-//			System.out.println(getRekusiveZeichen(knotenliste.size()) + ",mal:" + mal+ ",ergebenis:" + ergebenis+"," + knotenliste.toString() + ",min:" + min );
+//			 System.out.println(getRekusiveZeichen(knotenReihenfolge.size()) +
+//			 ",mal:" + mal+ ",ergebenis:" + ergebenis+"," +
+//			 knotenReihenfolge.toString() + ",min:" + minimalErgebenis );
 		}
 
 		nichtBesuchtKnoten.add(startKnote);
-		knotenliste.remove(startKnote);
+		knotenReihenfolge.remove(startKnote);
 
 	}
 
-	public float getErgebenis(ArrayList<Knote> knotenliste) {
+	// bekommen Ergebenis von Kanten der Konten,
+	public float getErgebenisVonKonten(ArrayList<Knote> knotenliste) {
 		float ergebenis = 0;
 
 		if (knotenliste.size() > 1) {
