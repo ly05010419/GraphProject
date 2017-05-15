@@ -32,22 +32,5 @@ public class MST {
 			nachgängerKnote.knoteGewicht = kante.gewicht;
 		}
 
-//		for (Knote knote : knotenList) {
-//			
-//			Collections.sort(knote.getNachbarKnotenList(), new Comparator<Knote>() {
-//				@Override
-//				public int compare(Knote Kante1, Knote Kante2) {
-//					if (Kante1.knoteGewicht > Kante2.knoteGewicht) {
-//						return 1;
-//					} else if (Kante1.knoteGewicht == Kante2.knoteGewicht) {
-//						return 0;
-//					} else {
-//						return -1;
-//					}
-//				}
-//			});
-//
-//		}
-
 	}
 }

@@ -303,12 +303,13 @@ public class Graph {
 			nichtBesuchtKnoten.add(konte);
 		}
 
-		int startKnoteId = startKnote.id;
+		Knote ursprungKnote = startKnote;
+		Knote letzteKnote = null;
 		nichtBesuchtKnoten.remove(startKnote);
 		// iteratiert nichtBesuchtList
 		while (nichtBesuchtKnoten.size() != 0) {
 
-			// Suche aus den Kanten von vnow zu unbesuchten Knoten
+			// die besucht Kante wegnehmen
 			ArrayList<UngerichtetKante> nachbarKantenList = new ArrayList<UngerichtetKante>();
 			ArrayList<UngerichtetKante> startKnoteKantenList = startKnote.getNachbarKantenList();
 			for (UngerichtetKante kante : startKnoteKantenList) {
@@ -317,35 +318,34 @@ public class Graph {
 				}
 			}
 
-			// die Kante mit dem guenstigsten Gewicht
+			// unbesucht Kanten sortieren
 			Collections.sort(nachbarKantenList, new Comparator<UngerichtetKante>() {
 				@Override
 				public int compare(UngerichtetKante Kante1, UngerichtetKante Kante2) {
 					return Kante1.compareTo(Kante2);
 				}
 			});
-
+			// die guestigste Kante
 			UngerichtetKante kante = nachbarKantenList.get(0);
 			kanten.add(kante);
 
 			ergebenis = ergebenis + kante.gewicht;
 			// gehe Kante entlang zum naechsten Knoten vnext.
 			startKnote = kante.nachgängerKnote;
+			letzteKnote = startKnote;
 			nichtBesuchtKnoten.remove(startKnote);
 		}
 
-		// Falls alle Knoten als besucht markiert sind, verbinde vnow mit vstart
-		// und STOPP.
-		for (UngerichtetKante kante : startKnote.getNachbarKantenList()) {
-			if (kante.nachgängerKnote.id == startKnoteId) {
-				ergebenis = ergebenis + kante.gewicht;
-				// Hamilton-Rundreise fertig!
-				kanten.add(kante);
-			}
-		}
+		UngerichtetKante kante = UngerichtetKante.getKanteMitId(ursprungKnote, letzteKnote, kantenMap);
+		
+		ergebenis = ergebenis + kante.gewicht;
+	
+		
+		kanten.add(kante);
 
-//		System.out.println("startKnoteId:" + startKnoteId + ",ergebenis:" + ergebenis);
-//		System.out.println("Hamilton-Rundreise:" + kanten);
+		 System.out.println("startKnoteId:" + ursprungKnote.id + ",ergebenis:" +
+		 ergebenis);
+//		 System.out.println("Hamilton-Rundreise:" + kanten);
 
 		return ergebenis;
 	}
@@ -360,9 +360,6 @@ public class Graph {
 		ArrayList<UngerichtetKante> kanten = kruskal();
 		MST mst = new MST(kanten, knoteAnzahl);
 
-		// System.out.println("Kanten von MST :" + mst.kantenList);
-		// System.out.println("Knoten von MST :" + mst.knotenList);
-
 		// das guestigest Ergebenis finden.
 		float min = Float.MAX_VALUE;
 		for (Knote startKnote : mst.knotenList) {
@@ -371,6 +368,8 @@ public class Graph {
 			ArrayList<Knote> knoten = tiefenSuche(startKnote, mst.knotenList);
 
 			float ergebenis = getErgebenisVonKonten(knoten);
+			
+			
 			if (ergebenis < min) {
 				min = ergebenis;
 			}
@@ -406,12 +405,13 @@ public class Graph {
 		System.out.println("min:" + minimalErgebenis + ",mal:" + mal + ",reihenFolge:" + minimalReihenFolge);
 
 	}
-// Tiefensuche durch Rekusion
+
+	// Tiefensuche durch Rekusion
 	public void rekusiveBruteforce(Knote startKnote, ArrayList<Knote> knotenReihenfolge) throws Exception {
-		if (knotenReihenfolge.size()==2) {
-			if(knotenReihenfolge.get(1).id>knoteAnzahl/2){
+		if (knotenReihenfolge.size() == 2) {
+			if (knotenReihenfolge.get(1).id > knoteAnzahl / 2) {
 				return;
-			}			
+			}
 		}
 		nichtBesuchtKnoten.remove(startKnote);
 
@@ -434,9 +434,9 @@ public class Graph {
 
 			mal++;
 
-//			 System.out.println(getRekusiveZeichen(knotenReihenfolge.size()) +
-//			 ",mal:" + mal+ ",ergebenis:" + ergebenis+"," +
-//			 knotenReihenfolge.toString() + ",min:" + minimalErgebenis );
+			// System.out.println(getRekusiveZeichen(knotenReihenfolge.size()) +
+			// ",mal:" + mal+ ",ergebenis:" + ergebenis+"," +
+			// knotenReihenfolge.toString() + ",min:" + minimalErgebenis );
 		}
 
 		nichtBesuchtKnoten.add(startKnote);
@@ -449,7 +449,7 @@ public class Graph {
 	 */
 
 	public void branchUndBound() throws Exception {
-		
+
 		insgesamtGewicht = 0;
 		// Initialisiereung
 		nichtBesuchtKnoten.clear();
@@ -466,7 +466,7 @@ public class Graph {
 		System.out.println("min:" + minimalErgebenis + ",mal:" + mal + ",reihenFolge:" + minimalReihenFolge);
 	}
 
-	// Tiefensuche durch Rekusion 
+	// Tiefensuche durch Rekusion
 	public void rekusiveBranchUndBound(Knote startKnote, ArrayList<Knote> knotenReihenfolge) throws Exception {
 
 		float checkErgebenis = getErgebenisVonKonten(knotenReihenfolge);
@@ -474,11 +474,11 @@ public class Graph {
 			// schneiden ab
 			return;
 		}
-		
-		if (knotenReihenfolge.size()==2) {
-			if(knotenReihenfolge.get(1).id>knoteAnzahl/2){
+
+		if (knotenReihenfolge.size() == 2) {
+			if (knotenReihenfolge.get(1).id > knoteAnzahl / 2) {
 				return;
-			}			
+			}
 		}
 
 		nichtBesuchtKnoten.remove(startKnote);
@@ -500,14 +500,14 @@ public class Graph {
 			if (ergebenis < minimalErgebenis) {
 				minimalErgebenis = ergebenis;
 				minimalReihenFolge = knotenReihenfolge.toString();
-//				System.out.println(minimalErgebenis);
+				// System.out.println(minimalErgebenis);
 			}
 
 			mal++;
 
-//			 System.out.println(getRekusiveZeichen(knotenReihenfolge.size()) +
-//			 ",mal:" + mal+ ",ergebenis:" + ergebenis+"," +
-//			 knotenReihenfolge.toString() + ",min:" + minimalErgebenis );
+			// System.out.println(getRekusiveZeichen(knotenReihenfolge.size()) +
+			// ",mal:" + mal+ ",ergebenis:" + ergebenis+"," +
+			// knotenReihenfolge.toString() + ",min:" + minimalErgebenis );
 		}
 
 		nichtBesuchtKnoten.add(startKnote);
