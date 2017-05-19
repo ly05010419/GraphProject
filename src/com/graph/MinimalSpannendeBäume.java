@@ -4,7 +4,7 @@ import java.util.HashSet;
 
 public class MinimalSpannendeBäume {
 	private HashSet<Integer> _knoten;
-	private HashSet<UngerichtetKante> _kanten;
+	private HashSet<Kante> _kanten;
 
 	public String toString() {
 		if (_kanten == null) {
@@ -14,9 +14,9 @@ public class MinimalSpannendeBäume {
 		}
 	}
 
-	public HashSet<UngerichtetKante> getKanten() {
+	public HashSet<Kante> getKanten() {
 		if (_kanten == null) {
-			_kanten = new HashSet<UngerichtetKante>();
+			_kanten = new HashSet<Kante>();
 		}
 		return _kanten;
 	}

@@ -6,10 +6,10 @@ import java.util.Comparator;
 
 public class MST {
 
-	public ArrayList<UngerichtetKante> kantenList = new ArrayList<UngerichtetKante>();
+	public ArrayList<Kante> kantenList = new ArrayList<Kante>();
 	public ArrayList<Knote> knotenList = new ArrayList<Knote>();
 
-	public MST(ArrayList<UngerichtetKante> kanten, int knoteAnzahl) {
+	public MST(ArrayList<Kante> kanten, int knoteAnzahl) {
 
 		this.kantenList = kanten;
 
@@ -18,7 +18,7 @@ public class MST {
 			knotenList.add(knote);
 		}
 
-		for (UngerichtetKante kante : kanten) {
+		for (Kante kante : kanten) {
 			Knote nachgängerKnote = knotenList.get(kante.nachgängerKnote.id);
 			Knote vorgängerKonte = knotenList.get(kante.vorgängerKonte.id);
 			

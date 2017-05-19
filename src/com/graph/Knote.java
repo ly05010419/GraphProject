@@ -7,7 +7,7 @@ public class Knote implements Comparable<Knote> {
 	
 	public int id;
 	private ArrayList<Knote> nachbarKnoteList = new ArrayList<Knote>();
-	public ArrayList<UngerichtetKante> nachbarKantenList = new ArrayList<UngerichtetKante>();
+	public ArrayList<Kante> nachbarKantenList = new ArrayList<Kante>();
 	public Knote previousKnote;
 	float knoteGewicht;
 	private KnoteGruppe knoteGruppe;
@@ -65,6 +65,23 @@ public class Knote implements Comparable<Knote> {
 //		}
 		return ""+id;
 	}
+	
+	
+	public Kante getKanteMitId(Knote endKnote){
+		
+		Kante kante = null;
+		
+		for(Kante k: this.nachbarKantenList){
+			
+			if(k.nachgängerKnote==endKnote){
+				
+				kante = k;
+				break;
+			}
+		}
+		return kante;
+		
+	}
 
 	public int compareTo(Knote o) {
 
@@ -77,13 +94,13 @@ public class Knote implements Comparable<Knote> {
 		}
 	}
 
-	public ArrayList<UngerichtetKante> getNachbarKantenList() {
+	public ArrayList<Kante> getNachbarKantenList() {
 		return nachbarKantenList;
 	}
 	
 	
 
-	public void setNachbarKantenList(ArrayList<UngerichtetKante> kantenList) {
+	public void setNachbarKantenList(ArrayList<Kante> kantenList) {
 		this.nachbarKantenList = kantenList;
 	}
 

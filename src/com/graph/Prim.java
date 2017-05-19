@@ -7,7 +7,7 @@ public class Prim {
 	public static void main(String[] args) throws Exception {
 
 		Prim primsDriver = new Prim();
-		GraphParse graphParse = new GraphParse("./assets/G_100_200.txt");
+		GraphParse graphParse = new GraphParse("./assets/G_100_200.txt",false);
 
 		long startTime = System.currentTimeMillis();
 
@@ -39,7 +39,7 @@ public class Prim {
 		while (!priorityQueue.isEmpty()) {
 			Knote minKnote = priorityQueue.poll();
 			if (minKnote.nachbarKantenList != null && minKnote.nachbarKantenList.size() > 0) {
-				for (UngerichtetKante edge : minKnote.nachbarKantenList) {
+				for (Kante edge : minKnote.nachbarKantenList) {
 					if (priorityQueue.contains(edge.nachgängerKnote) && edge.gewicht < edge.nachgängerKnote.knoteGewicht) {
 						priorityQueue.remove(edge.nachgängerKnote);
 						edge.nachgängerKnote.knoteGewicht = edge.gewicht;

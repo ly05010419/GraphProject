@@ -61,12 +61,12 @@ public class Kruskal {
 	}
 
 	// CLSR p631 Algorithm
-	public static ArrayList<UngerichtetKante> Kruskal(ArrayList<Knote> vertices,
-			ArrayList<UngerichtetKante> kantenList) {
+	public static ArrayList<Kante> Kruskal(ArrayList<Knote> vertices,
+			ArrayList<Kante> kantenList) {
 
 		float ergbnis = 0;
 		// Initialize A = empty set
-		ArrayList<UngerichtetKante> mst = new ArrayList<>();
+		ArrayList<Kante> mst = new ArrayList<>();
 
 		for (Knote knote : vertices) {
 			PARENT.put(knote.id + "", knote.id + "");
@@ -75,7 +75,7 @@ public class Kruskal {
 
 		// For each edge (u,v) belongs to G.E taken in non decreasing order by
 		// weight
-		for (UngerichtetKante kante : kantenList) {
+		for (Kante kante : kantenList) {
 			// If (find-set(u)!=find-set(v)
 			String vorgängerKonteFindSet = FindSet(kante.vorgängerKonte.id + "");
 			String nachgängerKnoteFindSet = FindSet(kante.nachgängerKnote.id + "");
@@ -98,7 +98,7 @@ public class Kruskal {
 	public static void main(String[] args) throws Exception {
 
 //		GraphParse graphParse = new GraphParse("./assets/G_100_200.txt");
-		 GraphParse graphParse = new GraphParse("./assets/G_1_2_1.txt");
+		 GraphParse graphParse = new GraphParse("./assets/G_1_2_1.txt",false);
 
 		long startTime = System.currentTimeMillis();
 

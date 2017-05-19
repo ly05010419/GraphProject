@@ -10,20 +10,22 @@ import java.util.HashSet;
 
 //缺Adjanzmatrix
 public class GraphParse {
-	
+
 	public int knoteAnzahl;
 	public ArrayList<Knote> knotenList = new ArrayList<Knote>();
-	public HashSet<UngerichtetKante> kantenSet = new HashSet<UngerichtetKante>();
-	public HashMap<String,UngerichtetKante> kantenMap = new HashMap<String,UngerichtetKante>();
-	public ArrayList<UngerichtetKante> kantenList;
+	public HashSet<Kante> kantenSet = new HashSet<Kante>();
+	public HashMap<String, Kante> kantenMap = new HashMap<String, Kante>();
+	public ArrayList<Kante> kantenList;
+	boolean gerichtetGraph = false;
 
-	public GraphParse(String str) throws Exception {
+	public GraphParse(String str, boolean gerichtetGraph) throws Exception {
+
+		this.gerichtetGraph = gerichtetGraph;
 
 		FileReader reader = new FileReader(str);
 		BufferedReader bufferedReader = new BufferedReader(reader);
 		String text = bufferedReader.readLine();
 		knoteAnzahl = Integer.parseInt(text);
-
 
 		for (int i = 0; i < knoteAnzahl; i++) {
 			Knote knote = new Knote(i);
@@ -43,7 +45,7 @@ public class GraphParse {
 
 			}
 
-			//AdjanzenMatrix
+			// AdjanzenMatrix
 			if (s.length > 3) {
 
 				for (int j = 0; j < s.length; j++) {
@@ -54,7 +56,11 @@ public class GraphParse {
 			} else {
 
 				createKonte(knotenList.get(Integer.parseInt(s[0])), knotenList.get(Integer.parseInt(s[1])), gewicht);
-				createKonte(knotenList.get(Integer.parseInt(s[1])), knotenList.get(Integer.parseInt(s[0])), gewicht);
+
+				if (!gerichtetGraph) {
+					createKonte(knotenList.get(Integer.parseInt(s[1])), knotenList.get(Integer.parseInt(s[0])),
+							gewicht);
+				}
 			}
 
 			text = bufferedReader.readLine();
@@ -63,10 +69,10 @@ public class GraphParse {
 
 		bufferedReader.close();
 
-		kantenList = new ArrayList<UngerichtetKante>(kantenSet);
-		Collections.sort(kantenList, new Comparator<UngerichtetKante>() {
+		kantenList = new ArrayList<Kante>(kantenSet);
+		Collections.sort(kantenList, new Comparator<Kante>() {
 			@Override
-			public int compare(UngerichtetKante Kante1, UngerichtetKante Kante2) {
+			public int compare(Kante Kante1, Kante Kante2) {
 				return Kante1.compareTo(Kante2);
 			}
 		});
@@ -91,7 +97,7 @@ public class GraphParse {
 
 		rootKnote.getNachbarKnotenList().add(kindKnote);
 
-		UngerichtetKante kante = new UngerichtetKante(rootKnote, kindKnote, gewicht);
+		Kante kante = new Kante(rootKnote, kindKnote, gewicht,this.gerichtetGraph);
 		// UngerichtetKante kante = new UngerichtetKante(rootKnote,kindKnote,
 		// (int)(1+Math.random()*(10-1+1)));
 		rootKnote.getNachbarKantenList().add(kante);
