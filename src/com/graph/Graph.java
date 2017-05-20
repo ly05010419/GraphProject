@@ -546,6 +546,7 @@ public class Graph {
 	 * ------------------------------------------------------------------------------------
 	 */
 
+	//druch priorityQueue die güstige Kante finden. ähnlich wie Prim.
 	public ArrayList<Knote> dijkstra(int startKnoteId, int endKnoteId) throws Exception {
 
 		insgesamtGewicht = 0;
@@ -578,10 +579,6 @@ public class Graph {
 							kante.nachgängerKnote.knoteGewicht = aktuellGewicht;
 							kante.nachgängerKnote.previousKnote = günstigKnote;
 
-							// System.out.println("id:" + edge.nachgängerKnote +
-							// ",(" + edge.nachgängerKnote.knoteGewicht
-							// + "," + edge.nachgängerKnote.previousKnote +
-							// ");");
 							priorityQueue.add(kante.nachgängerKnote);
 						}
 					}
@@ -590,7 +587,7 @@ public class Graph {
 		}
 
 		Knote endKnote = knotenList.get(endKnoteId);
-		System.out.println(startKnote + "--" + endKnote + " Länge:" + endKnote.knoteGewicht);
+		System.out.println("dijkstra	:" + startKnote + "--" + endKnote + "	Länge:	" + endKnote.knoteGewicht);
 
 		return knoten;
 	}
@@ -600,7 +597,7 @@ public class Graph {
 	 */
 
 	public void mooreBellmanFord(int startKnoteId, int endKnoteId) throws Exception {
-		
+
 		for (Knote v : knotenList) {
 			if (v.id == startKnoteId) {
 				v.knoteGewicht = 0;
@@ -609,32 +606,47 @@ public class Graph {
 			}
 		}
 
+		ArrayList<Kante> negativZykel = null; 
+		
+		//Anzahl von Interation ist Anzahl von Konten
 		for (int i = 0; i < knotenList.size(); i++) {
-			mooreBellmanFordSchleife();
-//			System.out.println(i+"--------------------");
+			if (i < knotenList.size() - 1) {
+				mooreBellmanFordSchleife(false);
+			} else {
+				negativZykel = mooreBellmanFordSchleife(true);
+			}
 		}
 
 		Knote endKnote = knotenList.get(endKnoteId);
 
-		System.out.println(startKnoteId + "--" + endKnoteId + " Länge:" + endKnote.knoteGewicht);
+		if(negativZykel.size()>0){
+			System.out.println("BellmanFord	:" + startKnoteId + "--" + endKnoteId + "	kanten:"+negativZykel+" in dem negativen Zyklus");
+		}else{
+			System.out.println("BellmanFord	:" + startKnoteId + "--" + endKnoteId + "	Länge:	" + endKnote.knoteGewicht);
+			
+		}
 
 	}
 
-	public void mooreBellmanFordSchleife() throws Exception {
+	public ArrayList<Kante> mooreBellmanFordSchleife(boolean letzteMal) throws Exception {
+		ArrayList<Kante> negativZykel = new ArrayList<Kante>(); 
 		for (Kante kante : kantenList) {
 			Knote vorgängerKonte = kante.vorgängerKonte;
 			Knote nachgängerKnote = kante.nachgängerKnote;
 			if (vorgängerKonte.knoteGewicht + kante.gewicht < nachgängerKnote.knoteGewicht) {
 				nachgängerKnote.knoteGewicht = vorgängerKonte.knoteGewicht + kante.gewicht;
 				nachgängerKnote.previousKnote = vorgängerKonte;
+				
+				//Wenn in der letzte Interation es immer noch eine Änderung gibt,dann gibt es einen negativen Zyklus
+				if(letzteMal){
+//					System.out.println("kante:"+kante+" in dem negativen Zyklus");
+					negativZykel.add(kante);
+				}
 			}
 
 		}
 		
-//		for(Knote knote:knotenList){
-//			
-//			System.out.println(knote+":(" + knote.knoteGewicht + "," + knote.previousKnote +")");
-//		}
+		return negativZykel;
 
 	}
 

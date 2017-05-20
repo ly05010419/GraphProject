@@ -30,15 +30,16 @@ public class Schnittstelle {
 		
 		Graph graph4 = new Graph("./assets/MST/G_1_2.txt",true);
 		graph4.mooreBellmanFord(0, 1);
+		Graph graph6 = new Graph("./assets/MST/G_1_2.txt",true);
+		graph6.dijkstra(0, 1);
 		
 		Graph graph5 = new Graph("./assets/MST/G_1_2.txt",false);
 		graph5.mooreBellmanFord(0, 1);
-		
-		Graph graph6 = new Graph("./assets/MST/G_1_2.txt",true);
-		graph4.mooreBellmanFord(0, 1);
-		
 		Graph graph7 = new Graph("./assets/MST/G_1_2.txt",false);
-		graph5.mooreBellmanFord(0, 1);
+		graph7.dijkstra(0, 1);
+		
+		
+		
 		
 		
 	}
