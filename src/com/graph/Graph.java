@@ -11,7 +11,7 @@ import java.util.PriorityQueue;
 import java.util.Queue;
 
 public class Graph {
-	public ArrayList<GraphCompenent> graphCompenentList = new ArrayList<GraphCompenent>();
+	public ArrayList<ArrayList<Knote>> graphCompenentList = new ArrayList<ArrayList<Knote>>();
 
 	public ArrayList<Knote> nichtBesuchtKnoten = new ArrayList<Knote>();
 	public ArrayList<Knote> besuchtKnoten = new ArrayList<Knote>();
@@ -45,7 +45,7 @@ public class Graph {
 		queue.add(startKnote);
 		besuchtKnoten.add(startKnote);
 
-		GraphCompenent graphCompenent = new GraphCompenent();
+		ArrayList<Knote> graphCompenent = new ArrayList<Knote>();
 		graphCompenentList.add(graphCompenent);
 
 		while (!queue.isEmpty()) {
@@ -54,7 +54,7 @@ public class Graph {
 			Knote vater = queue.poll();
 			// System.out.println(vater);
 
-			graphCompenent.getKnoten().add(vater);
+			graphCompenent.add(vater);
 
 			for (Knote knote : vater.getNachbarKnotenList()) {
 				if (!besuchtKnoten.contains(knote)) {
@@ -72,7 +72,7 @@ public class Graph {
 				queue.add(startKnote);
 				besuchtKnoten.add(startKnote);
 
-				graphCompenent = new GraphCompenent();
+				graphCompenent = new ArrayList<Knote>();
 				graphCompenentList.add(graphCompenent);
 			}
 		}
@@ -102,7 +102,7 @@ public class Graph {
 		// iteratiert nichtBesuchtList
 		while (nichtBesuchtKnoten.size() != 0) {
 
-			GraphCompenent g = new GraphCompenent();
+			ArrayList<Knote> g = new ArrayList<Knote>();
 
 			graphCompenentList.add(g);
 
@@ -649,7 +649,7 @@ public class Graph {
 		Fluss fluss = flussSucheDurchBreitenSuche(startKnoteId, endKnoteId);
 
 		while (fluss != null) {
-
+//			System.out.println(fluss);
 			fluss = flussSucheDurchBreitenSuche(startKnoteId, endKnoteId);
 		}
 
@@ -698,29 +698,37 @@ public class Graph {
 	}
 
 
-	public Fluss getFlussDurchEndKnote(Knote letzteKnote) {
+	public Fluss getFlussDurchEndKnote(Knote aktuellKnote) {
 		
-		ArrayList<Kante> kantenFluss = new ArrayList<Kante>();
-		Knote previousKnote = letzteKnote.previousKnote;
+		Fluss fluss = new Fluss();
+		
+		
+		Knote previousKnote = aktuellKnote.previousKnote;
 		
 		float minimalFluswert = Float.MAX_VALUE;
 		while (previousKnote != null) {
-			Kante kante = previousKnote.getKanteMitId(letzteKnote);
+			
+			//kante von previousKnote nach aktuellKnote
+			Kante kante = previousKnote.getKanteMitId(aktuellKnote);
 
+			
 			if (kante != null) {
-				kantenFluss.add(kante);
-				letzteKnote = kante.vorgängerKonte;
-				previousKnote = letzteKnote.previousKnote;
-
+				fluss.kantenList.add(kante);
+				
 				if (kante.gewicht < minimalFluswert) {
 					minimalFluswert = kante.gewicht;
 				}
+				
+				aktuellKnote = previousKnote;
+				previousKnote = previousKnote.previousKnote;
+				
 			} else {
+				//keine Kante von previousKnote nach aktuellKnote existiert. fertig! alle Fluss gefunden!
 				return null;
 			}
 		}
 
-		Fluss fluss = new Fluss(minimalFluswert, kantenFluss);
+		fluss.flussWert = minimalFluswert;
 
 		return fluss;
 	}
@@ -728,8 +736,9 @@ public class Graph {
 	public void createResidualGraph(Fluss fluss) {
 		for (Kante kante : fluss.kantenList) {
 
+			//alte Kante aktualisiert
 			kante.gewicht = kante.gewicht - fluss.flussWert;
-
+			//neu Kante erstellen
 			this.graphParse.addNewKnate(kante.nachgängerKnote, kante.vorgängerKonte, fluss.flussWert);
 
 			if (kante.gewicht == 0) {

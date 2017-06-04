@@ -9,7 +9,7 @@ public class Knote implements Comparable<Knote> {
 	private ArrayList<Knote> nachbarKnoteList = new ArrayList<Knote>();
 	public ArrayList<Kante> nachbarKantenList = new ArrayList<Kante>();
 	public Knote previousKnote;
-	float knoteGewicht;
+	public float knoteGewicht;
 	private KnoteGruppe knoteGruppe;
 	
 	

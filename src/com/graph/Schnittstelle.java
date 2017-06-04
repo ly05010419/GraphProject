@@ -18,12 +18,12 @@ public class Schnittstelle {
 		graph1.fordFulkerson(0,7);
 		
 //		
-//		long startTime = System.currentTimeMillis();
-//		
-//		Graph graph2 = new Graph("./assets/MST/G_1_2.txt",true);
-//		graph2.fordFulkerson(0,7);
-//		long endTime = System.currentTimeMillis();
-//		System.out.println("Alle Zeit：		" + (endTime - startTime) / (1000.0) + "s");
+		long startTime = System.currentTimeMillis();
+		
+		Graph graph2 = new Graph("./assets/MST/G_1_2.txt",true);
+		graph2.fordFulkerson(0,7);
+		long endTime = System.currentTimeMillis();
+		System.out.println("Alle Zeit：		" + (endTime - startTime) / (1000.0) + "s");
 
 	}
 

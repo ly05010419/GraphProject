@@ -1,9 +1,8 @@
 package com.graph;
 
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
 
+//MinimalSpannendeBäume
 public class MST {
 
 	public ArrayList<Kante> kantenList = new ArrayList<Kante>();
