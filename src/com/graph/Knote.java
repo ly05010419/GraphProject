@@ -63,6 +63,7 @@ public class Knote implements Comparable<Knote> {
 //		} else {
 //			return "(id:" + id  + ",previous:" + previousKnote.id+")";
 //		}
+//		return ""+id+",Gewicht:"+this.knoteGewicht;
 		return ""+id;
 	}
 	
@@ -81,6 +82,27 @@ public class Knote implements Comparable<Knote> {
 		}
 		return kante;
 		
+	}
+	
+
+	public boolean removeKnoteUndKante(Knote knote){
+		
+		
+		boolean flag = false;
+		
+		for(Kante k: this.nachbarKantenList){
+			
+			if(k.nachgängerKnote==knote){
+				
+				this.nachbarKantenList.remove(k);
+				
+				break;
+			}
+		}
+		
+		this.nachbarKnoteList.remove(knote);
+		
+		return flag;
 	}
 
 	public int compareTo(Knote o) {

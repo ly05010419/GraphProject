@@ -13,14 +13,14 @@ import java.util.Queue;
 public class Graph {
 	public ArrayList<GraphCompenent> graphCompenentList = new ArrayList<GraphCompenent>();
 
-	private ArrayList<Knote> knotenList;
-	private ArrayList<Kante> kantenList;
 	public ArrayList<Knote> nichtBesuchtKnoten = new ArrayList<Knote>();
 	public ArrayList<Knote> besuchtKnoten = new ArrayList<Knote>();
 	public HashSet<String> besuchtHamiltonKreis = new HashSet<String>();
 	private int knoteAnzahl;
 	private float insgesamtGewicht = 0;
 	public HashMap<String, Kante> kantenMap;
+	public GraphParse graphParse = null;
+	private float insgesamtFluswert = 0;
 
 	boolean gerichtetGraph = false;
 
@@ -28,9 +28,8 @@ public class Graph {
 
 		this.gerichtetGraph = gerichtetGraph;
 
-		GraphParse graphParse = new GraphParse(str, gerichtetGraph);
-		knotenList = graphParse.knotenList;
-		kantenList = graphParse.kantenList;
+		this.graphParse = new GraphParse(str, gerichtetGraph);
+
 		knoteAnzahl = graphParse.knoteAnzahl;
 		kantenMap = graphParse.kantenMap;
 		// System.out.println("KnoteAnzahl: " + knoteAnzahl);
@@ -42,7 +41,7 @@ public class Graph {
 	public void breitenSuche() throws Exception {
 		Queue<Knote> queue = new LinkedList<Knote>();
 
-		Knote startKnote = knotenList.get(0);
+		Knote startKnote = graphParse.knotenList.get(0);
 		queue.add(startKnote);
 		besuchtKnoten.add(startKnote);
 
@@ -64,9 +63,10 @@ public class Graph {
 				}
 			}
 
-			if (queue.size() == 0 && besuchtKnoten.size() != knotenList.size()) {
+			// 多个图的情况 计算一共有几个图
+			if (queue.size() == 0 && besuchtKnoten.size() != graphParse.knotenList.size()) {
 
-				nichtBesuchtKnoten = diffKnotenList(knotenList, besuchtKnoten);
+				nichtBesuchtKnoten = diffKnotenList(graphParse.knotenList, besuchtKnoten);
 
 				startKnote = nichtBesuchtKnoten.get(0);
 				queue.add(startKnote);
@@ -145,7 +145,7 @@ public class Graph {
 		ArrayList<Knote> knoten = new ArrayList<Knote>();
 
 		PriorityQueue<Knote> priorityQueue = new PriorityQueue<Knote>();
-		for (Knote v : knotenList) {
+		for (Knote v : graphParse.knotenList) {
 			v.knoteGewicht = Float.MAX_VALUE;
 			priorityQueue.add(v);
 		}
@@ -178,7 +178,7 @@ public class Graph {
 			}
 		}
 
-		for (Knote knote : knotenList) {
+		for (Knote knote : graphParse.knotenList) {
 			insgesamtGewicht = insgesamtGewicht + knote.knoteGewicht;
 		}
 		System.out.println("Prim insgesamtGewicht:" + insgesamtGewicht);
@@ -198,7 +198,7 @@ public class Graph {
 
 		ArrayList<Kante> kanten = new ArrayList<Kante>();
 
-		for (Kante güstigeKante : kantenList) {
+		for (Kante güstigeKante : graphParse.kantenList) {
 
 			if (!kreis(güstigeKante)) {
 
@@ -290,7 +290,7 @@ public class Graph {
 	public void nearestNeighbor() throws Exception {
 		float min = Float.MAX_VALUE;
 
-		for (Knote konte : knotenList) {
+		for (Knote konte : graphParse.knotenList) {
 			float ergebenis = nearestNeighbor(konte);
 			if (ergebenis < min) {
 				min = ergebenis;
@@ -305,7 +305,7 @@ public class Graph {
 		ArrayList<Kante> kanten = new ArrayList<Kante>();
 
 		nichtBesuchtKnoten.clear();
-		for (Knote konte : knotenList) {
+		for (Knote konte : graphParse.knotenList) {
 			nichtBesuchtKnoten.add(konte);
 		}
 
@@ -400,13 +400,13 @@ public class Graph {
 		insgesamtGewicht = 0;
 		// Initialisiereung
 		nichtBesuchtKnoten.clear();
-		for (Knote konte : knotenList) {
+		for (Knote konte : graphParse.knotenList) {
 			nichtBesuchtKnoten.add(konte);
 		}
 
 		ArrayList<Knote> knotenReihenfolge = new ArrayList<Knote>();
 
-		Knote startKnote = this.knotenList.get(0);
+		Knote startKnote = this.graphParse.knotenList.get(0);
 
 		rekusiveBruteforce(startKnote, knotenReihenfolge);
 
@@ -461,13 +461,13 @@ public class Graph {
 		insgesamtGewicht = 0;
 		// Initialisiereung
 		nichtBesuchtKnoten.clear();
-		for (Knote konte : knotenList) {
+		for (Knote konte : graphParse.knotenList) {
 			nichtBesuchtKnoten.add(konte);
 		}
 
 		ArrayList<Knote> knotenReihenfolge = new ArrayList<Knote>();
 
-		Knote startKnote = this.knotenList.get(0);
+		Knote startKnote = this.graphParse.knotenList.get(0);
 
 		rekusiveBranchUndBound(startKnote, knotenReihenfolge);
 
@@ -534,62 +534,63 @@ public class Graph {
 		return ergebenis;
 	}
 
-	public String getRekusiveZeichen(int i) {
-		StringBuffer s = new StringBuffer();
-		for (int j = 0; j < i; j++) {
-			s.append("----");
-		}
-		return s.toString();
-	}
+	// public String getRekusiveZeichen(int i) {
+	// StringBuffer s = new StringBuffer();
+	// for (int j = 0; j < i; j++) {
+	// s.append("----");
+	// }
+	// return s.toString();
+	// }
 
 	/**
 	 * ------------------------------------------------------------------------------------
 	 */
 
-	//druch priorityQueue die güstige Kante finden. ähnlich wie Prim.
-	public ArrayList<Knote> dijkstra(int startKnoteId, int endKnoteId) throws Exception {
+	public void dijkstra(int startKnoteId, int endKnoteId) throws Exception {
 
 		insgesamtGewicht = 0;
-		ArrayList<Knote> knoten = new ArrayList<Knote>();
 
 		PriorityQueue<Knote> priorityQueue = new PriorityQueue<Knote>();
-		for (Knote v : knotenList) {
+		for (Knote v : graphParse.knotenList) {
 			v.knoteGewicht = Float.MAX_VALUE;
 			priorityQueue.add(v);
 		}
 
-		Knote startKnote = knotenList.get(startKnoteId);
+		Knote startKnote = graphParse.knotenList.get(startKnoteId);
 		startKnote.knoteGewicht = 0;
+
 		priorityQueue.remove(startKnote);
 		priorityQueue.add(startKnote);
+
 		while (!priorityQueue.isEmpty()) {
 			Knote günstigKnote = priorityQueue.poll();
-			knoten.add(günstigKnote);
 
-			if (günstigKnote.nachbarKantenList != null && günstigKnote.nachbarKantenList.size() > 0) {
-				for (Kante kante : günstigKnote.nachbarKantenList) {
+			if (günstigKnote.id == endKnoteId) {
+				break;
+			}
 
-					if (priorityQueue.contains(kante.nachgängerKnote)) {
+			for (Kante kante : günstigKnote.nachbarKantenList) {
 
-						float aktuellGewicht = kante.gewicht + günstigKnote.knoteGewicht;
+				if (priorityQueue.contains(kante.nachgängerKnote)) {
 
-						if (aktuellGewicht < kante.nachgängerKnote.knoteGewicht) {
+					float aktuellGewicht = kante.gewicht + günstigKnote.knoteGewicht;
 
-							priorityQueue.remove(kante.nachgängerKnote);
-							kante.nachgängerKnote.knoteGewicht = aktuellGewicht;
-							kante.nachgängerKnote.previousKnote = günstigKnote;
+					if (aktuellGewicht < kante.nachgängerKnote.knoteGewicht) {
 
-							priorityQueue.add(kante.nachgängerKnote);
-						}
+						kante.nachgängerKnote.knoteGewicht = aktuellGewicht;
+						kante.nachgängerKnote.previousKnote = günstigKnote;
+
+						priorityQueue.remove(kante.nachgängerKnote);
+						priorityQueue.add(kante.nachgängerKnote);
 					}
 				}
 			}
+
 		}
 
-		Knote endKnote = knotenList.get(endKnoteId);
+		Knote endKnote = graphParse.knotenList.get(endKnoteId);
 		System.out.println("dijkstra	:" + startKnote + "--" + endKnote + "	Länge:	" + endKnote.knoteGewicht);
 
-		return knoten;
 	}
 
 	/**
@@ -598,7 +599,7 @@ public class Graph {
 
 	public void mooreBellmanFord(int startKnoteId, int endKnoteId) throws Exception {
 
-		for (Knote v : knotenList) {
+		for (Knote v : graphParse.knotenList) {
 			if (v.id == startKnoteId) {
 				v.knoteGewicht = 0;
 			} else {
@@ -606,48 +607,135 @@ public class Graph {
 			}
 		}
 
-		ArrayList<Kante> negativZykel = null; 
-		
-		//Anzahl von Interation ist Anzahl von Konten
-		for (int i = 0; i < knotenList.size(); i++) {
-			if (i < knotenList.size() - 1) {
-				mooreBellmanFordSchleife(false);
-			} else {
-				negativZykel = mooreBellmanFordSchleife(true);
-			}
+		for (int i = 0; i < graphParse.knotenList.size() - 1; i++) {
+			mooreBellmanFordSchleife();
 		}
 
-		Knote endKnote = knotenList.get(endKnoteId);
+		ArrayList<Kante> negativZykel = mooreBellmanFordSchleife();
 
-		if(negativZykel.size()>0){
-			System.out.println("BellmanFord	:" + startKnoteId + "--" + endKnoteId + "	kanten:"+negativZykel+" in dem negativen Zyklus");
-		}else{
-			System.out.println("BellmanFord	:" + startKnoteId + "--" + endKnoteId + "	Länge:	" + endKnote.knoteGewicht);
-			
+		if (negativZykel.size() > 0) {
+			System.out.println("BellmanFord	:" + startKnoteId + "--" + endKnoteId + "	kanten:" + negativZykel
+					+ " in dem negativen Zyklus");
+		} else {
+			Knote endKnote = graphParse.knotenList.get(endKnoteId);
+			System.out.println(
+					"BellmanFord	:" + startKnoteId + "--" + endKnoteId + "	Länge:	" + endKnote.knoteGewicht);
+
 		}
 
 	}
 
-	public ArrayList<Kante> mooreBellmanFordSchleife(boolean letzteMal) throws Exception {
-		ArrayList<Kante> negativZykel = new ArrayList<Kante>(); 
-		for (Kante kante : kantenList) {
+	public ArrayList<Kante> mooreBellmanFordSchleife() throws Exception {
+		ArrayList<Kante> negativZykel = new ArrayList<Kante>();
+		for (Kante kante : graphParse.kantenList) {
 			Knote vorgängerKonte = kante.vorgängerKonte;
 			Knote nachgängerKnote = kante.nachgängerKnote;
 			if (vorgängerKonte.knoteGewicht + kante.gewicht < nachgängerKnote.knoteGewicht) {
 				nachgängerKnote.knoteGewicht = vorgängerKonte.knoteGewicht + kante.gewicht;
 				nachgängerKnote.previousKnote = vorgängerKonte;
-				
-				//Wenn in der letzte Interation es immer noch eine Änderung gibt,dann gibt es einen negativen Zyklus
-				if(letzteMal){
-//					System.out.println("kante:"+kante+" in dem negativen Zyklus");
-					negativZykel.add(kante);
-				}
+				negativZykel.add(kante);
 			}
-
 		}
-		
+
 		return negativZykel;
 
+	}
+
+	/**
+	 * ------------------------------------------------------------------------------------
+	 */
+	public void fordFulkerson(int startKnoteId, int endKnoteId) throws Exception {
+
+		Fluss fluss = flussSucheDurchBreitenSuche(startKnoteId, endKnoteId);
+
+		while (fluss != null) {
+
+			fluss = flussSucheDurchBreitenSuche(startKnoteId, endKnoteId);
+		}
+
+		System.out.println("insgesamtFluswert:" + insgesamtFluswert);
+	}
+
+	public Fluss flussSucheDurchBreitenSuche(int startKnoteId, int endKnoteId) throws Exception {
+
+		besuchtKnoten.clear();
+
+		Queue<Knote> queue = new LinkedList<Knote>();
+
+		Knote startKnote = graphParse.knotenList.get(startKnoteId);
+		queue.add(startKnote);
+		besuchtKnoten.add(startKnote);
+
+		while (!queue.isEmpty()) {
+
+			// poll 这里可以得到广度优先遍历的顺序
+			Knote vater = queue.poll();
+
+			for (Kante kante : vater.getNachbarKantenList()) {
+				if (!besuchtKnoten.contains(kante.nachgängerKnote)) {
+					queue.add(kante.nachgängerKnote);
+					besuchtKnoten.add(kante.nachgängerKnote);
+					
+					kante.nachgängerKnote.previousKnote = kante.vorgängerKonte;
+				}
+			}
+		}
+
+		
+		Knote endKonte = graphParse.knotenList.get(endKnoteId);
+
+		//find Fluss von 7 nach 0, durch previousKnote,z.B 7-4,4-3,3-0 diese drei KantenReihfolge
+		Fluss fluss = getFlussDurchEndKnote(endKonte);
+
+		if (fluss != null) {
+
+			insgesamtFluswert += fluss.flussWert;
+
+			createResidualGraph(fluss);
+		}
+
+		return fluss;
+	}
+
+
+	public Fluss getFlussDurchEndKnote(Knote letzteKnote) {
+		
+		ArrayList<Kante> kantenFluss = new ArrayList<Kante>();
+		Knote previousKnote = letzteKnote.previousKnote;
+		
+		float minimalFluswert = Float.MAX_VALUE;
+		while (previousKnote != null) {
+			Kante kante = previousKnote.getKanteMitId(letzteKnote);
+
+			if (kante != null) {
+				kantenFluss.add(kante);
+				letzteKnote = kante.vorgängerKonte;
+				previousKnote = letzteKnote.previousKnote;
+
+				if (kante.gewicht < minimalFluswert) {
+					minimalFluswert = kante.gewicht;
+				}
+			} else {
+				return null;
+			}
+		}
+
+		Fluss fluss = new Fluss(minimalFluswert, kantenFluss);
+
+		return fluss;
+	}
+
+	public void createResidualGraph(Fluss fluss) {
+		for (Kante kante : fluss.kantenList) {
+
+			kante.gewicht = kante.gewicht - fluss.flussWert;
+
+			this.graphParse.addNewKnate(kante.nachgängerKnote, kante.vorgängerKonte, fluss.flussWert);
+
+			if (kante.gewicht == 0) {
+				kante.vorgängerKonte.removeKnoteUndKante(kante.nachgängerKnote);
+			}		
+		}
 	}
 
 }
