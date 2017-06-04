@@ -1,6 +1,10 @@
-package com.graph;
+package com.other;
 
 import java.util.*;
+
+import com.graph.GraphParse;
+import com.graph.Kante;
+import com.graph.Knote;
 
 public class Kruskal {
 

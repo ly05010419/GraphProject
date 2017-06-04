@@ -50,15 +50,15 @@ public class GraphParse {
 
 				for (int j = 0; j < s.length; j++) {
 					if (s[j].equals("1")) {
-						createKonte(knotenList.get(i), knotenList.get(j), 0);
+						createKnate(knotenList.get(i), knotenList.get(j), 0);
 					}
 				}
 			} else {
 
-				createKonte(knotenList.get(Integer.parseInt(s[0])), knotenList.get(Integer.parseInt(s[1])), gewicht);
+				createKnate(knotenList.get(Integer.parseInt(s[0])), knotenList.get(Integer.parseInt(s[1])), gewicht);
 
 				if (!gerichtetGraph) {
-					createKonte(knotenList.get(Integer.parseInt(s[1])), knotenList.get(Integer.parseInt(s[0])),
+					createKnate(knotenList.get(Integer.parseInt(s[1])), knotenList.get(Integer.parseInt(s[0])),
 							gewicht);
 				}
 			}
@@ -93,16 +93,31 @@ public class GraphParse {
 		// System.out.println("kantenList:"+kantenList);
 	}
 
-	public void createKonte(Knote rootKnote, Knote kindKnote, float gewicht) {
+	private void createKnate(Knote rootKnote, Knote kindKnote, float gewicht) {
 
 		rootKnote.getNachbarKnotenList().add(kindKnote);
 
-		Kante kante = new Kante(rootKnote, kindKnote, gewicht,this.gerichtetGraph);
-		// UngerichtetKante kante = new UngerichtetKante(rootKnote,kindKnote,
-		// (int)(1+Math.random()*(10-1+1)));
+		Kante kante = new Kante(rootKnote, kindKnote, gewicht, this.gerichtetGraph);
 		rootKnote.getNachbarKantenList().add(kante);
 
 		kantenSet.add(kante);
 		kantenMap.put(kante.kanteId, kante);
+	}
+
+	public void addNewKnate(Knote rootKnote, Knote kindKnote, float gewicht) {
+
+		Kante kante = new Kante(rootKnote, kindKnote, gewicht, this.gerichtetGraph);
+
+		if (!kantenList.contains(kante)) {
+			rootKnote.getNachbarKnotenList().add(kindKnote);
+			rootKnote.getNachbarKantenList().add(kante);
+
+			kantenList.add(kante);
+			kantenMap.put(kante.kanteId, kante);
+		}else{
+			kante = kantenMap.get(kante.kanteId);
+			kante.gewicht+=gewicht;
+		}
+
 	}
 }
