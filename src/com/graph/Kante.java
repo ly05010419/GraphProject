@@ -36,7 +36,7 @@ public class Kante implements Comparable<Kante> {
 
 	public String toString() {
 
-		return "(" + vorgängerKonte.id + "," + nachgängerKnote.id + ",g:" + gewicht + ",k:" + kapazität +" )";
+		return "(" + vorgängerKonte.id + "," + nachgängerKnote.id +",k:" + kapazität + ",g:" + gewicht + " )";
 	}
 
 	// Prüfung für zwei kante nach Reihenfolge,ob es gleich ist. z.B. Kante(2-9)

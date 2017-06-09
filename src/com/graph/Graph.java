@@ -36,9 +36,9 @@ public class Graph {
 		this.mitBalance = parser.mitBalance;
 	}
 
-	public void createRueckKnate(Knote rootKnote, Knote kindKnote, float kapazität) {
+	public void createRueckKnate(Knote rootKnote, Knote kindKnote, float gewicht, float kapazität) {
 
-		Kante kante = new Kante(rootKnote, kindKnote, 0 ,kapazität, this.gerichtetGraph);
+		Kante kante = new Kante(rootKnote, kindKnote, gewicht ,kapazität, this.gerichtetGraph);
 
 		if (!kantenList.contains(kante)) {
 			rootKnote.getNachbarKnotenList().add(kindKnote);
@@ -51,5 +51,12 @@ public class Graph {
 			kante.kapazität += kapazität;
 		}
 
+	}
+
+
+	public void removeKante(Kante kante) {
+		kante.vorgängerKonte.removeKnoteUndKante(kante.nachgängerKnote);
+		this.kantenList.remove(kante);
+		this.kantenMap.remove(kante.kanteId);
 	}
 }

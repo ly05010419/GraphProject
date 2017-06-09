@@ -10,6 +10,8 @@ public class Knote implements Comparable<Knote> {
 	public Knote previousKnote;
 	public float knoteGewicht;
 	public float balance;
+	public boolean mitBalance;
+	
 	private KnoteGruppe knoteGruppe;
 
 	public boolean hatKnoteGruppe() {

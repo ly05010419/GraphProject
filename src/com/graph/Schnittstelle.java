@@ -10,7 +10,7 @@ public class Schnittstelle {
 		// Schnittstelle.showTiefenSuche();
 		// Schnittstelle.showPrimUndKrusal();
 		// Schnittstelle.travelingSalesmanProblem();
-		// Schnittstelle.showKuerzesteWege();
+//		 Schnittstelle.showKuerzesteWege();
 //		 Schnittstelle.showfordFulkerson();
 		 Schnittstelle.showCycleCanceling();
 	}
