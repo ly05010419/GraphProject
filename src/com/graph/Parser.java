@@ -17,11 +17,13 @@ public class Parser {
 	public ArrayList<Kante> kantenList;
 	boolean gerichtetGraph = false;
 	boolean mitBalance = false;
+	boolean mitKapazität = false;
 
-	public Parser(String str, boolean gerichtetGraph, boolean mitBalance) throws Exception {
+	public Parser(String str, boolean gerichtetGraph, boolean mitKapazität, boolean mitBalance) throws Exception {
 
 		this.gerichtetGraph = gerichtetGraph;
 		this.mitBalance = mitBalance;
+		this.mitKapazität = mitKapazität;
 
 		FileReader reader = new FileReader(str);
 		BufferedReader bufferedReader = new BufferedReader(reader);
@@ -54,14 +56,20 @@ public class Parser {
 			String[] s = text.split("\\t");
 
 			float gewicht = 0;
-			float Kapazität = -1;
+			float kapazität = 0;
 			if (s.length == 3) {
 
-				gewicht = Float.parseFloat(s[2]);
+				if (this.mitKapazität) {
 
-			} else if (s.length == 4) {
+					kapazität = Float.parseFloat(s[2]);
+				} else {
+
+					gewicht = Float.parseFloat(s[2]);
+				}
+
+			} else if (this.mitBalance) {
 				gewicht = Float.parseFloat(s[2]);
-				Kapazität = Float.parseFloat(s[3]);
+				kapazität = Float.parseFloat(s[3]);
 			}
 
 			// AdjanzenMatrix
@@ -69,17 +77,17 @@ public class Parser {
 
 				for (int j = 0; j < s.length; j++) {
 					if (s[j].equals("1")) {
-						createKnate(knotenList.get(i), knotenList.get(j), 0, -1);
+						createKnate(knotenList.get(i), knotenList.get(j), 0, 0);
 					}
 				}
 			} else {
 
 				createKnate(knotenList.get(Integer.parseInt(s[0])), knotenList.get(Integer.parseInt(s[1])), gewicht,
-						Kapazität);
+						kapazität);
 
 				if (!gerichtetGraph) {
 					createKnate(knotenList.get(Integer.parseInt(s[1])), knotenList.get(Integer.parseInt(s[0])), gewicht,
-							Kapazität);
+							kapazität);
 				}
 			}
 
@@ -117,7 +125,7 @@ public class Parser {
 
 		rootKnote.getNachbarKnotenList().add(kindKnote);
 
-		Kante kante = new Kante(rootKnote, kindKnote, gewicht, this.gerichtetGraph, kapazität);
+		Kante kante = new Kante(rootKnote, kindKnote, gewicht, kapazität, this.gerichtetGraph);
 		rootKnote.getNachbarKantenList().add(kante);
 
 		kantenSet.add(kante);

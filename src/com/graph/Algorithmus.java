@@ -19,24 +19,22 @@ public class Algorithmus {
 	private float insgesamtGewicht = 0;
 	private float insgesamtFluswert = 0;
 	public Graph graph;
-	boolean gerichtetGraph = false;
 
 	public Algorithmus(String str) throws Exception {
-		this.graph = new Graph(str, false, false);
+		this.graph = new Graph(str, false, false, false);
 	}
 
 	public Algorithmus(String str, boolean gerichtetGraph) throws Exception {
 
-		this.gerichtetGraph = gerichtetGraph;
-
-		this.graph = new Graph(str, gerichtetGraph, false);
+		this.graph = new Graph(str, gerichtetGraph, false, false);
 	}
 
-	public Algorithmus(String str, boolean gerichtetGraph, boolean mitBalance) throws Exception {
+	public Algorithmus(String str, boolean gerichtetGraph, boolean mitKapazität) throws Exception {
+		this.graph = new Graph(str, gerichtetGraph, mitKapazität, false);
+	}
 
-		this.gerichtetGraph = gerichtetGraph;
-
-		this.graph = new Graph(str, gerichtetGraph, mitBalance);
+	public Algorithmus(String str, boolean gerichtetGraph, boolean mitKapazität, boolean mitBalance) throws Exception {
+		this.graph = new Graph(str, gerichtetGraph, mitKapazität, mitBalance);
 	}
 
 	/**
@@ -718,8 +716,8 @@ public class Algorithmus {
 			if (kante != null) {
 				fluss.kantenList.add(kante);
 
-				if (kante.gewicht < minimalFluswert) {
-					minimalFluswert = kante.gewicht;
+				if (kante.kapazität < minimalFluswert) {
+					minimalFluswert = kante.kapazität;
 				}
 
 				aktuellKnote = previousKnote;
@@ -741,11 +739,11 @@ public class Algorithmus {
 		for (Kante kante : fluss.kantenList) {
 
 			// alte Kante aktualisiert
-			kante.gewicht = kante.gewicht - fluss.flussWert;
+			kante.kapazität = kante.kapazität - fluss.flussWert;
 			// neu Kante erstellen
 			this.graph.createRueckKnate(kante.nachgängerKnote, kante.vorgängerKonte, fluss.flussWert);
 
-			if (kante.gewicht == 0) {
+			if (kante.kapazität == 0) {
 				kante.vorgängerKonte.removeKnoteUndKante(kante.nachgängerKnote);
 			}
 		}
@@ -758,6 +756,17 @@ public class Algorithmus {
 
 		System.out.println(this.graph.knotenList);
 		System.out.println(this.graph.kantenList);
+
+		this.erstellenSuperQuelleUndSenke();
+		this.fordFulkerson(0, 3);
+
+		System.out.println(this.graph.knotenList);
+		System.out.println(this.graph.kantenList);
+
+	}
+
+	public void erstellenSuperQuelleUndSenke() {
+
 	}
 
 }

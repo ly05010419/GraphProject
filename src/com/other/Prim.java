@@ -11,7 +11,7 @@ public class Prim {
 	public static void main(String[] args) throws Exception {
 
 		Prim primsDriver = new Prim();
-		Graph graphParse = new Graph("./assets/G_100_200.txt",false,false);
+		Graph graphParse = new Graph("./assets/G_100_200.txt");
 
 		long startTime = System.currentTimeMillis();
 

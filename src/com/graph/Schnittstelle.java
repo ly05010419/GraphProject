@@ -6,17 +6,18 @@ public class Schnittstelle {
 
 	public static void main(String[] args) throws Exception {
 
-		// Schnittstelle.showBreitenSucheUndTiefenSuche();
+		// Schnittstelle.showBreitenSuche();
+		// Schnittstelle.showTiefenSuche();
 		// Schnittstelle.showPrimUndKrusal();
 		// Schnittstelle.travelingSalesmanProblem();
 		// Schnittstelle.showKuerzesteWege();
-		// Schnittstelle.showfordFulkerson();
-		Schnittstelle.showCycleCanceling();
+//		 Schnittstelle.showfordFulkerson();
+		 Schnittstelle.showCycleCanceling();
 	}
 
 	public static void showCycleCanceling() throws Exception {
 
-		Algorithmus graph1 = new Algorithmus("./assets/kostenminimalFluss/KostenminimalTest.txt", true , true);
+		Algorithmus graph1 = new Algorithmus("./assets/kostenminimalFluss/KostenminimalTest.txt", true, true, true);
 		graph1.cycleCanceling();
 
 		// Graph graph1 = new
@@ -38,10 +39,10 @@ public class Schnittstelle {
 
 	public static void showfordFulkerson() throws Exception {
 
-		Algorithmus graph1 = new Algorithmus("./assets/Fluss/Fluss.txt", true);
+		Algorithmus graph1 = new Algorithmus("./assets/Fluss/Fluss.txt", true, true);
 		graph1.fordFulkerson(0, 7);
 
-		Algorithmus graph2 = new Algorithmus("./assets/MST/G_1_2.txt", true);
+		Algorithmus graph2 = new Algorithmus("./assets/MST/G_1_2.txt", true, true);
 		graph2.fordFulkerson(0, 7);
 	}
 
@@ -136,7 +137,7 @@ public class Schnittstelle {
 		}
 	}
 
-	public static void showBreitenSucheUndTiefenSuche() throws Exception {
+	public static void showBreitenSuche() throws Exception {
 
 		ArrayList<String> strList = new ArrayList<String>();
 		strList.add("./assets/BreitensucheUndTiefensuche/Graph1.txt");
@@ -154,6 +155,30 @@ public class Schnittstelle {
 			long startTime = System.currentTimeMillis();
 
 			graph.breitenSuche();
+
+			long endTime = System.currentTimeMillis();
+			System.out.println("Alle Zeit：		" + (endTime - startTime) / (1000.0) + "s");
+		}
+
+	}
+
+	public static void showTiefenSuche() throws Exception {
+
+		ArrayList<String> strList = new ArrayList<String>();
+		strList.add("./assets/BreitensucheUndTiefensuche/Graph1.txt");
+		strList.add("./assets/BreitensucheUndTiefensuche/Graph2.txt");
+		strList.add("./assets/BreitensucheUndTiefensuche/Graph3.txt");
+		strList.add("./assets/BreitensucheUndTiefensuche/Graph4.txt");
+		// strList.add("./assets/BreitensucheUndTiefensuche/Graph5.txt");
+
+		for (String str : strList) {
+
+			Schnittstelle.nameVonTxt(str);
+
+			Algorithmus graph = new Algorithmus(str, false);
+
+			long startTime = System.currentTimeMillis();
+
 			// graph.tiefenSuche();
 
 			long endTime = System.currentTimeMillis();

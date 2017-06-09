@@ -11,9 +11,23 @@ public class Graph {
 	public ArrayList<Kante> kantenList;
 	boolean gerichtetGraph = false;
 	boolean mitBalance = false;
+	boolean mitKapazität = false;
+	
 
-	public Graph(String str, boolean gerichtetGraph, boolean mitBalance) throws Exception {
-		Parser parser = new Parser(str, gerichtetGraph, mitBalance);
+	public Graph(String str, boolean gerichtetGraph,boolean mitKapazität, boolean mitBalance) throws Exception {
+		Parser parser = new Parser(str, gerichtetGraph, mitKapazität,mitBalance);
+		this.knoteAnzahl = parser.knoteAnzahl;
+		this.knotenList = parser.knotenList;
+		this.kantenList = parser.kantenList;
+		this.kantenMap = parser.kantenMap;
+		this.gerichtetGraph = parser.gerichtetGraph;
+		this.mitBalance = parser.mitBalance;
+		this.mitKapazität = parser.mitKapazität;
+	}
+	
+	
+	public Graph(String str) throws Exception {
+		Parser parser = new Parser(str, false, false,false);
 		this.knoteAnzahl = parser.knoteAnzahl;
 		this.knotenList = parser.knotenList;
 		this.kantenList = parser.kantenList;
@@ -22,9 +36,9 @@ public class Graph {
 		this.mitBalance = parser.mitBalance;
 	}
 
-	public void createRueckKnate(Knote rootKnote, Knote kindKnote, float gewicht) {
+	public void createRueckKnate(Knote rootKnote, Knote kindKnote, float kapazität) {
 
-		Kante kante = new Kante(rootKnote, kindKnote, gewicht, this.gerichtetGraph);
+		Kante kante = new Kante(rootKnote, kindKnote, 0 ,kapazität, this.gerichtetGraph);
 
 		if (!kantenList.contains(kante)) {
 			rootKnote.getNachbarKnotenList().add(kindKnote);
@@ -34,7 +48,7 @@ public class Graph {
 			kantenMap.put(kante.kanteId, kante);
 		} else {
 			kante = kantenMap.get(kante.kanteId);
-			kante.gewicht += gewicht;
+			kante.kapazität += kapazität;
 		}
 
 	}

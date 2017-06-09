@@ -102,7 +102,7 @@ public class Kruskal {
 	public static void main(String[] args) throws Exception {
 
 //		GraphParse graphParse = new GraphParse("./assets/G_100_200.txt");
-		 Graph graphParse = new Graph("./assets/G_1_2_1.txt",false,false);
+		 Graph graphParse = new Graph("./assets/G_1_2_1.txt");
 
 		long startTime = System.currentTimeMillis();
 

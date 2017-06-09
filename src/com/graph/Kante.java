@@ -15,12 +15,12 @@ public class Kante implements Comparable<Kante> {
 		this.gerichtetGraph = gerichtetGraph;
 	}
 
-	public Kante(Knote vorgängerKonte, Knote nachgängerKnote, float gewicht, boolean gerichtetGraph) {
+	public Kante(Knote vorgängerKonte, Knote nachgängerKnote, float gewicht,float kapazität, boolean gerichtetGraph) {
 		this.gerichtetGraph = gerichtetGraph;
 		this.vorgängerKonte = vorgängerKonte;
 		this.nachgängerKnote = nachgängerKnote;
 		this.gewicht = gewicht;
-
+		this.kapazität = kapazität; 
 		if (gerichtetGraph) {
 			if (vorgängerKonte.id < nachgängerKnote.id) {
 				kanteId = "" + vorgängerKonte.id + "" + nachgängerKnote.id;
@@ -32,10 +32,7 @@ public class Kante implements Comparable<Kante> {
 		}
 	}
 	
-	public Kante(Knote vorgängerKonte, Knote nachgängerKnote, float gewicht, boolean gerichtetGraph,float kapazität) {
-		this(vorgängerKonte,nachgängerKnote,gewicht,gerichtetGraph);
-		this.kapazität = kapazität; 
-	}
+	
 
 	public String toString() {
 
