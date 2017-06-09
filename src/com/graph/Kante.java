@@ -1,7 +1,13 @@
 package com.graph;
 
-public class Kante implements Comparable<Kante> {
+import java.io.Serializable;
 
+public class Kante implements Comparable<Kante>, Serializable{
+
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -2252238274991575615L;
 	public Knote vorgängerKonte;
 	public Knote nachgängerKnote;
 	public float gewicht;//oder die Kosten

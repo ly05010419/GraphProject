@@ -1,10 +1,15 @@
 package com.graph;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-public class Graph {
+public class Graph implements Serializable{
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 5700317175218085176L;
 	public int knoteAnzahl;
 	public ArrayList<Knote> knotenList;
 	public HashMap<String, Kante> kantenMap;
