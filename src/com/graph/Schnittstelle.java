@@ -10,42 +10,60 @@ public class Schnittstelle {
 		// Schnittstelle.showPrimUndKrusal();
 		// Schnittstelle.travelingSalesmanProblem();
 		// Schnittstelle.showKuerzesteWege();
-		Schnittstelle.showfordFulkerson();
+		// Schnittstelle.showfordFulkerson();
+		Schnittstelle.showCycleCanceling();
+	}
+
+	public static void showCycleCanceling() throws Exception {
+
+		Algorithmus graph1 = new Algorithmus("./assets/kostenminimalFluss/KostenminimalTest.txt", true , true);
+		graph1.cycleCanceling();
+
+		// Graph graph1 = new
+		// Graph("./assets/kostenminimalFluss/Kostenminimal1.txt", true);
+		// graph1.cycleCanceling();
+		//
+		// Graph graph2 = new
+		// Graph("./assets/kostenminimalFluss/Kostenminimal2.txt", true);
+		// graph2.cycleCanceling();
+		//
+		// Graph graph3 = new
+		// Graph("./assets/kostenminimalFluss/Kostenminimal3.txt", true);
+		// graph3.cycleCanceling();
+		//
+		// Graph graph4 = new
+		// Graph("./assets/kostenminimalFluss/Kostenminimal4.txt", true);
+		// graph4.cycleCanceling();
 	}
 
 	public static void showfordFulkerson() throws Exception {
-		Graph graph1 = new Graph("./assets/Fluss/Fluss.txt", true);
-		graph1.fordFulkerson(0,7);
-		
-//		
-		long startTime = System.currentTimeMillis();
-		
-		Graph graph2 = new Graph("./assets/MST/G_1_2.txt",true);
-		graph2.fordFulkerson(0,7);
-		long endTime = System.currentTimeMillis();
-		System.out.println("Alle Zeit：		" + (endTime - startTime) / (1000.0) + "s");
 
+		Algorithmus graph1 = new Algorithmus("./assets/Fluss/Fluss.txt", true);
+		graph1.fordFulkerson(0, 7);
+
+		Algorithmus graph2 = new Algorithmus("./assets/MST/G_1_2.txt", true);
+		graph2.fordFulkerson(0, 7);
 	}
 
 	public static void showKuerzesteWege() throws Exception {
 
-		Graph graph1 = new Graph("./assets/Wege/Wege1.txt", true);
+		Algorithmus graph1 = new Algorithmus("./assets/Wege/Wege1.txt", true);
 		graph1.dijkstra(2, 0);
 
-		Graph graph2 = new Graph("./assets/Wege/Wege2.txt", true);
+		Algorithmus graph2 = new Algorithmus("./assets/Wege/Wege2.txt", true);
 		graph2.mooreBellmanFord(2, 0);
 
-		Graph graph3 = new Graph("./assets/Wege/Wege3.txt", true);
+		Algorithmus graph3 = new Algorithmus("./assets/Wege/Wege3.txt", true);
 		graph3.mooreBellmanFord(2, 0);
 
-		Graph graph4 = new Graph("./assets/MST/G_1_2.txt", true);
+		Algorithmus graph4 = new Algorithmus("./assets/MST/G_1_2.txt", true);
 		graph4.mooreBellmanFord(0, 1);
-		Graph graph6 = new Graph("./assets/MST/G_1_2.txt", true);
+		Algorithmus graph6 = new Algorithmus("./assets/MST/G_1_2.txt", true);
 		graph6.dijkstra(0, 1);
 
-		Graph graph5 = new Graph("./assets/MST/G_1_2.txt", false);
+		Algorithmus graph5 = new Algorithmus("./assets/MST/G_1_2.txt", false);
 		graph5.mooreBellmanFord(0, 1);
-		Graph graph7 = new Graph("./assets/MST/G_1_2.txt", false);
+		Algorithmus graph7 = new Algorithmus("./assets/MST/G_1_2.txt", false);
 		graph7.dijkstra(0, 1);
 		//
 
@@ -72,7 +90,7 @@ public class Schnittstelle {
 
 			Schnittstelle.nameVonTxt(str);
 
-			Graph graph = new Graph(str, false);
+			Algorithmus graph = new Algorithmus(str, false);
 
 			long startTime = System.currentTimeMillis();
 
@@ -106,7 +124,7 @@ public class Schnittstelle {
 
 			Schnittstelle.nameVonTxt(str);
 
-			Graph graph = new Graph(str, false);
+			Algorithmus graph = new Algorithmus(str, false);
 
 			long startTime = System.currentTimeMillis();
 
@@ -131,7 +149,7 @@ public class Schnittstelle {
 
 			Schnittstelle.nameVonTxt(str);
 
-			Graph graph = new Graph(str, false);
+			Algorithmus graph = new Algorithmus(str, false);
 
 			long startTime = System.currentTimeMillis();
 
@@ -152,8 +170,7 @@ public class Schnittstelle {
 			System.out.println(str.replace("./assets/MST/", "").replace(".txt", ""));
 		} else if (str.contains("./assets/BreitensucheUndTiefensuche/")) {
 			System.out.println(str.replace("./assets/BreitensucheUndTiefensuche/", "").replace(".txt", ""));
-		}
-		else if (str.contains("./assets/BreitensucheUndTiefensuche/")) {
+		} else if (str.contains("./assets/BreitensucheUndTiefensuche/")) {
 			System.out.println(str.replace("./assets/BreitensucheUndTiefensuche/", "").replace(".txt", ""));
 		}
 	}

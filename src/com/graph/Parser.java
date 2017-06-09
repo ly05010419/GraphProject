@@ -8,8 +8,7 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
 
-//缺Adjanzmatrix
-public class GraphParse {
+public class Parser {
 
 	public int knoteAnzahl;
 	public ArrayList<Knote> knotenList = new ArrayList<Knote>();
@@ -17,19 +16,35 @@ public class GraphParse {
 	public HashMap<String, Kante> kantenMap = new HashMap<String, Kante>();
 	public ArrayList<Kante> kantenList;
 	boolean gerichtetGraph = false;
+	boolean mitBalance = false;
 
-	public GraphParse(String str, boolean gerichtetGraph) throws Exception {
+	public Parser(String str, boolean gerichtetGraph, boolean mitBalance) throws Exception {
 
 		this.gerichtetGraph = gerichtetGraph;
+		this.mitBalance = mitBalance;
 
 		FileReader reader = new FileReader(str);
 		BufferedReader bufferedReader = new BufferedReader(reader);
 		String text = bufferedReader.readLine();
 		knoteAnzahl = Integer.parseInt(text);
 
-		for (int i = 0; i < knoteAnzahl; i++) {
-			Knote knote = new Knote(i);
-			knotenList.add(knote);
+		if (this.mitBalance) {
+			for (int i = 0; i < knoteAnzahl; i++) {
+				text = bufferedReader.readLine();
+
+				float balance = Float.parseFloat(text);
+				Knote knote = new Knote(i);
+				knote.balance = balance;
+				knotenList.add(knote);
+			}
+
+		} else {
+
+			for (int i = 0; i < knoteAnzahl; i++) {
+				Knote knote = new Knote(i);
+				knotenList.add(knote);
+			}
+
 		}
 
 		text = bufferedReader.readLine();
@@ -39,27 +54,32 @@ public class GraphParse {
 			String[] s = text.split("\\t");
 
 			float gewicht = 0;
+			float Kapazität = -1;
 			if (s.length == 3) {
 
 				gewicht = Float.parseFloat(s[2]);
 
+			} else if (s.length == 4) {
+				gewicht = Float.parseFloat(s[2]);
+				Kapazität = Float.parseFloat(s[3]);
 			}
 
 			// AdjanzenMatrix
-			if (s.length > 3) {
+			if (s.length > 3 && !this.mitBalance) {
 
 				for (int j = 0; j < s.length; j++) {
 					if (s[j].equals("1")) {
-						createKnate(knotenList.get(i), knotenList.get(j), 0);
+						createKnate(knotenList.get(i), knotenList.get(j), 0, -1);
 					}
 				}
 			} else {
 
-				createKnate(knotenList.get(Integer.parseInt(s[0])), knotenList.get(Integer.parseInt(s[1])), gewicht);
+				createKnate(knotenList.get(Integer.parseInt(s[0])), knotenList.get(Integer.parseInt(s[1])), gewicht,
+						Kapazität);
 
 				if (!gerichtetGraph) {
-					createKnate(knotenList.get(Integer.parseInt(s[1])), knotenList.get(Integer.parseInt(s[0])),
-							gewicht);
+					createKnate(knotenList.get(Integer.parseInt(s[1])), knotenList.get(Integer.parseInt(s[0])), gewicht,
+							Kapazität);
 				}
 			}
 
@@ -93,31 +113,15 @@ public class GraphParse {
 		// System.out.println("kantenList:"+kantenList);
 	}
 
-	private void createKnate(Knote rootKnote, Knote kindKnote, float gewicht) {
+	private void createKnate(Knote rootKnote, Knote kindKnote, float gewicht, float kapazität) {
 
 		rootKnote.getNachbarKnotenList().add(kindKnote);
 
-		Kante kante = new Kante(rootKnote, kindKnote, gewicht, this.gerichtetGraph);
+		Kante kante = new Kante(rootKnote, kindKnote, gewicht, this.gerichtetGraph, kapazität);
 		rootKnote.getNachbarKantenList().add(kante);
 
 		kantenSet.add(kante);
 		kantenMap.put(kante.kanteId, kante);
 	}
 
-	public void addNewKnate(Knote rootKnote, Knote kindKnote, float gewicht) {
-
-		Kante kante = new Kante(rootKnote, kindKnote, gewicht, this.gerichtetGraph);
-
-		if (!kantenList.contains(kante)) {
-			rootKnote.getNachbarKnotenList().add(kindKnote);
-			rootKnote.getNachbarKantenList().add(kante);
-
-			kantenList.add(kante);
-			kantenMap.put(kante.kanteId, kante);
-		}else{
-			kante = kantenMap.get(kante.kanteId);
-			kante.gewicht+=gewicht;
-		}
-
-	}
 }

@@ -4,8 +4,8 @@ public class Kante implements Comparable<Kante> {
 
 	public Knote vorgängerKonte;
 	public Knote nachgängerKnote;
-	public float gewicht;
-//	public float flussWerte;
+	public float gewicht;//oder die Kosten
+	public float kapazität;
 	public String kanteId;
 	boolean gerichtetGraph = false;
 
@@ -13,7 +13,6 @@ public class Kante implements Comparable<Kante> {
 		this.gewicht = weight;
 		this.nachgängerKnote = end;
 		this.gerichtetGraph = gerichtetGraph;
-//		this.flussWerte = 0;
 	}
 
 	public Kante(Knote vorgängerKonte, Knote nachgängerKnote, float gewicht, boolean gerichtetGraph) {
@@ -21,7 +20,6 @@ public class Kante implements Comparable<Kante> {
 		this.vorgängerKonte = vorgängerKonte;
 		this.nachgängerKnote = nachgängerKnote;
 		this.gewicht = gewicht;
-//		this.flussWerte = 0; 
 
 		if (gerichtetGraph) {
 			if (vorgängerKonte.id < nachgängerKnote.id) {
@@ -33,10 +31,15 @@ public class Kante implements Comparable<Kante> {
 			kanteId = "" + vorgängerKonte.id + "" + nachgängerKnote.id;
 		}
 	}
+	
+	public Kante(Knote vorgängerKonte, Knote nachgängerKnote, float gewicht, boolean gerichtetGraph,float kapazität) {
+		this(vorgängerKonte,nachgängerKnote,gewicht,gerichtetGraph);
+		this.kapazität = kapazität; 
+	}
 
 	public String toString() {
 
-		return "(" + vorgängerKonte.id + "," + nachgängerKnote.id + ",g:" + gewicht + " "+")";
+		return "(" + vorgängerKonte.id + "," + nachgängerKnote.id + ",g:" + gewicht + ",k:" + kapazität +" )";
 	}
 
 	// Prüfung für zwei kante nach Reihenfolge,ob es gleich ist. z.B. Kante(2-9)
