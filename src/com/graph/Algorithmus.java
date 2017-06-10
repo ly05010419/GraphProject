@@ -610,55 +610,54 @@ public class Algorithmus {
 	 * ------------------------------------------------------------------------------------
 	 */
 
-	public Kreis mooreBellmanFord(int startKnoteId, int endKnoteId, Graph newGraph) throws Exception {
+	public Kreis mooreBellmanFord(int startKnoteId, int endKnoteId, Graph graph) throws Exception {
 
-		for (Knote v : newGraph.knotenList) {
+		for (Knote v : graph.knotenList) {
 			if (v.id == startKnoteId) {
 				v.knoteGewicht = 0;
+				v.previousKnote = v;
 			} else {
 				v.knoteGewicht = Float.MAX_VALUE;
 			}
 		}
 
-		for (int i = 0; i < newGraph.knotenList.size() - 1; i++) {
-			mooreBellmanFordSchleife(newGraph);
+
+		for (int i = 0; i < graph.knotenList.size() - 1; i++) {
+			mooreBellmanFordSchleife(graph,false);
 		}
 
-		Kreis negativKreis = mooreBellmanFordSchleife(newGraph);
-
-		// if (negativKreis.kantenList.size() > 0) {
-		// System.out.println("BellmanFord :" + startKnoteId + "--" + endKnoteId
-		// + " kanten:" + negativKreis
-		// + " in dem negativen Zyklus");
-		// } else {
-		// Knote endKnote = graph.knotenList.get(endKnoteId);
-		// System.out.println(
-		// "BellmanFord :" + startKnoteId + "--" + endKnoteId + " Länge: " +
-		// endKnote.knoteGewicht);
-		//
-		// }
+		Kreis negativKreis = mooreBellmanFordSchleife(graph,true);
 
 		return negativKreis;
 
 	}
 
-	public Kreis mooreBellmanFordSchleife(Graph newGraph) {
+	public Kreis mooreBellmanFordSchleife(Graph graph,boolean letzteMal) {
 		ArrayList<Kante> kantenInNegativKreis = new ArrayList<Kante>();
-		for (Kante kante : newGraph.kantenList) {
+		for (Kante kante : graph.kantenList) {
 			Knote vorgängerKonte = kante.vorgängerKonte;
 			Knote nachgängerKnote = kante.nachgängerKnote;
-			if (vorgängerKonte.knoteGewicht + kante.gewicht < nachgängerKnote.knoteGewicht) {
+			float atkualGewicht = vorgängerKonte.knoteGewicht + kante.gewicht;
+			if( atkualGewicht < nachgängerKnote.knoteGewicht) {
+				System.out.println("atkualGewicht:"+atkualGewicht+","+nachgängerKnote.knoteGewicht);
+				
 				nachgängerKnote.knoteGewicht = vorgängerKonte.knoteGewicht + kante.gewicht;
 				nachgängerKnote.previousKnote = vorgängerKonte;
 				kantenInNegativKreis.add(kante);
 			}
 		}
-
-		if (!kantenInNegativKreis.isEmpty()) {
-			return this.findNegativKreis(kantenInNegativKreis);
-		} else {
+		System.out.println(graph.knotenList);
+		
+		if(letzteMal){
+			if (!kantenInNegativKreis.isEmpty()) {
+				return this.findNegativKreis(kantenInNegativKreis);
+			} else {
+				return null;
+			}
+		}else {
 			return null;
 		}
+		
 	}
 
 	public Kreis findNegativKreis(ArrayList<Kante> kantenInNegativKreis) {
@@ -681,9 +680,9 @@ public class Algorithmus {
 
 					nachgängerKnote = k.nachgängerKnote;
 
-					if (java.lang.Math.abs(k.gewicht) < minimalKreisWert) {
+					if (java.lang.Math.abs(k.getKapazität()) < minimalKreisWert) {
 
-						minimalKreisWert = k.gewicht;
+						minimalKreisWert = k.getKapazität();
 					}
 
 					break;
@@ -705,23 +704,20 @@ public class Algorithmus {
 	public ArrayList<Fluss> fordFulkerson(int startKnoteId, int endKnoteId, Graph graph) throws Exception {
 
 		ArrayList<Fluss> flussList = new ArrayList<Fluss>();
-		
-		
-		
+
 		Fluss fluss = flussSucheDurchBreitenSuche(startKnoteId, endKnoteId, graph);
-		
+
 		while (fluss != null) {
-			
-			
-//			System.out.println(fluss);
-//			System.out.println(graph.kantenList);
+
+			// System.out.println(fluss);
+			// System.out.println(graph.kantenList);
 			flussList.add(fluss);
 			fluss = flussSucheDurchBreitenSuche(startKnoteId, endKnoteId, graph);
-		
+
 		}
 
 		System.out.println(" Fluss gefunden und InsgesamtFluswert:" + insgesamtFluswert);
-		
+
 		return flussList;
 	}
 
@@ -818,11 +814,12 @@ public class Algorithmus {
 		for (Kante kante : fluss.kantenList) {
 
 			// alte Kante aktualisiert
-			kante.setFlussWert(kante.getFlussWert()+fluss.flussWert);
+			kante.setFlussWert(kante.getFlussWert() + fluss.flussWert);
 			// neu Kante erstellen
-			graph.createRueckKnate(kante.nachgängerKnote, kante.vorgängerKonte, -kante.gewicht,kante.getKapazität(), kante.getKapazität()-kante.getFlussWert());
+			graph.createRueckKnate(kante.nachgängerKnote, kante.vorgängerKonte, -kante.gewicht, kante.getKapazität(),
+					kante.getKapazität() - kante.getFlussWert());
 
-			if (kante.getVerfügebarKapazität()==0) {
+			if (kante.getVerfügebarKapazität() == 0) {
 				graph.removeKante(kante);
 			}
 		}
@@ -833,29 +830,96 @@ public class Algorithmus {
 	 */
 	public void cycleCanceling(Graph graph) throws Exception {
 
-		System.out.println("graph.kantenList:"+graph.kantenList);
+		System.out.println("graph.kantenList:" + graph.kantenList);
 		System.out.println("------------------------------------------------------------------------------------");
 
 		erstellenSuperQuelleUndSenke();
-		
+
 		Graph residualGraph = CloneUtils.clone(graph);
 		ArrayList<Fluss> flussList = fordFulkerson(0, 3, residualGraph);
-		System.out.println("flussList:"+flussList);
+		System.out.println("flussList:" + flussList);
+		System.out.println("------------------------------------------------------------------------------------");
+
+		System.out.println("residualGraph.kantenList:" + residualGraph.kantenList);
+		System.out.println("------------------------------------------------------------------------------------");
+
+		Kreis negativKreis = mooreBellmanFord(0, 3, residualGraph);
+		System.out.println("negativKreis:" + negativKreis);
+
+		System.out.println("------------------------------------------------------------------------------------");
+
+		// akualisiertFluss(flussList, negativKreis);
+
+		for (int i = 0; i < negativKreis.kantenList.size(); i++) {
+			Kante kante = negativKreis.kantenList.get(i);
+			if (kante.gewicht > 0) {
+				kante.setFlussWert(kante.getFlussWert() + negativKreis.kreisWert);
+			} else {
+				kante.setFlussWert(negativKreis.kreisWert);
+			}
+		}
+
+		System.out.println("residualGraph.kantenList:" + residualGraph.kantenList);
+		System.out.println("------------------------------------------------------------------------------------");
+
+		createResidualGraph(residualGraph);
+
+		System.out.println("residualGraph.kantenList:" + residualGraph.kantenList);
 		System.out.println("------------------------------------------------------------------------------------");
 		
-		System.out.println("graph.kantenList:"+graph.kantenList);
-		System.out.println("residualGraph.kantenList:"+residualGraph.kantenList);
+		negativKreis = mooreBellmanFord(0, 3, residualGraph);
+		System.out.println("negativKreis:" + negativKreis);
 		System.out.println("------------------------------------------------------------------------------------");
-		
-		
-//		Kreis negativKreis = mooreBellmanFord(0, 3, residualGraph);
-//		System.out.println("negativKreis:" + negativKreis);
-//
-//		System.out.println("------------------------------------------------------------------------------------");
-//		aktualisiertGraphDurchNegativKreis(graph, negativKreis);
-//		System.out.println("graph.kantenList:"+graph.kantenList);
+	}
+
+	public void createResidualGraph(Graph graph) {
+
+		ArrayList<Kante> rueckKnatenList = new ArrayList<Kante>();
+		ArrayList<Kante> removeKnatenList = new ArrayList<Kante>();
+
+		for (Kante kante : graph.kantenList) {
+
+			if (kante.getFlussWert() > 0) {
+
+				Kante rueckKnate = graph.findKante(kante.nachgängerKnote.id, kante.vorgängerKonte.id);
+
+				if (rueckKnate == null) {
+
+					rueckKnate = new Kante(kante.nachgängerKnote, kante.vorgängerKonte, -kante.gewicht,
+							kante.getKapazität(), kante.getKapazität() - kante.getFlussWert(), kante.gerichtetGraph);
+
+					rueckKnatenList.add(rueckKnate);
+
+				}
+				if (kante.getVerfügebarKapazität() == 0) {
+
+					removeKnatenList.add(kante);
+				}
+
+				System.out.println("kante:" + kante);
+				System.out.println("rueckKnate:" + rueckKnate);
+			}
+		}
+
+		for (Kante kante : rueckKnatenList) {
+
+			kante.nachgängerKnote.getNachbarKnotenList().add(kante.vorgängerKonte);
+			kante.nachgängerKnote.getNachbarKantenList().add(kante);
+			graph.kantenList.add(kante);
+			graph.kantenMap.put(kante.kanteId, kante);
+
+		}
+
+		for (Kante kante : removeKnatenList) {
+			kante.nachgängerKnote.getNachbarKnotenList().remove(kante.vorgängerKonte);
+			kante.nachgängerKnote.getNachbarKantenList().remove(kante);
+			graph.kantenList.remove(kante);
+			graph.kantenMap.remove(kante.kanteId);
+
+		}
 
 	}
+
 
 	public void erstellenSuperQuelleUndSenke() {
 
@@ -865,7 +929,7 @@ public class Algorithmus {
 		for (Kante kante : kreis.kantenList) {
 
 			// alte Kante aktualisiert
-			kante.setFlussWert(kante.getFlussWert()+ kreis.kreisWert);
+			kante.setFlussWert(kante.getFlussWert() + kreis.kreisWert);
 			Kante kanteVonGraph = graph.findKante(kante.vorgängerKonte.id, kante.nachgängerKnote.id);
 			if (kanteVonGraph != null) {
 				kanteVonGraph.gewicht += kante.gewicht;

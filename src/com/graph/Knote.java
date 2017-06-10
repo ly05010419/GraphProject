@@ -67,7 +67,7 @@ public class Knote implements Comparable<Knote>,Serializable {
 		// return "(id:" + id + ",previous:" + previousKnote.id+")";
 		// }
 		// return ""+id+",Gewicht:"+this.knoteGewicht;
-		return "" + id;
+		return "" + id+"("+this.previousKnote.id+"/"+this.knoteGewicht+")";
 	}
 
 	public Kante getKanteMitId(Knote endKnote) {

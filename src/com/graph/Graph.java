@@ -39,9 +39,9 @@ public class Graph implements Serializable {
 		this.mitBalance = parser.mitBalance;
 	}
 
-	public void createRueckKnate(Knote rootKnote, Knote kindKnote, float gewicht, float kapazität,float flussWert) {
+	public Kante createRueckKnate(Knote rootKnote, Knote kindKnote, float gewicht, float kapazität, float flussWert) {
 
-		Kante kante = new Kante(rootKnote, kindKnote, gewicht, kapazität,flussWert, this.gerichtetGraph);
+		Kante kante = new Kante(rootKnote, kindKnote, gewicht, kapazität, flussWert, this.gerichtetGraph);
 
 		if (!kantenList.contains(kante)) {
 			rootKnote.getNachbarKnotenList().add(kindKnote);
@@ -53,7 +53,7 @@ public class Graph implements Serializable {
 			kante = kantenMap.get(kante.kanteId);
 			kante.setFlussWert(flussWert);
 		}
-
+		return kante;
 	}
 
 	public void removeKante(Kante kante) {

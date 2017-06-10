@@ -2,7 +2,7 @@ package com.graph;
 
 import java.io.Serializable;
 
-public class Kante implements Comparable<Kante>, Serializable{
+public class Kante implements Comparable<Kante>, Serializable {
 
 	/**
 	 * 
@@ -10,12 +10,22 @@ public class Kante implements Comparable<Kante>, Serializable{
 	private static final long serialVersionUID = -2252238274991575615L;
 	public Knote vorgängerKonte;
 	public Knote nachgängerKnote;
-	public float gewicht;//oder die Kosten
+	public float gewicht;// oder die Kosten
 	private float kapazität;
 	private float flussWert;
 	private float verfügebarKapazität;
+
 	public float getKapazität() {
 		return kapazität;
+	}
+
+	public boolean isAvailable() {
+
+		if (this.getVerfügebarKapazität() > 0) {
+			return true;
+		} else {
+			return false;
+		}
 	}
 
 	public void setKapazität(float kapazität) {
@@ -31,7 +41,7 @@ public class Kante implements Comparable<Kante>, Serializable{
 	}
 
 	public float getVerfügebarKapazität() {
-		return this.kapazität-this.flussWert;
+		return this.kapazität - this.flussWert;
 	}
 
 	public void setVerfügebarKapazität(float verfügebarKapazität) {
@@ -40,8 +50,6 @@ public class Kante implements Comparable<Kante>, Serializable{
 
 	public String kanteId;
 	boolean gerichtetGraph = false;
-	
-	
 
 	public Kante(Knote end, float weight, boolean gerichtetGraph) {
 		this.gewicht = weight;
@@ -49,14 +57,15 @@ public class Kante implements Comparable<Kante>, Serializable{
 		this.gerichtetGraph = gerichtetGraph;
 	}
 
-	public Kante(Knote vorgängerKonte, Knote nachgängerKnote, float gewicht,float kapazität,float flussWert, boolean gerichtetGraph) {
+	public Kante(Knote vorgängerKonte, Knote nachgängerKnote, float gewicht, float kapazität, float flussWert,
+			boolean gerichtetGraph) {
 		this.gerichtetGraph = gerichtetGraph;
 		this.vorgängerKonte = vorgängerKonte;
 		this.nachgängerKnote = nachgängerKnote;
 		this.gewicht = gewicht;
 		this.kapazität = kapazität;
-		this.flussWert = flussWert; 
-		
+		this.flussWert = flussWert;
+
 		if (gerichtetGraph) {
 			kanteId = "" + vorgängerKonte.id + "" + nachgängerKnote.id;
 		} else {
@@ -67,12 +76,11 @@ public class Kante implements Comparable<Kante>, Serializable{
 			}
 		}
 	}
-	
-	
 
 	public String toString() {
 
-		return "(" + vorgängerKonte.id + "," + nachgängerKnote.id +",k("+flussWert+"/" + kapazität + "),g:" + gewicht + " )";
+		return " [" + vorgängerKonte.id + "," + nachgängerKnote.id + ", (" + flussWert + "/" + kapazität + "/" + gewicht
+				+ ") ]";
 	}
 
 	// Prüfung für zwei kante nach Reihenfolge,ob es gleich ist. z.B. Kante(2-9)
@@ -132,17 +140,17 @@ public class Kante implements Comparable<Kante>, Serializable{
 		}
 	}
 
-//	public static UngerichtetKante getKanteMitId(Knote knoteA, Knote knoteB,
-//			HashMap<String, UngerichtetKante> kantenMap) {
-//		String kanteId = null;
-//		
-//		if (knoteA.id < knoteB.id) {
-//			kanteId = knoteA.id + "" + knoteB.id;
-//		} else {
-//			kanteId = knoteB.id + "" + knoteA.id;
-//		}
-//		UngerichtetKante kante = kantenMap.get(kanteId);
-//		return kante;
-//	}
+	// public static UngerichtetKante getKanteMitId(Knote knoteA, Knote knoteB,
+	// HashMap<String, UngerichtetKante> kantenMap) {
+	// String kanteId = null;
+	//
+	// if (knoteA.id < knoteB.id) {
+	// kanteId = knoteA.id + "" + knoteB.id;
+	// } else {
+	// kanteId = knoteB.id + "" + knoteA.id;
+	// }
+	// UngerichtetKante kante = kantenMap.get(kanteId);
+	// return kante;
+	// }
 
 }
