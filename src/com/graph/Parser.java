@@ -126,7 +126,7 @@ public class Parser {
 
 		rootKnote.getNachbarKnotenList().add(kindKnote);
 
-		Kante kante = new Kante(rootKnote, kindKnote, gewicht, kapazität, this.gerichtetGraph);
+		Kante kante = new Kante(rootKnote, kindKnote, gewicht, kapazität,0, this.gerichtetGraph);
 		rootKnote.getNachbarKantenList().add(kante);
 
 		kantenSet.add(kante);

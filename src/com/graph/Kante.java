@@ -11,9 +11,37 @@ public class Kante implements Comparable<Kante>, Serializable{
 	public Knote vorgängerKonte;
 	public Knote nachgängerKnote;
 	public float gewicht;//oder die Kosten
-	public float kapazität;
+	private float kapazität;
+	private float flussWert;
+	private float verfügebarKapazität;
+	public float getKapazität() {
+		return kapazität;
+	}
+
+	public void setKapazität(float kapazität) {
+		this.kapazität = kapazität;
+	}
+
+	public float getFlussWert() {
+		return flussWert;
+	}
+
+	public void setFlussWert(float flussWert) {
+		this.flussWert = flussWert;
+	}
+
+	public float getVerfügebarKapazität() {
+		return this.kapazität-this.flussWert;
+	}
+
+	public void setVerfügebarKapazität(float verfügebarKapazität) {
+		this.verfügebarKapazität = verfügebarKapazität;
+	}
+
 	public String kanteId;
 	boolean gerichtetGraph = false;
+	
+	
 
 	public Kante(Knote end, float weight, boolean gerichtetGraph) {
 		this.gewicht = weight;
@@ -21,20 +49,22 @@ public class Kante implements Comparable<Kante>, Serializable{
 		this.gerichtetGraph = gerichtetGraph;
 	}
 
-	public Kante(Knote vorgängerKonte, Knote nachgängerKnote, float gewicht,float kapazität, boolean gerichtetGraph) {
+	public Kante(Knote vorgängerKonte, Knote nachgängerKnote, float gewicht,float kapazität,float flussWert, boolean gerichtetGraph) {
 		this.gerichtetGraph = gerichtetGraph;
 		this.vorgängerKonte = vorgängerKonte;
 		this.nachgängerKnote = nachgängerKnote;
 		this.gewicht = gewicht;
-		this.kapazität = kapazität; 
+		this.kapazität = kapazität;
+		this.flussWert = flussWert; 
+		
 		if (gerichtetGraph) {
+			kanteId = "" + vorgängerKonte.id + "" + nachgängerKnote.id;
+		} else {
 			if (vorgängerKonte.id < nachgängerKnote.id) {
 				kanteId = "" + vorgängerKonte.id + "" + nachgängerKnote.id;
 			} else {
 				kanteId = "" + nachgängerKnote.id + "" + vorgängerKonte.id;
 			}
-		} else {
-			kanteId = "" + vorgängerKonte.id + "" + nachgängerKnote.id;
 		}
 	}
 	
@@ -42,7 +72,7 @@ public class Kante implements Comparable<Kante>, Serializable{
 
 	public String toString() {
 
-		return "(" + vorgängerKonte.id + "," + nachgängerKnote.id +",k:" + kapazität + ",g:" + gewicht + " )";
+		return "(" + vorgängerKonte.id + "," + nachgängerKnote.id +",k("+flussWert+"/" + kapazität + "),g:" + gewicht + " )";
 	}
 
 	// Prüfung für zwei kante nach Reihenfolge,ob es gleich ist. z.B. Kante(2-9)

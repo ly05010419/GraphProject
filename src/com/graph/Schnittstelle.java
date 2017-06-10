@@ -11,8 +11,8 @@ public class Schnittstelle {
 		// Schnittstelle.showPrimUndKrusal();
 		// Schnittstelle.travelingSalesmanProblem();
 //		 Schnittstelle.showKuerzesteWege();
-//		 Schnittstelle.showfordFulkerson();
-		 Schnittstelle.showCycleCanceling();
+		 Schnittstelle.showfordFulkerson();
+//		 Schnittstelle.showCycleCanceling();
 	}
 
 	public static void showCycleCanceling() throws Exception {
@@ -40,9 +40,9 @@ public class Schnittstelle {
 
 	public static void showfordFulkerson() throws Exception {
 
-		Algorithmus algorithmus1 = new Algorithmus();
-		Graph graph1 = new Graph("./assets/Fluss/Fluss.txt", true, true, false);
-		algorithmus1.fordFulkerson(0, 7,graph1);
+//		Algorithmus algorithmus1 = new Algorithmus();
+//		Graph graph1 = new Graph("./assets/Fluss/Fluss.txt", true, true, false);
+//		algorithmus1.fordFulkerson(0, 7,graph1);
 
 		Algorithmus algorithmus2 = new Algorithmus();
 		Graph graph2 = new Graph("./assets/MST/G_1_2.txt", true, true, false);
