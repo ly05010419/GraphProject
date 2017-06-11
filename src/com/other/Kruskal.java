@@ -2,7 +2,7 @@ package com.other;
 
 import java.util.*;
 
-import com.graph.GraphParse;
+import com.graph.Graph;
 import com.graph.Kante;
 import com.graph.Knote;
 
@@ -102,7 +102,7 @@ public class Kruskal {
 	public static void main(String[] args) throws Exception {
 
 //		GraphParse graphParse = new GraphParse("./assets/G_100_200.txt");
-		 GraphParse graphParse = new GraphParse("./assets/G_1_2_1.txt",false);
+		 Graph graphParse = new Graph("./assets/G_1_2_1.txt");
 
 		long startTime = System.currentTimeMillis();
 

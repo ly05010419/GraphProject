@@ -3,7 +3,7 @@ package com.other;
 import java.util.List;
 import java.util.PriorityQueue;
 
-import com.graph.GraphParse;
+import com.graph.Graph;
 import com.graph.Kante;
 import com.graph.Knote;
 
@@ -11,7 +11,7 @@ public class Prim {
 	public static void main(String[] args) throws Exception {
 
 		Prim primsDriver = new Prim();
-		GraphParse graphParse = new GraphParse("./assets/G_100_200.txt",false);
+		Graph graphParse = new Graph("./assets/G_100_200.txt");
 
 		long startTime = System.currentTimeMillis();
 
