@@ -3,13 +3,9 @@ package com.graph;
 import java.util.ArrayList;
 
 public class Kreis {
-	public ArrayList<Kante> kantenList;
+	public ArrayList<Kante> kantenList = new ArrayList<Kante> ();
 	public float kreisWert;
 	
-	public Kreis(){
-		this.kantenList = new ArrayList<Kante>();
-		
-	}
 	
 	public String toString(){
 		

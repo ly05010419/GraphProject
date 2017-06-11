@@ -58,8 +58,8 @@ public class Graph implements Serializable {
 
 	public void removeKante(Kante kante) {
 		kante.vorgängerKonte.removeKnoteUndKante(kante.nachgängerKnote);
-		this.kantenList.remove(kante);
-		this.kantenMap.remove(kante.kanteId);
+//		this.kantenList.remove(kante);
+//		this.kantenMap.remove(kante.kanteId);
 	}
 
 	public Kante findKante(int id, int id2) {

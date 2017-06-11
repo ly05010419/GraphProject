@@ -53,20 +53,6 @@ public class Knote implements Comparable<Knote>,Serializable {
 
 	public String toString() {
 
-		// if (previousKnote == null) {
-		//
-		// StringBuffer sBuffer = new StringBuffer("(id:" + id+",[");
-		//
-		// for(Knote knote:this.getNachbarKnotenList()){
-		//
-		// sBuffer.append(knote.id+",");
-		// }
-		// sBuffer.append("])");
-		// return sBuffer.toString();
-		// } else {
-		// return "(id:" + id + ",previous:" + previousKnote.id+")";
-		// }
-		// return ""+id+",Gewicht:"+this.knoteGewicht;
 		return "" + id+"("+this.previousKnote.id+"/"+this.knoteGewicht+")";
 	}
 
