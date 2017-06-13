@@ -21,8 +21,8 @@ Zur Bestimmung der Anzahl der Zusammenhangskomponenten.
 
 
 
-Tiefensuche 坏了 有时间修复一下
+Tiefensuche 和 doppelterBaum 坏了 有时间修复一下
 
 
-doppelterBaum
+
 
