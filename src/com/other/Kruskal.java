@@ -86,7 +86,7 @@ public class Kruskal {
 			if (vorgängerKonteFindSet != nachgängerKnoteFindSet) {
 				// A = A union (u, v)
 				mst.add(kante);
-				ergbnis = ergbnis + kante.gewicht;
+				ergbnis = ergbnis + kante.kosten;
 				// UNION(u, v)
 				Union(kante.vorgängerKonte.id + "", kante.nachgängerKnote.id + "");
 				// System.out.println("PARENT"+PARENT);

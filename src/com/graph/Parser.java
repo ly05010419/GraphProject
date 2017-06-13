@@ -37,7 +37,7 @@ public class Parser {
 				float balance = Float.parseFloat(text);
 				Knote knote = new Knote(i);
 				knote.balance = balance;
-				knote.mitBalance = this.mitBalance;
+				
 				knotenList.add(knote);
 			}
 

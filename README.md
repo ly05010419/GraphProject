@@ -19,3 +19,10 @@ Zur Bestimmung der Anzahl der Zusammenhangskomponenten.
 ##### 6) Dijkstra戴克斯特拉 和 MooreBellmanFord贝尔曼-福特 算法的实现。
 ##### 7) Ford-Fulkerson 方法。
 
+
+
+Tiefensuche 和 doppelterBaum 坏了 有时间修复一下
+
+
+
+

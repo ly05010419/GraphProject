@@ -44,9 +44,9 @@ public class Prim {
 			Knote minKnote = priorityQueue.poll();
 			if (minKnote.nachbarKantenList != null && minKnote.nachbarKantenList.size() > 0) {
 				for (Kante edge : minKnote.nachbarKantenList) {
-					if (priorityQueue.contains(edge.nachgängerKnote) && edge.gewicht < edge.nachgängerKnote.knoteGewicht) {
+					if (priorityQueue.contains(edge.nachgängerKnote) && edge.kosten < edge.nachgängerKnote.knoteGewicht) {
 						priorityQueue.remove(edge.nachgängerKnote);
-						edge.nachgängerKnote.knoteGewicht = edge.gewicht;
+						edge.nachgängerKnote.knoteGewicht = edge.kosten;
 						edge.nachgängerKnote.previousKnote = minKnote;
 						// System.out.println(edge.end);
 						priorityQueue.add(edge.nachgängerKnote);

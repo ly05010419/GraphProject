@@ -3,20 +3,18 @@ package com.graph;
 import java.io.Serializable;
 import java.util.ArrayList;
 
-public class Knote implements Comparable<Knote>, Serializable {
+public class Knote implements Comparable<Knote> ,Serializable{
 
 	/**
 	 * 
 	 */
-	private static final long serialVersionUID = -6641075211541355022L;
+	private static final long serialVersionUID = 2951053925989006851L;
 	public int id;
 	private ArrayList<Knote> nachbarKnoteList = new ArrayList<Knote>();
 	public ArrayList<Kante> nachbarKantenList = new ArrayList<Kante>();
 	public Knote previousKnote;
 	public float knoteGewicht;
 	public float balance;
-	public boolean mitBalance;
-
 	private KnoteGruppe knoteGruppe;
 
 	public boolean hatKnoteGruppe() {
@@ -52,12 +50,22 @@ public class Knote implements Comparable<Knote>, Serializable {
 	}
 
 	public String toString() {
-		if (this.previousKnote != null) {
-			return "" + id + "(" + this.previousKnote.id + "/" + this.knoteGewicht + ")";
-		} else {
-			return "" + id;
 
-		}
+		// if (previousKnote == null) {
+		//
+		// StringBuffer sBuffer = new StringBuffer("(id:" + id+",[");
+		//
+		// for(Knote knote:this.getNachbarKnotenList()){
+		//
+		// sBuffer.append(knote.id+",");
+		// }
+		// sBuffer.append("])");
+		// return sBuffer.toString();
+		// } else {
+		// return "(id:" + id + ",previous:" + previousKnote.id+")";
+		// }
+		// return ""+id+",Gewicht:"+this.knoteGewicht;
+		return "" + id;
 	}
 
 	public Kante getKanteMitId(Knote endKnote) {
