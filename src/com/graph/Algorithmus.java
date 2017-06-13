@@ -607,11 +607,12 @@ public class Algorithmus {
 
 	}
 
-	
-
 	public ArrayList<Kante> mooreBellmanFordSchleife(Graph graph) throws Exception {
 		ArrayList<Kante> negativZykel = new ArrayList<Kante>();
 		for (Kante kante : graph.kantenList) {
+			if (!kante.isAvailable()) {
+				continue;
+			}
 			Knote vorgängerKonte = kante.vorgängerKonte;
 			Knote nachgängerKnote = kante.nachgängerKnote;
 			if (vorgängerKonte.knoteGewicht + kante.kosten < nachgängerKnote.knoteGewicht) {
@@ -641,8 +642,8 @@ public class Algorithmus {
 			fluss = flussSucheDurchBreitenSuche(startKnoteId, endKnoteId, graph);
 		}
 
-		 System.out.println("Fluss gefunden und InsgesamtFluswert:" +
-		 insgesamtFluswert);
+		// System.out.println("Fluss gefunden und InsgesamtFluswert:" +
+		// insgesamtFluswert);
 
 		return flussList;
 	}
@@ -656,7 +657,7 @@ public class Algorithmus {
 		Knote startKnote = graph.knotenList.get(startKnoteId);
 		queue.add(startKnote);
 		besuchtKnoten.add(startKnote);
-		
+
 		if (graph.mitBalance) {
 			if (startKnote.balance == 0) {
 				return null;
@@ -691,7 +692,7 @@ public class Algorithmus {
 				startKnote.balance = 0;
 			}
 		}
-		
+
 		if (fluss != null) {
 
 			insgesamtFluswert += fluss.flussWert;
@@ -716,7 +717,7 @@ public class Algorithmus {
 
 			if (kante != null) {
 				fluss.kantenList.add(kante);
-				
+
 				if (kante.getVerfügebarKapazität() < minimalFluswert) {
 					minimalFluswert = kante.getVerfügebarKapazität();
 				}
@@ -737,25 +738,14 @@ public class Algorithmus {
 	}
 
 	public void createResidualGraph(Fluss fluss, Graph graph) {
-//		for (Kante kante : fluss.kantenList) {
-//
-//			// alte Kante aktualisiert
-//			kante.kapazität = kante.kapazität - fluss.flussWert;
-//			// neu Kante erstellen
-//			graph.createRueckKnate(kante.nachgängerKnote, kante.vorgängerKonte, fluss.flussWert);
-//
-//			if (kante.kapazität == 0) {
-//				kante.vorgängerKonte.removeKnoteUndKante(kante.nachgängerKnote);
-//			}
-//		}
-		
+
 		for (Kante kante : fluss.kantenList) {
 
 			// alte Kante aktualisiert
 			kante.setFlussWert(kante.getFlussWert() + fluss.flussWert);
 			// neu Kante erstellen
-			Kante rKante = graph.createRueckKnate(kante.nachgängerKnote, kante.vorgängerKonte, -kante.kosten, kante.getKapazität(),
-					kante.getKapazität() - kante.getFlussWert());
+			Kante rKante = graph.createRueckKnate(kante.nachgängerKnote, kante.vorgängerKonte, -kante.kosten,
+					kante.getKapazität(), kante.getKapazität() - kante.getFlussWert());
 
 			if (kante.getVerfügebarKapazität() == 0) {
 				graph.removeKante(kante);
@@ -768,10 +758,10 @@ public class Algorithmus {
 	 */
 	public void cycleCanceling(Graph graph) throws Exception {
 
-		System.out.println(graph.kantenList);
+		System.out.println("graph.kantenList:" + graph.kantenList);
+		System.out.println("------------------------------------------------------------------------------------");
 
 		// 找到Quelle和Senke
-
 		int quelleId = -1;
 		int senkeId = -1;
 
@@ -786,24 +776,24 @@ public class Algorithmus {
 		ArrayList<Fluss> flussList = fordFulkerson(quelleId, senkeId, graph);
 
 		System.out.println(flussList);
-		System.out.println(graph.kantenList);
+		System.out.println("ResidualGraph durch fordFulkerson:" + graph.kantenList);
 		System.out.println("------------------------------------------------------------------------------------");
+
+		// 只通过修改Knote找到负圈 对边的值没影响
 		Kreis negativKreis = findNegativZykeldurchMooreBellmanFord(quelleId, senkeId, graph);
 
-		System.out.println(graph.kantenList);
-		System.out.println("------------------------------------------------------------------------------------");
 		while (negativKreis != null) {
 			System.out.println("negativKreis:" + negativKreis);
 			System.out.println("------------------------------------------------------------------------------------");
 
 			aktualisertGraph(negativKreis, graph);
 
-			System.out.println("graph.kantenList:" + graph.kantenList);
+			System.out.println("aktualisiertGraph durch negativKreis:" + graph.kantenList);
 			System.out.println("------------------------------------------------------------------------------------");
 
 			createResidualGraph(graph);
 
-			System.out.println("graph.kantenList:" + graph.kantenList);
+			System.out.println("ResidualGraph:" + graph.kantenList);
 			System.out.println("------------------------------------------------------------------------------------");
 
 			negativKreis = findNegativZykeldurchMooreBellmanFord(quelleId, senkeId, graph);
@@ -819,12 +809,12 @@ public class Algorithmus {
 
 		System.out.println("kosten:" + kosten);
 	}
-	
+
 	public void erstellenSuperQuelleUndSenke() {
 
 	}
-	
-	//通过N-1次更新遍历边 第N次发现负圈
+
+	// 通过N-1次更新遍历边 第N次发现负圈
 	public Kreis findNegativZykeldurchMooreBellmanFord(int startKnoteId, int endKnoteId, Graph graph) throws Exception {
 
 		for (Knote v : graph.knotenList) {
@@ -846,8 +836,6 @@ public class Algorithmus {
 		return negativKreis;
 
 	}
-
-
 
 	// Die Kanten, die richtung wie NegativKreis sind, sollen addiert mit
 	// NegativKreis.kreisWert, sonst subtrahiert.
@@ -941,14 +929,14 @@ public class Algorithmus {
 				return getKreisVonLinkList(linkList);
 			}
 		}
-		
-		if(linkList.size()>0){
 
-		Knote firstKnote = linkList.getFirst().vorgängerKonte;
-		Knote lastKnote = linkList.getLast().nachgängerKnote;
+		if (linkList.size() > 0) {
 
-		Kante eineKante = lastKnote.getKanteMitId(firstKnote);
-		linkList.add(eineKante);
+			Knote firstKnote = linkList.getFirst().vorgängerKonte;
+			Knote lastKnote = linkList.getLast().nachgängerKnote;
+
+			Kante eineKante = lastKnote.getKanteMitId(firstKnote);
+			linkList.add(eineKante);
 		}
 
 		return getKreisVonLinkList(linkList);
@@ -966,8 +954,12 @@ public class Algorithmus {
 			kreis.kantenList.add(k);
 		}
 
-		kreis.kreisWert = minimalKreisWert;
-		return kreis;
+		if (kreis.kantenList.size() > 0) {
+			kreis.kreisWert = minimalKreisWert;
+			return kreis;
+		} else {
+			return null;
+		}
 
 	}
 

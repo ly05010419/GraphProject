@@ -49,13 +49,15 @@ public class Kante implements Comparable<Kante> ,Serializable{
 	
 	
 	
-	
+	public boolean isAvailable() {
 
-//	public String toString() {
-//
-//		return "(" + vorgängerKonte.id + "," + nachgängerKnote.id + ",g:" + kosten + ",k:" + kapazität +" )";
-//	}
-//	
+		if (this.getVerfügebarKapazität() > 0) {
+			return true;
+		} else {
+			return false;
+		}
+	}
+
 	public String toString() {
 
 		return " [" + vorgängerKonte.id + "," + nachgängerKnote.id + ", (" + flussWert + "/" + kapazität + "/" + kosten

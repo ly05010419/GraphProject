@@ -13,8 +13,8 @@ public class Schnittstelle {
 		// Schnittstelle.showPrimUndKrusal();
 		// Schnittstelle.travelingSalesmanProblem();
 		// Schnittstelle.showKuerzesteWege();
-		 Schnittstelle.showfordFulkerson();
-//		Schnittstelle.showCycleCanceling();
+//		 Schnittstelle.showfordFulkerson();
+		Schnittstelle.showCycleCanceling();
 	}
 
 	public static void showCycleCanceling() throws Exception {
