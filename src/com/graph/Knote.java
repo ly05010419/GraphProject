@@ -1,9 +1,14 @@
 package com.graph;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 
-public class Knote implements Comparable<Knote> {
+public class Knote implements Comparable<Knote> ,Serializable{
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 2951053925989006851L;
 	public int id;
 	private ArrayList<Knote> nachbarKnoteList = new ArrayList<Knote>();
 	public ArrayList<Kante> nachbarKantenList = new ArrayList<Kante>();

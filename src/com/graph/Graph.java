@@ -50,6 +50,32 @@ public class Graph {
 			kante = kantenMap.get(kante.kanteId);
 			kante.kapazität += kapazität;
 		}
+	}
+	
+	public Kante createRueckKnate(Knote rootKnote, Knote kindKnote, float gewicht, float kapazität, float flussWert) {
 
+		Kante kante = new Kante(rootKnote, kindKnote, gewicht, kapazität, flussWert, this.gerichtetGraph);
+
+		if (!kantenList.contains(kante)) {
+			rootKnote.getNachbarKnotenList().add(kindKnote);
+			rootKnote.getNachbarKantenList().add(kante);
+
+			kantenList.add(kante);
+			kantenMap.put(kante.kanteId, kante);
+		} else {
+			kante = kantenMap.get(kante.kanteId);
+			kante.setFlussWert(flussWert);
+		}
+		return kante;
+	}
+
+	public void removeKante(Kante kante) {
+		kante.vorgängerKonte.removeKnoteUndKante(kante.nachgängerKnote);
+	}
+	
+
+	public Kante findKante(int id, int id2) {
+		String kanteId = "" + id + "" + id2;
+		return this.kantenMap.get(kanteId);
 	}
 }

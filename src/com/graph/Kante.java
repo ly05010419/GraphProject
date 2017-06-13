@@ -1,16 +1,24 @@
 package com.graph;
 
-public class Kante implements Comparable<Kante> {
+import java.io.Serializable;
 
+public class Kante implements Comparable<Kante> ,Serializable{
+
+	
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 41869960674878176L;
 	public Knote vorgängerKonte;
 	public Knote nachgängerKnote;
-	public float gewicht;//oder die Kosten
+	public float kosten;//oder die Kosten
 	public float kapazität;
+	private float flussWert;
 	public String kanteId;
 	boolean gerichtetGraph = false;
 
 	public Kante(Knote end, float weight, boolean gerichtetGraph) {
-		this.gewicht = weight;
+		this.kosten = weight;
 		this.nachgängerKnote = end;
 		this.gerichtetGraph = gerichtetGraph;
 	}
@@ -19,24 +27,39 @@ public class Kante implements Comparable<Kante> {
 		this.gerichtetGraph = gerichtetGraph;
 		this.vorgängerKonte = vorgängerKonte;
 		this.nachgängerKnote = nachgängerKnote;
-		this.gewicht = gewicht;
+		this.kosten = gewicht;
 		this.kapazität = kapazität; 
 		if (gerichtetGraph) {
+			kanteId = "" + vorgängerKonte.id + "" + nachgängerKnote.id;
+		} else {
 			if (vorgängerKonte.id < nachgängerKnote.id) {
 				kanteId = "" + vorgängerKonte.id + "" + nachgängerKnote.id;
 			} else {
 				kanteId = "" + nachgängerKnote.id + "" + vorgängerKonte.id;
 			}
-		} else {
-			kanteId = "" + vorgängerKonte.id + "" + nachgängerKnote.id;
 		}
 	}
 	
 	
+	public Kante(Knote vorgängerKonte, Knote nachgängerKnote, float gewicht, float kapazität, float flussWert,
+			boolean gerichtetGraph) {
+		this( vorgängerKonte,  nachgängerKnote,  gewicht,  kapazität, gerichtetGraph);
+		this.flussWert = flussWert;
+	}
+	
+	
+	
+	
 
+//	public String toString() {
+//
+//		return "(" + vorgängerKonte.id + "," + nachgängerKnote.id + ",g:" + kosten + ",k:" + kapazität +" )";
+//	}
+//	
 	public String toString() {
 
-		return "(" + vorgängerKonte.id + "," + nachgängerKnote.id + ",g:" + gewicht + ",k:" + kapazität +" )";
+		return " [" + vorgängerKonte.id + "," + nachgängerKnote.id + ", (" + flussWert + "/" + kapazität + "/" + kosten
+				+ ") ]";
 	}
 
 	// Prüfung für zwei kante nach Reihenfolge,ob es gleich ist. z.B. Kante(2-9)
@@ -87,26 +110,33 @@ public class Kante implements Comparable<Kante> {
 	// Sortieren nach Gewicht
 	@Override
 	public int compareTo(Kante o) {
-		if (this.gewicht > o.gewicht) {
+		if (this.kosten > o.kosten) {
 			return 1;
-		} else if (this.gewicht == o.gewicht) {
+		} else if (this.kosten == o.kosten) {
 			return 0;
 		} else {
 			return -1;
 		}
 	}
 
-//	public static UngerichtetKante getKanteMitId(Knote knoteA, Knote knoteB,
-//			HashMap<String, UngerichtetKante> kantenMap) {
-//		String kanteId = null;
-//		
-//		if (knoteA.id < knoteB.id) {
-//			kanteId = knoteA.id + "" + knoteB.id;
-//		} else {
-//			kanteId = knoteB.id + "" + knoteA.id;
-//		}
-//		UngerichtetKante kante = kantenMap.get(kanteId);
-//		return kante;
-//	}
+	public float getVerfügebarKapazität() {
+		return this.kapazität - this.flussWert;
+	}
+	
+	public float getFlussWert() {
+		return flussWert;
+	}
+
+	public void setFlussWert(float flussWert) {
+		this.flussWert = flussWert;
+	}
+	
+	public float getKapazität() {
+		return kapazität;
+	}
+	
+	public void setKapazität(float kapazität) {
+		this.kapazität = kapazität;
+	}
 
 }

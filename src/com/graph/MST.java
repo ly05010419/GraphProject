@@ -27,8 +27,8 @@ public class MST {
 			vorgängerKonte.getNachbarKnotenList().add(nachgängerKnote);
 			nachgängerKnote.getNachbarKnotenList().add(vorgängerKonte);
 			
-			vorgängerKonte.knoteGewicht = kante.gewicht;
-			nachgängerKnote.knoteGewicht = kante.gewicht;
+			vorgängerKonte.knoteGewicht = kante.kosten;
+			nachgängerKnote.knoteGewicht = kante.kosten;
 		}
 
 	}
