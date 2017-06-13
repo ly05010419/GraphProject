@@ -17,7 +17,10 @@ public class Schnittstelle {
 
 	public static void showCycleCanceling() throws Exception {
 
+
+		
 		Algorithmus algorithmus0 = new Algorithmus();
+//		Graph graph0 = new Graph("./assets/kostenminimalFluss/KostenminimalTestMitSuperQuelle.txt", true, true, true);
 		Graph graph0 = new Graph("./assets/kostenminimalFluss/KostenminimalTest.txt", true, true, true);
 		algorithmus0.cycleCanceling(graph0);
 

@@ -3,7 +3,7 @@ package com.graph;
 import java.io.Serializable;
 import java.util.ArrayList;
 
-public class Knote implements Comparable<Knote>,Serializable {
+public class Knote implements Comparable<Knote>, Serializable {
 
 	/**
 	 * 
@@ -16,7 +16,7 @@ public class Knote implements Comparable<Knote>,Serializable {
 	public float knoteGewicht;
 	public float balance;
 	public boolean mitBalance;
-	
+
 	private KnoteGruppe knoteGruppe;
 
 	public boolean hatKnoteGruppe() {
@@ -52,8 +52,12 @@ public class Knote implements Comparable<Knote>,Serializable {
 	}
 
 	public String toString() {
+		if (this.previousKnote != null) {
+			return "" + id + "(" + this.previousKnote.id + "/" + this.knoteGewicht + ")";
+		} else {
+			return "" + id;
 
-		return "" + id+"("+this.previousKnote.id+"/"+this.knoteGewicht+")";
+		}
 	}
 
 	public Kante getKanteMitId(Knote endKnote) {

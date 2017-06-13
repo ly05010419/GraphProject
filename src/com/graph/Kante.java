@@ -9,15 +9,15 @@ public class Kante implements Comparable<Kante>, Serializable {
 	 */
 	private static final long serialVersionUID = -2252238274991575615L;
 	public Knote vorgängerKonte;
+
+	public String kanteId;
 	public Knote nachgängerKnote;
+	boolean gerichtetGraph = false;
 	public float gewicht;// oder die Kosten
 	private float kapazität;
 	private float flussWert;
 	private float verfügebarKapazität;
 
-	public float getKapazität() {
-		return kapazität;
-	}
 
 	public boolean isAvailable() {
 
@@ -28,28 +28,6 @@ public class Kante implements Comparable<Kante>, Serializable {
 		}
 	}
 
-	public void setKapazität(float kapazität) {
-		this.kapazität = kapazität;
-	}
-
-	public float getFlussWert() {
-		return flussWert;
-	}
-
-	public void setFlussWert(float flussWert) {
-		this.flussWert = flussWert;
-	}
-
-	public float getVerfügebarKapazität() {
-		return this.kapazität - this.flussWert;
-	}
-
-	public void setVerfügebarKapazität(float verfügebarKapazität) {
-		this.verfügebarKapazität = verfügebarKapazität;
-	}
-
-	public String kanteId;
-	boolean gerichtetGraph = false;
 
 	public Kante(Knote end, float weight, boolean gerichtetGraph) {
 		this.gewicht = weight;
@@ -140,17 +118,28 @@ public class Kante implements Comparable<Kante>, Serializable {
 		}
 	}
 
-	// public static UngerichtetKante getKanteMitId(Knote knoteA, Knote knoteB,
-	// HashMap<String, UngerichtetKante> kantenMap) {
-	// String kanteId = null;
-	//
-	// if (knoteA.id < knoteB.id) {
-	// kanteId = knoteA.id + "" + knoteB.id;
-	// } else {
-	// kanteId = knoteB.id + "" + knoteA.id;
-	// }
-	// UngerichtetKante kante = kantenMap.get(kanteId);
-	// return kante;
-	// }
+	public float getKapazität() {
+		return kapazität;
+	}
+	
+	public void setKapazität(float kapazität) {
+		this.kapazität = kapazität;
+	}
+
+	public float getFlussWert() {
+		return flussWert;
+	}
+
+	public void setFlussWert(float flussWert) {
+		this.flussWert = flussWert;
+	}
+
+	public float getVerfügebarKapazität() {
+		return this.kapazität - this.flussWert;
+	}
+
+	public void setVerfügebarKapazität(float verfügebarKapazität) {
+		this.verfügebarKapazität = verfügebarKapazität;
+	}
 
 }

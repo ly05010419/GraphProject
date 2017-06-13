@@ -97,8 +97,10 @@ public class Parser {
 		}
 
 		bufferedReader.close();
-
+		
 		kantenList = new ArrayList<Kante>(kantenSet);
+		
+//		System.out.println(kantenList);
 		Collections.sort(kantenList, new Comparator<Kante>() {
 			@Override
 			public int compare(Kante Kante1, Kante Kante2) {
@@ -106,6 +108,8 @@ public class Parser {
 			}
 		});
 
+//		System.out.println(kantenList);
+		
 		Collections.sort(knotenList, new Comparator<Knote>() {
 			@Override
 			public int compare(Knote Kante1, Knote Kante2) {
@@ -119,7 +123,7 @@ public class Parser {
 			}
 		});
 
-		// System.out.println("kantenList:"+kantenList);
+		
 	}
 
 	private void createKnate(Knote rootKnote, Knote kindKnote, float gewicht, float kapazität) {

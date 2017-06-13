@@ -769,7 +769,7 @@ public class Algorithmus {
 	}
 
 	/**
-	 * ------------------------------------------------------------------------------------
+	 * 通过广度优先算法 和ResidualGraph 找到最大流
 	 */
 	public ArrayList<Fluss> fordFulkerson(int startKnoteId, int endKnoteId, Graph graph) throws Exception {
 
@@ -838,6 +838,8 @@ public class Algorithmus {
 			insgesamtFluswert += fluss.flussWert;
 
 			createResidualGraph(fluss, graph);
+			
+			System.out.println(graph.kantenList);
 		}
 
 		return fluss;
@@ -893,7 +895,7 @@ public class Algorithmus {
 	}
 
 	/**
-	 * ------------------------------------------------------------------------------------
+	 * 首先找到最大流，然后不断消除负边，然后就得到了最小成本流
 	 */
 	public void cycleCanceling(Graph graph) throws Exception {
 
@@ -903,14 +905,27 @@ public class Algorithmus {
 		System.out.println("graph.kantenList:" + graph.kantenList);
 		System.out.println("------------------------------------------------------------------------------------");
 
-		ArrayList<Fluss> flussList = fordFulkerson(0, 3, graph);
+//		找到Quelle和Senke
+		
+		int quelleId = -1;
+		int senkeId = -1;
+
+		for(Knote knote:graph.knotenList){
+			if(knote.balance>0){
+				 quelleId = knote.id;
+			}else if(knote.balance<0){
+				senkeId = knote.id;
+			}
+		}
+		
+		ArrayList<Fluss> flussList = fordFulkerson(quelleId, senkeId, graph);
 		System.out.println("flussList:" + flussList);
 		System.out.println("------------------------------------------------------------------------------------");
 
 		System.out.println("graph.kantenList:" + graph.kantenList);
 		System.out.println("------------------------------------------------------------------------------------");
 
-		Kreis negativKreis = mooreBellmanFord(0, 3, graph);
+		Kreis negativKreis = mooreBellmanFord(quelleId, senkeId, graph);
 
 		while (negativKreis != null) {
 			System.out.println("negativKreis:" + negativKreis);
@@ -926,7 +941,7 @@ public class Algorithmus {
 			System.out.println("graph.kantenList:" + graph.kantenList);
 			System.out.println("------------------------------------------------------------------------------------");
 
-			negativKreis = mooreBellmanFord(0, 3, graph);
+			negativKreis = mooreBellmanFord(quelleId, senkeId, graph);
 		}
 
 		float kosten = 0;
