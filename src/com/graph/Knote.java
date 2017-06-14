@@ -3,7 +3,7 @@ package com.graph;
 import java.io.Serializable;
 import java.util.ArrayList;
 
-public class Knote implements Comparable<Knote> ,Serializable{
+public class Knote implements Comparable<Knote>, Serializable {
 
 	/**
 	 * 
@@ -50,22 +50,11 @@ public class Knote implements Comparable<Knote> ,Serializable{
 	}
 
 	public String toString() {
-
-		// if (previousKnote == null) {
-		//
-		// StringBuffer sBuffer = new StringBuffer("(id:" + id+",[");
-		//
-		// for(Knote knote:this.getNachbarKnotenList()){
-		//
-		// sBuffer.append(knote.id+",");
-		// }
-		// sBuffer.append("])");
-		// return sBuffer.toString();
-		// } else {
-		// return "(id:" + id + ",previous:" + previousKnote.id+")";
-		// }
-		// return ""+id+",Gewicht:"+this.knoteGewicht;
-		return "" + id;
+		if (balance > 0 || balance < 0) {
+			return "" + id+",balance:"+balance;
+		} else {
+			return "" + id;
+		}
 	}
 
 	public Kante getKanteMitId(Knote endKnote) {
@@ -84,6 +73,7 @@ public class Knote implements Comparable<Knote> ,Serializable{
 
 	}
 
+	//删除子节点和到子节点的边
 	public boolean removeKnoteUndKante(Knote knote) {
 
 		boolean flag = false;

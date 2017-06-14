@@ -10,6 +10,7 @@ public class Schnittstelle {
 
 		// Schnittstelle.showTiefenSuche();
 
+		
 		// Schnittstelle.showPrimUndKrusal();
 		// Schnittstelle.travelingSalesmanProblem();
 		// Schnittstelle.showKuerzesteWege();
@@ -21,7 +22,7 @@ public class Schnittstelle {
 
 		Algorithmus algorithmus = new Algorithmus();
 		Graph graph = new Graph("./assets/kostenminimalFluss/KostenminimalTest.txt", true, true, true);
-		
+//		Graph graph = new Graph("./assets/kostenminimalFluss/Kostenminimal2.txt", true, true, true);
 		algorithmus.cycleCanceling(graph);
 
 		// Graph graph1 = new

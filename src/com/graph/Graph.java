@@ -36,23 +36,8 @@ public class Graph {
 		this.mitBalance = parser.mitBalance;
 	}
 
-	public void createRueckKnate(Knote rootKnote, Knote kindKnote, float kapazität) {
-
-		Kante kante = new Kante(rootKnote, kindKnote, 0 ,kapazität, this.gerichtetGraph);
-
-		if (!kantenList.contains(kante)) {
-			rootKnote.getNachbarKnotenList().add(kindKnote);
-			rootKnote.getNachbarKantenList().add(kante);
-
-			kantenList.add(kante);
-			kantenMap.put(kante.kanteId, kante);
-		} else {
-			kante = kantenMap.get(kante.kanteId);
-			kante.kapazität += kapazität;
-		}
-	}
 	
-	public Kante createRueckKnate(Knote rootKnote, Knote kindKnote, float gewicht, float kapazität, float flussWert) {
+	public Kante createEineKnate(Knote rootKnote, Knote kindKnote, float gewicht, float kapazität, float flussWert) {
 
 		Kante kante = new Kante(rootKnote, kindKnote, gewicht, kapazität, flussWert, this.gerichtetGraph);
 
@@ -69,8 +54,19 @@ public class Graph {
 		return kante;
 	}
 
-	public void removeKante(Kante kante) {
-		kante.vorgängerKonte.removeKnoteUndKante(kante.nachgängerKnote);
+	//删除这个节点，和于这个节点有关的所有边
+	public void removeKnoteMitSeinKante(Knote knote) {
+		knotenList.remove(knote);
+		
+		ArrayList<Kante> removeList = new ArrayList<Kante>();
+		for (Kante kante : kantenList) {
+			if(kante.nachgängerKnote.id==knote.id||kante.vorgängerKonte.id==knote.id){
+				removeList.add(kante);
+			}
+		}
+		
+		kantenList.removeAll(removeList);
+		
 	}
 	
 
