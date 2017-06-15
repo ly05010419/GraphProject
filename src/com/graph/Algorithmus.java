@@ -684,8 +684,6 @@ public class Algorithmus {
 		// drei KantenReihfolge
 		Fluss fluss = getFlussDurchEndKnote(endKonte);
 
-		
-
 		if (fluss != null) {
 			if (graph.mitBalance) {
 				if (startKnote.balance >= fluss.flussWert) {
@@ -759,20 +757,19 @@ public class Algorithmus {
 	 */
 	public void cycleCanceling(Graph graph) throws Exception {
 
-		
 		System.out.println("original Graph:" + graph.kantenList);
 		System.out.println("------------------------------------------------------------------------------------");
 
-		//Erstellen superQuelle und superSenke für mit mehrere Quellen und Senken Graph zu Fluss finden
+		// Erstellen superQuelle und superSenke für mit mehrere Quellen und
+		// Senken Graph zu Fluss finden
 		Knote superQuelle = erstellenSuperQuelle(graph);
 		Knote superSenke = erstellenSuperSenke(graph);
 
-		
 		System.out.println("graph mit SuperQuelle:" + graph.kantenList);
 		System.out.println("------------------------------------------------------------------------------------");
 
-		//durch fordFulkerson fluss finden
-		
+		// durch fordFulkerson fluss finden
+
 		ArrayList<Fluss> flussList = fordFulkerson(superQuelle.id, superSenke.id, graph);
 
 		if (flussList.size() == 0) {
@@ -780,30 +777,35 @@ public class Algorithmus {
 			return;
 		}
 
-		// Fluss gefunden, fertig brauchen wir nicht mehr superQuelle und superSenke
+		// Fluss gefunden, fertig brauchen wir nicht mehr superQuelle und
+		// superSenke
 		removeSuperQuelleUndSenke(graph, superQuelle, superSenke);
 
-		System.out.println("FlussList: "+flussList);
+		System.out.println("FlussList: " + flussList);
 		System.out.println("------------------------------------------------------------------------------------");
 		System.out.println("ResidualGraph durch fordFulkerson:" + graph.kantenList);
 		System.out.println("------------------------------------------------------------------------------------");
 
-		//Erstellen superKnote,die mit alle andere Knote verbindet, helfen uns zu negative Kreis finden
+		// Erstellen superKnote,die mit alle andere Knote verbindet, helfen uns
+		// zu negative Kreis finden
 		Knote superKnote = erstellenSuperKnote(graph);
 
 		System.out.println("ResidualGraph durch fordFulkerson:" + graph.kantenList);
 		System.out.println("------------------------------------------------------------------------------------");
 
-		//finden wir negative Kreis, dann aktualisiert Kante, Die Knaten in gleich Richtung addieren minimale Wert von Kreis, in umgekehrte Richtung subtrahieren.bis keine negative Kreis 
+		// finden wir negative Kreis, dann aktualisiert Kante, Die Knaten in
+		// gleich Richtung addieren minimale Wert von Kreis, in umgekehrte
+		// Richtung subtrahieren.bis keine negative Kreis
 		findKreisUndAktualisiertGraph(graph, superKnote.id);
 
-		//brauchen wir nicht mehr SuperKnote, alle negative Kreis haben wir gefunden!
+		// brauchen wir nicht mehr SuperKnote, alle negative Kreis haben wir
+		// gefunden!
 		graph.removeKnoteMitSeinKante(superKnote);
 
 		System.out.println("ResidualGraph durch fordFulkerson:" + graph.kantenList);
 		System.out.println("------------------------------------------------------------------------------------");
 
-		//Kosten rechenen
+		// Kosten rechenen
 		rechnenKosten(graph);
 
 	}
@@ -818,13 +820,15 @@ public class Algorithmus {
 			System.out.println("negativKreis:" + negativKreis);
 			System.out.println("------------------------------------------------------------------------------------");
 
-			// Die Knaten in gleich Richtung addieren minimale Wert von Kreis, in umgekehrte Richtung subtrahieren.
+			// Die Knaten in gleich Richtung addieren minimale Wert von Kreis,
+			// in umgekehrte Richtung subtrahieren.
 			aktualisertGraph(negativKreis, graph);
 
 			System.out.println("aktualisiertGraph durch negativKreis:" + graph.kantenList);
 			System.out.println("------------------------------------------------------------------------------------");
 
-			// erstellen ResidualGraph um negative Kreis weiter finden, bis keine negative Kreis
+			// erstellen ResidualGraph um negative Kreis weiter finden, bis
+			// keine negative Kreis
 			createResidualGraph(graph);
 
 			System.out.println("ResidualGraph:" + graph.kantenList);
@@ -921,7 +925,7 @@ public class Algorithmus {
 	}
 
 	// 通过N-1次更新遍历边 第N次发现负圈
-	//Wie MooreBellmanFord 
+	// Wie MooreBellmanFord
 	public Kreis findNegativZykeldurchMooreBellmanFord(int startKnoteId, Graph graph) throws Exception {
 
 		reset();
@@ -998,16 +1002,16 @@ public class Algorithmus {
 
 		Kante kante = kantenInNegativKreis.get(0);
 
-		ArrayList<Knote> knotenVonKreis = new ArrayList<Knote>();
-
+		// durch previousKnote immer zurück laufen (N Mal) N Anzahl von Konten
 		Knote previousKnote = kante.nachgängerKnote;
-		;
 
 		for (int i = 0; i < graph.knotenList.size(); i++) {
 
 			previousKnote = previousKnote.previousKnote;
 		}
 
+		ArrayList<Knote> knotenVonKreis = new ArrayList<Knote>();
+		// wechle Knoten mehr als einmal besucht, diese Konte bestimmt in Kreis
 		for (int i = 0; i < graph.knotenList.size(); i++) {
 			if (!knotenVonKreis.contains(previousKnote)) {
 				knotenVonKreis.add(previousKnote);
@@ -1015,19 +1019,23 @@ public class Algorithmus {
 			previousKnote = previousKnote.previousKnote;
 		}
 
-		System.out.println(knotenVonKreis);
+		System.out.println("knotenVonKreis :" + knotenVonKreis);
 
 		float minimal = Float.MAX_VALUE;
+
+		// um Kreis mit Kanten zu erstellen, die richtung ist umgekehrt
 		Knote startKnote = knotenVonKreis.get(0);
 		for (int i = knotenVonKreis.size() - 1; i >= 0; i--) {
-			Knote knote1 = knotenVonKreis.get(i);
-			Kante k = graph.findKante(startKnote.id, knote1.id);
+			Knote knote = knotenVonKreis.get(i);
+			Kante k = graph.findKante(startKnote.id, knote.id);
+
 			if (k.getVerfügebarKapazität() < minimal) {
 				minimal = k.getVerfügebarKapazität();
 			}
+
 			kreis.kantenList.add(k);
 			kreis.kreisWert = minimal;
-			startKnote = knote1;
+			startKnote = knote;
 		}
 
 		return kreis;

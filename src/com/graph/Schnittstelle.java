@@ -22,8 +22,8 @@ public class Schnittstelle {
 
 		Algorithmus algorithmus = new Algorithmus();
 //		Graph graph = new Graph("./assets/kostenminimalFluss/KostenminimalTest.txt", true, true, true);
-//		Graph graph = new Graph("./assets/kostenminimalFluss/Kostenminimal1.txt", true, true, true);
-		Graph graph = new Graph("./assets/kostenminimalFluss/Kostenminimal2.txt", true, true, true);
+		Graph graph = new Graph("./assets/kostenminimalFluss/Kostenminimal1.txt", true, true, true);
+//		Graph graph = new Graph("./assets/kostenminimalFluss/Kostenminimal2.txt", true, true, true);
 //		Graph graph = new Graph("./assets/kostenminimalFluss/Kostenminimal3.txt", true, true, true);
 //		Graph graph = new Graph("./assets/kostenminimalFluss/Kostenminimal4.txt", true, true, true);
 		algorithmus.cycleCanceling(graph);
