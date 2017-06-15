@@ -73,26 +73,6 @@ public class Knote implements Comparable<Knote>, Serializable {
 
 	}
 
-	//删除子节点和到子节点的边
-	public boolean removeKnoteUndKante(Knote knote) {
-
-		boolean flag = false;
-
-		for (Kante k : this.nachbarKantenList) {
-
-			if (k.nachgängerKnote == knote) {
-
-				this.nachbarKantenList.remove(k);
-
-				break;
-			}
-		}
-
-		this.nachbarKnoteList.remove(knote);
-
-		return flag;
-	}
-
 	public int compareTo(Knote o) {
 
 		if (this.knoteGewicht > o.knoteGewicht) {

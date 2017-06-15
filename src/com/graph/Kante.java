@@ -15,6 +15,8 @@ public class Kante implements Comparable<Kante> ,Serializable{
 	public float kapazität;
 	private float flussWert;
 	public String kanteId;
+	public boolean residualKante;
+	
 	boolean gerichtetGraph = false;
 
 	public Kante(Knote end, float weight, boolean gerichtetGraph) {

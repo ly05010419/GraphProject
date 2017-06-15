@@ -37,10 +37,12 @@ public class Graph {
 	}
 
 	
-	public Kante createEineKnate(Knote rootKnote, Knote kindKnote, float gewicht, float kapazität, float flussWert) {
+	public Kante createEineKnate(Knote rootKnote, Knote kindKnote, float gewicht, float kapazität, float flussWert,boolean residualKante) {
 
 		Kante kante = new Kante(rootKnote, kindKnote, gewicht, kapazität, flussWert, this.gerichtetGraph);
 
+		kante.residualKante = residualKante;
+		
 		if (!kantenList.contains(kante)) {
 			rootKnote.getNachbarKnotenList().add(kindKnote);
 			rootKnote.getNachbarKantenList().add(kante);
@@ -66,7 +68,11 @@ public class Graph {
 		}
 		
 		kantenList.removeAll(removeList);
-		
+	}
+	
+	public void removeKante(Kante kante) {
+		kante.vorgängerKonte.getNachbarKnotenList().remove(kante.nachgängerKnote);
+		kante.vorgängerKonte.getNachbarKantenList().remove(kante);
 	}
 	
 

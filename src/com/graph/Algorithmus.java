@@ -674,10 +674,6 @@ public class Algorithmus {
 					besuchtKnoten.add(kante.nachgängerKnote);
 
 					kante.nachgängerKnote.previousKnote = kante.vorgängerKonte;
-					// System.out.println("kante.nachgängerKnote.id:" +
-					// kante.nachgängerKnote.id
-					// + "kante.nachgängerKnote.previousKnote.id:" +
-					// kante.nachgängerKnote.previousKnote.id);
 				}
 			}
 		}
@@ -688,16 +684,17 @@ public class Algorithmus {
 		// drei KantenReihfolge
 		Fluss fluss = getFlussDurchEndKnote(endKonte);
 
-		if (graph.mitBalance) {
-			if (startKnote.balance >= fluss.flussWert) {
-				startKnote.balance = startKnote.balance - fluss.flussWert;
-			} else {
-				fluss.flussWert = startKnote.balance;
-				startKnote.balance = 0;
-			}
-		}
+		
 
 		if (fluss != null) {
+			if (graph.mitBalance) {
+				if (startKnote.balance >= fluss.flussWert) {
+					startKnote.balance = startKnote.balance - fluss.flussWert;
+				} else {
+					fluss.flussWert = startKnote.balance;
+					startKnote.balance = 0;
+				}
+			}
 
 			insgesamtFluswert += fluss.flussWert;
 
@@ -749,11 +746,10 @@ public class Algorithmus {
 			kante.setFlussWert(kante.getFlussWert() + fluss.flussWert);
 			// neu Kante erstellen
 			graph.createEineKnate(kante.nachgängerKnote, kante.vorgängerKonte, -kante.kosten, kante.getKapazität(),
-					kante.getKapazität() - kante.getFlussWert());
+					kante.getKapazität() - kante.getFlussWert(), true);
 
 			if (kante.getVerfügebarKapazität() == 0) {
-
-				kante.vorgängerKonte.removeKnoteUndKante(kante.nachgängerKnote);
+				graph.removeKante(kante);
 			}
 		}
 	}
@@ -763,15 +759,15 @@ public class Algorithmus {
 	 */
 	public void cycleCanceling(Graph graph) throws Exception {
 
-		System.out.println("graph.knotenList:" + graph.knotenList);
-		System.out.println("graph.kantenList:" + graph.kantenList);
+		
+		System.out.println("original Graph:" + graph.kantenList);
 		System.out.println("------------------------------------------------------------------------------------");
 
 		Knote superQuelle = erstellenSuperQuelle(graph);
 		Knote superSenke = erstellenSuperSenke(graph);
 
-		System.out.println("graph.knotenList:" + graph.knotenList);
-		System.out.println("graph.SuperQuelle:" + graph.kantenList);
+		
+		System.out.println("graph mit SuperQuelle:" + graph.kantenList);
 		System.out.println("------------------------------------------------------------------------------------");
 
 		ArrayList<Fluss> flussList = fordFulkerson(superQuelle.id, superSenke.id, graph);
@@ -783,7 +779,8 @@ public class Algorithmus {
 
 		removeSuperQuelleUndSenke(graph, superQuelle, superSenke);
 
-		System.out.println(flussList);
+		System.out.println("FlussList: "+flussList);
+		System.out.println("------------------------------------------------------------------------------------");
 		System.out.println("ResidualGraph durch fordFulkerson:" + graph.kantenList);
 		System.out.println("------------------------------------------------------------------------------------");
 
@@ -793,9 +790,9 @@ public class Algorithmus {
 		System.out.println("------------------------------------------------------------------------------------");
 
 		findKreisUndAktualisiertGraph(graph, superS.id);
-		
+
 		graph.removeKnoteMitSeinKante(superS);
-		
+
 		System.out.println("ResidualGraph durch fordFulkerson:" + graph.kantenList);
 		System.out.println("------------------------------------------------------------------------------------");
 
@@ -831,7 +828,7 @@ public class Algorithmus {
 		float kosten = 0;
 
 		for (Kante k : graph.kantenList) {
-			if (k.kosten > 0) {
+			if (!k.residualKante) {
 				kosten = kosten + k.getFlussWert() * k.kosten;
 			}
 		}
@@ -846,13 +843,11 @@ public class Algorithmus {
 		graph.knotenList.add(superQulle);
 
 		for (Knote k : graph.knotenList) {
-			graph.createEineKnate(superQulle, k, 1, 1, 0);
+			graph.createEineKnate(superQulle, k, 1, 1, 0, false);
 		}
 
 		return superQulle;
 	}
-	
-
 
 	public Knote erstellenSuperQuelle(Graph graph) {
 		Knote superQulle = null;
@@ -870,7 +865,7 @@ public class Algorithmus {
 
 			for (Knote k : quellenList) {
 				superQulle.balance += k.balance;
-				graph.createEineKnate(superQulle, k, 0, k.balance, 0);
+				graph.createEineKnate(superQulle, k, 0, k.balance, 0, false);
 				k.balance = 0;
 			}
 		}
@@ -896,7 +891,7 @@ public class Algorithmus {
 			for (Knote k : senkenList) {
 				superSenke.balance += k.balance;
 
-				graph.createEineKnate(k, superSenke, 0, -k.balance, 0);
+				graph.createEineKnate(k, superSenke, 0, -k.balance, 0, false);
 				k.balance = 0;
 			}
 		}
@@ -963,10 +958,7 @@ public class Algorithmus {
 	// entfernen.
 	public void createResidualGraph(Graph graph) {
 
-		ArrayList<Kante> rueckKnatenList = new ArrayList<Kante>();
-		ArrayList<Kante> removeKnatenList = new ArrayList<Kante>();
-
-		for (Kante kante : graph.kantenList) {
+		for (Kante kante : CloneUtils.clone(graph.kantenList)) {
 
 			if (kante.getFlussWert() > 0) {
 
@@ -974,39 +966,24 @@ public class Algorithmus {
 
 				if (rueckKnate == null) {
 
-					rueckKnate = new Kante(kante.nachgängerKnote, kante.vorgängerKonte, -kante.kosten,
-							kante.getKapazität(), kante.getKapazität() - kante.getFlussWert(), kante.gerichtetGraph);
-
-					rueckKnatenList.add(rueckKnate);
+					graph.createEineKnate(kante.nachgängerKnote, kante.vorgängerKonte, -kante.kosten,
+							kante.getKapazität(), kante.getKapazität() - kante.getFlussWert(), true);
 				}
 				if (kante.getVerfügebarKapazität() == 0) {
-					removeKnatenList.add(kante);
+					graph.removeKante(kante);
 				}
 			}
-		}
-
-		for (Kante kante : rueckKnatenList) {
-
-			kante.nachgängerKnote.getNachbarKnotenList().add(kante.vorgängerKonte);
-			kante.nachgängerKnote.getNachbarKantenList().add(kante);
-			graph.kantenList.add(kante);
-			graph.kantenMap.put(kante.kanteId, kante);
-		}
-
-		for (Kante kante : removeKnatenList) {
-			kante.nachgängerKnote.getNachbarKnotenList().remove(kante.vorgängerKonte);
-			kante.nachgängerKnote.getNachbarKantenList().remove(kante);
 		}
 
 	}
 
 	public Kreis findNegativKreis(Graph graph, ArrayList<Kante> kantenInNegativKreis) {
-		
-		if(kantenInNegativKreis.size()==0){
-			
+
+		if (kantenInNegativKreis.size() == 0) {
+
 			return null;
 		}
-		
+
 		Kreis kreis = new Kreis();
 
 		Kante kante = kantenInNegativKreis.get(0);
@@ -1029,14 +1006,13 @@ public class Algorithmus {
 		}
 
 		System.out.println(knotenVonKreis);
-		
-		
+
 		float minimal = Float.MAX_VALUE;
 		Knote startKnote = knotenVonKreis.get(0);
-		for(int i = knotenVonKreis.size()-1 ;i>=0;i--){
+		for (int i = knotenVonKreis.size() - 1; i >= 0; i--) {
 			Knote knote1 = knotenVonKreis.get(i);
 			Kante k = graph.findKante(startKnote.id, knote1.id);
-			if(k.getVerfügebarKapazität()<minimal){
+			if (k.getVerfügebarKapazität() < minimal) {
 				minimal = k.getVerfügebarKapazität();
 			}
 			kreis.kantenList.add(k);
@@ -1046,7 +1022,6 @@ public class Algorithmus {
 
 		return kreis;
 	}
-	
 
 	public void reset() {
 		nichtBesuchtKnoten = new ArrayList<Knote>();
