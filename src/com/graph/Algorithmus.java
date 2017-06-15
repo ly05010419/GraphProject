@@ -753,7 +753,11 @@ public class Algorithmus {
 	}
 
 	/**
-	 * ------------------------------------------------------------------------------------
+	 * 通过最大流，和最短路径 来解决最小成本问题
+	 * 1.创建SuperQuelle和Senke得到最大流Fluss
+	 * 2.创建SuperKnote超级节点连接所有其他节点，找到负圈
+	 * 3.消灭负圈，更新边的值
+	 * 4.没有负圈结束，去掉超级节点，去掉residualKante，计算最大流最小成本
 	 */
 	public void cycleCanceling(Graph graph) throws Exception {
 
@@ -1019,11 +1023,11 @@ public class Algorithmus {
 		Knote previousKnote = kante.nachgängerKnote;
 
 		for (int i = 0; i < graph.knotenList.size(); i++) {
-
 			previousKnote = previousKnote.previousKnote;
 		}
 
 		ArrayList<Knote> knotenVonKreis = new ArrayList<Knote>();
+		
 		// wechle Knoten mehr als einmal besucht, diese Konte bestimmt in Kreis
 		for (int i = 0; i < graph.knotenList.size(); i++) {
 			if (!knotenVonKreis.contains(previousKnote)) {
