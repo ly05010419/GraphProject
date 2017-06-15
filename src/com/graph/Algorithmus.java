@@ -781,12 +781,32 @@ public class Algorithmus {
 			return;
 		}
 
+		removeSuperQuelleUndSenke(graph, superQuelle, superSenke);
+
 		System.out.println(flussList);
 		System.out.println("ResidualGraph durch fordFulkerson:" + graph.kantenList);
 		System.out.println("------------------------------------------------------------------------------------");
 
+		Knote superS = erstellenSuperS(graph);
+
+		System.out.println("ResidualGraph durch fordFulkerson:" + graph.kantenList);
+		System.out.println("------------------------------------------------------------------------------------");
+
+		findKreisUndAktualisiertGraph(graph, superS.id);
+		
+		graph.removeKnoteMitSeinKante(superS);
+		
+		System.out.println("ResidualGraph durch fordFulkerson:" + graph.kantenList);
+		System.out.println("------------------------------------------------------------------------------------");
+
+		rechnenKosten(graph);
+
+	}
+
+	public void findKreisUndAktualisiertGraph(Graph graph, int superQuelleId) throws Exception {
+
 		// 只通过修改Knote找到负圈 对边的值没影响
-		Kreis negativKreis = findNegativZykeldurchMooreBellmanFord(superQuelle.id, superSenke.id, graph);
+		Kreis negativKreis = findNegativZykeldurchMooreBellmanFord(superQuelleId, graph);
 
 		while (negativKreis != null) {
 			System.out.println("negativKreis:" + negativKreis);
@@ -802,10 +822,12 @@ public class Algorithmus {
 			System.out.println("ResidualGraph:" + graph.kantenList);
 			System.out.println("------------------------------------------------------------------------------------");
 
-			negativKreis = findNegativZykeldurchMooreBellmanFord(superQuelle.id, superSenke.id, graph);
+			negativKreis = findNegativZykeldurchMooreBellmanFord(superQuelleId, graph);
 		}
 
-//		removeSuperQuelleUndSenke(graph, superQuelle, superSenke);
+	}
+
+	public void rechnenKosten(Graph graph) {
 		float kosten = 0;
 
 		for (Kante k : graph.kantenList) {
@@ -815,23 +837,34 @@ public class Algorithmus {
 		}
 
 		System.out.println("kosten:" + kosten);
+
 	}
 
-	public Knote erstellenSuperQuelle(Graph graph) {
+	public Knote erstellenSuperS(Graph graph) {
 
+		Knote superQulle = new Knote(graph.knotenList.size());
+		graph.knotenList.add(superQulle);
+
+		for (Knote k : graph.knotenList) {
+			graph.createEineKnate(superQulle, k, 1, 1, 0);
+		}
+
+		return superQulle;
+	}
+	
+
+
+	public Knote erstellenSuperQuelle(Graph graph) {
+		Knote superQulle = null;
 		ArrayList<Knote> quellenList = new ArrayList<Knote>();
 		for (Knote knote : graph.knotenList) {
 			if (knote.balance > 0) {
 				quellenList.add(knote);
+				// superQulle = knote;
 			}
 		}
 
-		Knote superQulle = null;
-//		if (quellenList.size() == 1) {
-//			superQulle = quellenList.get(0);
-//			
-//		}else if (quellenList.size() > 1) {
-			if (quellenList.size() > 0) {
+		if (quellenList.size() > 0) {
 			superQulle = new Knote(graph.knotenList.size());
 			graph.knotenList.add(superQulle);
 
@@ -846,18 +879,16 @@ public class Algorithmus {
 	}
 
 	public Knote erstellenSuperSenke(Graph graph) {
+		Knote superSenke = null;
 
 		ArrayList<Knote> senkenList = new ArrayList<Knote>();
 		for (Knote knote : graph.knotenList) {
 			if (knote.balance < 0) {
 				senkenList.add(knote);
+				// superSenke = knote;
 			}
 		}
-		Knote superSenke = null;
-//		if (senkenList.size() == 1) {
-//			superSenke = senkenList.get(0);
-//			
-//		}else if (senkenList.size() > 1) {
+
 		if (senkenList.size() > 0) {
 			superSenke = new Knote(graph.knotenList.size());
 			graph.knotenList.add(superSenke);
@@ -886,10 +917,10 @@ public class Algorithmus {
 	}
 
 	// 通过N-1次更新遍历边 第N次发现负圈
-	public Kreis findNegativZykeldurchMooreBellmanFord(int startKnoteId, int endKnoteId, Graph graph) throws Exception {
+	public Kreis findNegativZykeldurchMooreBellmanFord(int startKnoteId, Graph graph) throws Exception {
 
 		reset();
-		
+
 		for (Knote v : graph.knotenList) {
 			if (v.id == startKnoteId) {
 				v.knoteGewicht = 0;
@@ -904,7 +935,7 @@ public class Algorithmus {
 
 		ArrayList<Kante> negativZykel = mooreBellmanFordSchleife(graph);
 
-		Kreis negativKreis = this.findNegativKreis(negativZykel);
+		Kreis negativKreis = this.findNegativKreis(graph, negativZykel);
 
 		return negativKreis;
 
@@ -969,116 +1000,53 @@ public class Algorithmus {
 
 	}
 
-	public Kreis findNegativKreis(ArrayList<Kante> kantenInNegativKreis) {
-
-		ArrayList<Kante> kantenInNegativKreis2 = CloneUtils.clone(kantenInNegativKreis);
-
-		LinkedList<Kante> linkList = new LinkedList<Kante>();
-
-		while (!kantenInNegativKreis2.isEmpty()) {
-
-			Kante k = kantenInNegativKreis2.get(0);
-			kantenInNegativKreis2.remove(k);
-
-			Kante previousKante = findPreviousKante(k, kantenInNegativKreis);
-
-			if (previousKante != null && !linkList.contains(previousKante)) {
-				linkList.add(previousKante);
-			}
-
-			Kante aktualKante = findKante(k, kantenInNegativKreis);
-			if (!linkList.contains(aktualKante)) {
-				linkList.add(aktualKante);
-			}
-
-			Kante nextKante = findNextKante(k, kantenInNegativKreis);
-
-			if (nextKante != null && !linkList.contains(nextKante)) {
-				linkList.add(nextKante);
-			}
-
-			if (linkList.getFirst().vorgängerKonte.id == linkList.getLast().nachgängerKnote.id) {
-
-				return getKreisVonLinkList(linkList);
-			}
-		}
-
-		if (linkList.size() > 0) {
-
-			Knote firstKnote = linkList.getFirst().vorgängerKonte;
-			Knote lastKnote = linkList.getLast().nachgängerKnote;
-
-			Kante eineKante = lastKnote.getKanteMitId(firstKnote);
-			linkList.add(eineKante);
-		}
-
-		return getKreisVonLinkList(linkList);
-
-	}
-
-	public Kreis getKreisVonLinkList(LinkedList<Kante> linkList) {
-
-		Kreis kreis = new Kreis();
-		float minimalKreisWert = Float.MAX_VALUE;
-		for (Kante k : linkList) {
-			if (k.getVerfügebarKapazität() < minimalKreisWert) {
-				minimalKreisWert = k.getVerfügebarKapazität();
-			}
-			kreis.kantenList.add(k);
-		}
-
-		if (kreis.kantenList.size() > 0) {
-			kreis.kreisWert = minimalKreisWert;
-			return kreis;
-		} else {
+	public Kreis findNegativKreis(Graph graph, ArrayList<Kante> kantenInNegativKreis) {
+		
+		if(kantenInNegativKreis.size()==0){
+			
 			return null;
 		}
+		
+		Kreis kreis = new Kreis();
 
-	}
+		Kante kante = kantenInNegativKreis.get(0);
 
-	public Kante findPreviousKante(Kante kante, ArrayList<Kante> kantenInNegativKreis) {
+		ArrayList<Knote> knotenVonKreis = new ArrayList<Knote>();
 
-		Knote vorgängerKonte = kante.vorgängerKonte;
+		Knote previousKnote = kante.nachgängerKnote;
+		;
 
-		for (int i = 0; i < kantenInNegativKreis.size(); i++) {
-			Kante k = kantenInNegativKreis.get(i);
+		for (int i = 0; i < graph.knotenList.size(); i++) {
 
-			if (vorgängerKonte.id == k.nachgängerKnote.id) {
-				return k;
-			}
+			previousKnote = previousKnote.previousKnote;
 		}
 
-		return null;
-	}
-
-	public Kante findNextKante(Kante kante, ArrayList<Kante> kantenInNegativKreis) {
-
-		Knote nachgängerKnote = kante.nachgängerKnote;
-
-		for (int i = 0; i < kantenInNegativKreis.size(); i++) {
-			Kante k = kantenInNegativKreis.get(i);
-
-			if (nachgängerKnote.id == k.vorgängerKonte.id) {
-
-				return k;
+		for (int i = 0; i < graph.knotenList.size(); i++) {
+			if (!knotenVonKreis.contains(previousKnote)) {
+				knotenVonKreis.add(previousKnote);
 			}
+			previousKnote = previousKnote.previousKnote;
 		}
 
-		return null;
-	}
-
-	public Kante findKante(Kante kante, ArrayList<Kante> kantenInNegativKreis) {
-
-		for (int i = 0; i < kantenInNegativKreis.size(); i++) {
-			Kante k = kantenInNegativKreis.get(i);
-
-			if (kante.kanteId.equals(k.kanteId)) {
-				return k;
+		System.out.println(knotenVonKreis);
+		
+		
+		float minimal = Float.MAX_VALUE;
+		Knote startKnote = knotenVonKreis.get(0);
+		for(int i = knotenVonKreis.size()-1 ;i>=0;i--){
+			Knote knote1 = knotenVonKreis.get(i);
+			Kante k = graph.findKante(startKnote.id, knote1.id);
+			if(k.getVerfügebarKapazität()<minimal){
+				minimal = k.getVerfügebarKapazität();
 			}
+			kreis.kantenList.add(k);
+			kreis.kreisWert = minimal;
+			startKnote = knote1;
 		}
 
-		return null;
+		return kreis;
 	}
+	
 
 	public void reset() {
 		nichtBesuchtKnoten = new ArrayList<Knote>();

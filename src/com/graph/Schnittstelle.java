@@ -13,7 +13,7 @@ public class Schnittstelle {
 		
 		// Schnittstelle.showPrimUndKrusal();
 		// Schnittstelle.travelingSalesmanProblem();
-		// Schnittstelle.showKuerzesteWege();
+//		 Schnittstelle.showKuerzesteWege();
 //		 Schnittstelle.showfordFulkerson();
 		Schnittstelle.showCycleCanceling();
 	}
@@ -21,8 +21,8 @@ public class Schnittstelle {
 	public static void showCycleCanceling() throws Exception {
 
 		Algorithmus algorithmus = new Algorithmus();
-		Graph graph = new Graph("./assets/kostenminimalFluss/KostenminimalTest.txt", true, true, true);
-//		Graph graph = new Graph("./assets/kostenminimalFluss/Kostenminimal2.txt", true, true, true);
+//		Graph graph = new Graph("./assets/kostenminimalFluss/KostenminimalTest.txt", true, true, true);
+		Graph graph = new Graph("./assets/kostenminimalFluss/Kostenminimal1.txt", true, true, true);
 		algorithmus.cycleCanceling(graph);
 
 		// Graph graph1 = new
