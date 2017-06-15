@@ -763,6 +763,7 @@ public class Algorithmus {
 		System.out.println("original Graph:" + graph.kantenList);
 		System.out.println("------------------------------------------------------------------------------------");
 
+		//Erstellen superQuelle und superSenke für mit mehrere Quellen und Senken Graph zu Fluss finden
 		Knote superQuelle = erstellenSuperQuelle(graph);
 		Knote superSenke = erstellenSuperSenke(graph);
 
@@ -770,6 +771,8 @@ public class Algorithmus {
 		System.out.println("graph mit SuperQuelle:" + graph.kantenList);
 		System.out.println("------------------------------------------------------------------------------------");
 
+		//durch fordFulkerson fluss finden
+		
 		ArrayList<Fluss> flussList = fordFulkerson(superQuelle.id, superSenke.id, graph);
 
 		if (flussList.size() == 0) {
@@ -777,6 +780,7 @@ public class Algorithmus {
 			return;
 		}
 
+		// Fluss gefunden, fertig brauchen wir nicht mehr superQuelle und superSenke
 		removeSuperQuelleUndSenke(graph, superQuelle, superSenke);
 
 		System.out.println("FlussList: "+flussList);
@@ -784,18 +788,22 @@ public class Algorithmus {
 		System.out.println("ResidualGraph durch fordFulkerson:" + graph.kantenList);
 		System.out.println("------------------------------------------------------------------------------------");
 
-		Knote superS = erstellenSuperS(graph);
+		//Erstellen superKnote,die mit alle andere Knote verbindet, helfen uns zu negative Kreis finden
+		Knote superKnote = erstellenSuperKnote(graph);
 
 		System.out.println("ResidualGraph durch fordFulkerson:" + graph.kantenList);
 		System.out.println("------------------------------------------------------------------------------------");
 
-		findKreisUndAktualisiertGraph(graph, superS.id);
+		//finden wir negative Kreis, dann aktualisiert Kante, Die Knaten in gleich Richtung addieren minimale Wert von Kreis, in umgekehrte Richtung subtrahieren.bis keine negative Kreis 
+		findKreisUndAktualisiertGraph(graph, superKnote.id);
 
-		graph.removeKnoteMitSeinKante(superS);
+		//brauchen wir nicht mehr SuperKnote, alle negative Kreis haben wir gefunden!
+		graph.removeKnoteMitSeinKante(superKnote);
 
 		System.out.println("ResidualGraph durch fordFulkerson:" + graph.kantenList);
 		System.out.println("------------------------------------------------------------------------------------");
 
+		//Kosten rechenen
 		rechnenKosten(graph);
 
 	}
@@ -803,17 +811,20 @@ public class Algorithmus {
 	public void findKreisUndAktualisiertGraph(Graph graph, int superQuelleId) throws Exception {
 
 		// 只通过修改Knote找到负圈 对边的值没影响
+		// negativKreis durch MooreBellmanFord finden
 		Kreis negativKreis = findNegativZykeldurchMooreBellmanFord(superQuelleId, graph);
 
 		while (negativKreis != null) {
 			System.out.println("negativKreis:" + negativKreis);
 			System.out.println("------------------------------------------------------------------------------------");
 
+			// Die Knaten in gleich Richtung addieren minimale Wert von Kreis, in umgekehrte Richtung subtrahieren.
 			aktualisertGraph(negativKreis, graph);
 
 			System.out.println("aktualisiertGraph durch negativKreis:" + graph.kantenList);
 			System.out.println("------------------------------------------------------------------------------------");
 
+			// erstellen ResidualGraph um negative Kreis weiter finden, bis keine negative Kreis
 			createResidualGraph(graph);
 
 			System.out.println("ResidualGraph:" + graph.kantenList);
@@ -837,7 +848,7 @@ public class Algorithmus {
 
 	}
 
-	public Knote erstellenSuperS(Graph graph) {
+	public Knote erstellenSuperKnote(Graph graph) {
 
 		Knote superQulle = new Knote(graph.knotenList.size());
 		graph.knotenList.add(superQulle);
@@ -855,7 +866,6 @@ public class Algorithmus {
 		for (Knote knote : graph.knotenList) {
 			if (knote.balance > 0) {
 				quellenList.add(knote);
-				// superQulle = knote;
 			}
 		}
 
@@ -880,7 +890,6 @@ public class Algorithmus {
 		for (Knote knote : graph.knotenList) {
 			if (knote.balance < 0) {
 				senkenList.add(knote);
-				// superSenke = knote;
 			}
 		}
 
@@ -912,6 +921,7 @@ public class Algorithmus {
 	}
 
 	// 通过N-1次更新遍历边 第N次发现负圈
+	//Wie MooreBellmanFord 
 	public Kreis findNegativZykeldurchMooreBellmanFord(int startKnoteId, Graph graph) throws Exception {
 
 		reset();
