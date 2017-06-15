@@ -686,7 +686,7 @@ public class Algorithmus {
 
 		if (fluss != null) {
 			if (graph.mitBalance) {
-				if (startKnote.balance >= fluss.flussWert) {
+				if (fluss.flussWert < startKnote.balance) {
 					startKnote.balance = startKnote.balance - fluss.flussWert;
 				} else {
 					fluss.flussWert = startKnote.balance;
@@ -762,17 +762,21 @@ public class Algorithmus {
 
 		// Erstellen superQuelle und superSenke für mit mehrere Quellen und
 		// Senken Graph zu Fluss finden
+
 		Knote superQuelle = erstellenSuperQuelle(graph);
 		Knote superSenke = erstellenSuperSenke(graph);
+
+		float balance = superQuelle.balance;
 
 		System.out.println("graph mit SuperQuelle:" + graph.kantenList);
 		System.out.println("------------------------------------------------------------------------------------");
 
 		// durch fordFulkerson fluss finden
-
 		ArrayList<Fluss> flussList = fordFulkerson(superQuelle.id, superSenke.id, graph);
 
-		if (flussList.size() == 0) {
+		float maximalFlussWert = getBalanceVonFluss(flussList);
+
+		if (maximalFlussWert < balance) {
 			System.out.println("Keine B-Fluss");
 			return;
 		}
@@ -807,7 +811,16 @@ public class Algorithmus {
 
 		// Kosten rechenen
 		rechnenKosten(graph);
+	}
 
+	public float getBalanceVonFluss(ArrayList<Fluss> flussList) {
+
+		float balance = 0;
+		for (Fluss fluss : flussList) {
+			balance += fluss.flussWert;
+		}
+
+		return balance;
 	}
 
 	public void findKreisUndAktualisiertGraph(Graph graph, int superQuelleId) throws Exception {
@@ -1000,7 +1013,7 @@ public class Algorithmus {
 
 		Kreis kreis = new Kreis();
 
-		Kante kante = kantenInNegativKreis.get(0);
+		Kante kante = kantenInNegativKreis.get(kantenInNegativKreis.size()-1);
 
 		// durch previousKnote immer zurück laufen (N Mal) N Anzahl von Konten
 		Knote previousKnote = kante.nachgängerKnote;
